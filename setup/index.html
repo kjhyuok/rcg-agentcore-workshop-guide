@@ -1,0 +1,2226 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="From PoC to Production: Strands Agents + AgentCore Hands-On">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../phase1/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>시작하기 전에 - Build! Deploy! Observe! 리테일 Agent 실전 구축하기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans KR";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href=".." title="Build! Deploy! Observe! 리테일 Agent 실전 구축하기" class="md-header__button md-logo" aria-label="Build! Deploy! Observe! 리테일 Agent 실전 구축하기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Build! Deploy! Observe! 리테일 Agent 실전 구축하기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              시작하기 전에
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Build! Deploy! Observe! 리테일 Agent 실전 구축하기" class="md-nav__button md-logo" aria-label="Build! Deploy! Observe! 리테일 Agent 실전 구축하기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Build! Deploy! Observe! 리테일 Agent 실전 구축하기
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시작하기 전에
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시작하기 전에
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        전체 흐름
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-a-cloudshell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part A: CloudShell에서 인프라 배포
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part A: CloudShell에서 인프라 배포">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-0-sagemaker-domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-0. SageMaker Domain 생성 (먼저!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-1. 코드 클론
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-2. 인프라 원스톱 배포
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-2.5. 환경변수 설정 (필수!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-3. 배포 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-4-sagemaker-code-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-4. SageMaker Code Editor 권한 부여
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-5. 환경변수 확인 (메모해두세요!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-b-sagemaker-code-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part B: SageMaker Code Editor에서 실습 환경 구성
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part B: SageMaker Code Editor에서 실습 환경 구성">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#b-0-code-editor-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-0. Code Editor Space 생성 &amp; 진입
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-1-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-1. 코드 클론 &amp; Python 환경
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-2. 가상환경 활성화
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-3. 환경변수 설정
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-4-bedrock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-4. Bedrock 모델 접근 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-5-agentcore-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-5. AgentCore CLI 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-6-code-interpreter-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-6. Code Interpreter &amp; Browser 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 환경변수 한눈에 보기 (워크샵 전체)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 환경변수 체크 (Phase 시작 전 확인용)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1: 첫 Agent, 세상에 내보내기
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 1: 첫 Agent, 세상에 내보내기
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase1/step1-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent에게 도구를 쥐어주자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase1/step2-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    똑똑한 두뇌를 달아주자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase1/step3-runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    세상에 공개하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase1/step4-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent의 생각을 들여다보기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 2A: 어제 온 고객을 기억하는 CS Agent
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 2A: 어제 온 고객을 기억하는 CS Agent
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2a/step1-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    고객을 기억하게 만들자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2a/step2-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    경쟁사 가격도 조회하게 하자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2a/step3-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    맥락을 이해하는 Agent 완성
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2a/step4-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    규칙을 지키게 하자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 2B: 알아서 발주하는 수요예측 Agent
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 2B: 알아서 발주하는 수요예측 Agent
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2b/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2b/step1-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    지난 발주를 기억하게 만들자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2b/step2-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    뉴스와 날씨도 수집하게 하자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2b/step3-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    데이터로 판단하는 Agent 완성
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase2b/step4-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    승인 규칙을 적용하자
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 3: 우리 회사 Agent, 팀으로 일하게 하기
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Phase 3: 우리 회사 Agent, 팀으로 일하게 하기
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase3/step1-usecase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Orchestrator에 내 Agent 연결하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase3/step2-fullstack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent 실력 측정하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase3/step3-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    최종 점검하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase3/step4-present/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    동료들 앞에서 시연하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    부록
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    부록
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/service-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AgentCore 서비스 한눈에 보기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/next-steps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    우리 회사에서 이어가기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ & 트러블슈팅
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/sa-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SA 운영 가이드 (환경 구축 & 배포)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        전체 흐름
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-a-cloudshell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part A: CloudShell에서 인프라 배포
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part A: CloudShell에서 인프라 배포">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-0-sagemaker-domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-0. SageMaker Domain 생성 (먼저!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-1. 코드 클론
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-2. 인프라 원스톱 배포
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-2.5. 환경변수 설정 (필수!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-3. 배포 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-4-sagemaker-code-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-4. SageMaker Code Editor 권한 부여
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A-5. 환경변수 확인 (메모해두세요!)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-b-sagemaker-code-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part B: SageMaker Code Editor에서 실습 환경 구성
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part B: SageMaker Code Editor에서 실습 환경 구성">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#b-0-code-editor-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-0. Code Editor Space 생성 &amp; 진입
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-1-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-1. 코드 클론 &amp; Python 환경
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-2. 가상환경 활성화
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-3. 환경변수 설정
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-4-bedrock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-4. Bedrock 모델 접근 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-5-agentcore-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-5. AgentCore CLI 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-6-code-interpreter-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B-6. Code Interpreter &amp; Browser 확인
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 환경변수 한눈에 보기 (워크샵 전체)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 환경변수 체크 (Phase 시작 전 확인용)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">환경 세팅<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">시작 전 반드시 완료</p>
+<p>이 페이지의 모든 단계를 완료해야 Phase 1을 시작할 수 있습니다.</p>
+</div>
+<hr />
+<h2 id="_2">전체 흐름<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>graph LR
+    A["☁️ &lt;b&gt;CloudShell&lt;/b&gt;&lt;br/&gt;인프라 배포 · 5분"]
+    B["💻 &lt;b&gt;Code Editor&lt;/b&gt;&lt;br/&gt;Agent 개발 · 워크샵 전체"]
+
+    A --&gt;|"Lambda + IAM + S3"| B
+
+    style A fill:#ff9900,stroke:#ff9900,color:#1a1a2e,font-weight:bold
+    style B fill:#42a5f5,stroke:#42a5f5,color:#1a1a2e,font-weight:bold
+
+    linkStyle 0 stroke:#ff9900,stroke-width:3px</code></pre>
+<div style="display:flex;gap:12px;margin:16px 0;flex-wrap:wrap;">
+<div style="flex:1;min-width:200px;padding:14px 18px;background:linear-gradient(135deg,#ff9900,#ffb84d);border-radius:12px;color:#1a1a2e;">
+<strong>Part A — CloudShell</strong><br/>
+<span style="font-size:0.85em;">코드 클론 → Lambda 11개 → IAM → Mock 사이트</span>
+</div>
+<div style="flex:1;min-width:200px;padding:14px 18px;background:linear-gradient(135deg,#1e88e5,#42a5f5);border-radius:12px;color:#fff;">
+<strong>Part B — Code Editor</strong><br/>
+<span style="font-size:0.85em;">Python 환경 → Agent 코드 → Gateway → 배포 → 테스트</span>
+</div>
+</div>
+
+<hr />
+<h2 id="part-a-cloudshell">Part A: CloudShell에서 인프라 배포<a class="headerlink" href="#part-a-cloudshell" title="Permanent link">&para;</a></h2>
+<h3 id="a-0-sagemaker-domain">A-0. SageMaker Domain 생성 (먼저!)<a class="headerlink" href="#a-0-sagemaker-domain" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Domain 생성에 3~5분 소요 — CloudShell 작업 전에 먼저 시작하세요</p>
+<p>백그라운드로 생성되는 동안 A-1~A-3을 진행할 수 있습니다.</p>
+</div>
+<p><strong>Step 1.</strong> Console 상단 검색창에 <strong>SageMaker</strong> 입력 → <strong>Amazon SageMaker AI</strong> → 좌측 <strong>SageMaker Studio</strong> 클릭 → <strong>"Create a SageMaker domain"</strong> 클릭</p>
+<p><img alt="Create Domain" src="../assets/images/setup/sagemaker-create-domain.png" /></p>
+<p><strong>Step 2.</strong> <strong>"Set up for single user (Quick setup)"</strong> 선택 (기본값) → 우측 하단 <strong>Set up</strong> 클릭</p>
+<p><img alt="Quick Setup" src="../assets/images/setup/sagemaker-quick-setup.png" /></p>
+<ul>
+<li>3~5분 대기 → Domain Status가 <code>InService</code>가 되면 완료</li>
+<li>이 동안 아래 A-1~A-3 CloudShell 작업을 병행하세요</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">왜 먼저 만드나요?</p>
+<p>이후 A-4 단계에서 <code>grant-sagemaker-permissions.sh</code>가 SageMaker Execution Role을 <strong>자동 탐색</strong>합니다.
+Domain이 없으면 Role을 찾지 못해 수동 입력이 필요합니다.</p>
+</div>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">AWS Console → CloudShell 열기</p>
+<p>콘솔 상단 바에서 <code>&gt;_</code> 아이콘을 클릭하면 CloudShell이 열립니다.
+리전을 <strong>us-east-1 (N. Virginia)</strong>로 설정하세요.</p>
+</div>
+<h3 id="a-1">A-1. 코드 클론<a class="headerlink" href="#a-1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kjhyuok/rcg-agentcore-workshop.git<span class="w"> </span>~/workshop
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>~/workshop
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>infra/*.sh
+</code></pre></div>
+<h3 id="a-2">A-2. 인프라 원스톱 배포<a class="headerlink" href="#a-2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>./infra/onestop.sh<span class="w"> </span>w001
+</code></pre></div>
+<p>이 스크립트가 하는 일:</p>
+<ul>
+<li>✅ IAM Role 2개 생성 (Lambda 실행용, Gateway용)</li>
+<li>✅ Lambda 11개 배포 (Phase 1~2B Tool 함수)</li>
+<li>✅ Mock 사이트 S3 배포 (Browser Tool용)</li>
+<li>✅ 환경변수 파일 생성 (<code>.env.w001</code>)</li>
+</ul>
+<details class="success">
+<summary>정상 출력 예시</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>╔══════════════════════════════════════════════════════════╗
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>║  🚀 RCG AgentCore Workshop — 원스톱 배포                ║
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>╠══════════════════════════════════════════════════════════╣
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>║  Participant ID : w001
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>║  Region         : us-east-1
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>║  Account        : 123456789012
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>╚══════════════════════════════════════════════════════════╝
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>[1/4] IAM Role 생성...
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  ✅ rcg-workshop-lambda-role 생성
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>  ✅ rcg-workshop-gateway-role 생성
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>[2/4] Lambda 11개 배포...
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>  ✅ rcg-workshop-customer-profile (생성)
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>  ✅ rcg-workshop-product-search (생성)
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>  ...
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>[3/4] Mock 사이트 배포...
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>  ✅ Mock 사이트: http://rcg-workshop-mock-123456789012.s3-website-us-east-1.amazonaws.com
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>╔══════════════════════════════════════════════════════════╗
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>║  🎉 배포 완료! 아래 환경변수를 설정하세요               ║
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>╠══════════════════════════════════════════════════════════╣
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>  export AWS_REGION=us-east-1
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>  export ACCOUNT_ID=123456789012
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>  export PARTICIPANT_ID=w001
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>  export MOCK_SITE_URL=http://rcg-workshop-mock-...
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>  export GATEWAY_ROLE_ARN=arn:aws:iam::123456789012:role/rcg-workshop-gateway-role
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>╚══════════════════════════════════════════════════════════╝
+</code></pre></div>
+</details>
+<h3 id="a-25">A-2.5. 환경변수 설정 (필수!)<a class="headerlink" href="#a-25" title="Permanent link">&para;</a></h3>
+<div class="admonition danger">
+<p class="admonition-title">반드시 실행하세요</p>
+<p><code>onestop.sh</code>는 서브셸에서 실행되므로, 스크립트가 출력한 환경변수가 <strong>현재 CloudShell 세션에 자동 반영되지 않습니다.</strong>
+출력된 <code>export</code> 구문을 <strong>복사해서 CloudShell에 붙여넣어야</strong> 이후 단계가 정상 동작합니다.</p>
+</div>
+<p>출력 마지막에 나온 <code>export</code> 5줄을 복사하여 CloudShell에 붙여넣기:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_REGION</span><span class="o">=</span>us-east-1
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ACCOUNT_ID</span><span class="o">=</span>&lt;출력된<span class="w"> </span>값&gt;
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PARTICIPANT_ID</span><span class="o">=</span>w001
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">MOCK_SITE_URL</span><span class="o">=</span>http://rcg-workshop-mock-&lt;ACCOUNT_ID&gt;.s3-website-us-east-1.amazonaws.com
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GATEWAY_ROLE_ARN</span><span class="o">=</span>arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/rcg-workshop-gateway-role
+</code></pre></div>
+<p>또는 생성된 <code>.env</code> 파일을 <code>source</code>해도 됩니다:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">source</span><span class="w"> </span>.env.w001
+</code></pre></div>
+<p>설정 확인:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$ACCOUNT_ID</span><span class="w">  </span><span class="c1"># 계정 ID가 출력되면 OK</span>
+</code></pre></div>
+<h3 id="a-3">A-3. 배포 확인<a class="headerlink" href="#a-3" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>aws<span class="w"> </span>lambda<span class="w"> </span>list-functions<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>--query<span class="w"> </span><span class="s2">&quot;Functions[?starts_with(FunctionName, &#39;rcg-workshop&#39;)].FunctionName&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--output<span class="w"> </span>table<span class="w"> </span>--region<span class="w"> </span>us-east-1
+</code></pre></div>
+<details class="success">
+<summary>정상 출력 (11개 Lambda)</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>+---------------------------------------+
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>|  rcg-workshop-customer-profile        |
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>|  rcg-workshop-product-search          |
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>|  rcg-workshop-purchase-history        |
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>|  rcg-workshop-cs-lookup-order         |
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>|  rcg-workshop-cs-return-policy        |
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>|  rcg-workshop-cs-process-return       |
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>|  rcg-workshop-cs-delivery-status      |
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>|  rcg-workshop-demand-inventory        |
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>|  rcg-workshop-demand-sales-trend      |
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>|  rcg-workshop-demand-external-factors |
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>|  rcg-workshop-demand-purchase-order   |
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>+---------------------------------------+
+</code></pre></div>
+</details>
+<h3 id="a-4-sagemaker-code-editor">A-4. SageMaker Code Editor 권한 부여<a class="headerlink" href="#a-4-sagemaker-code-editor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>./infra/grant-sagemaker-permissions.sh
+</code></pre></div>
+<p>이 스크립트가 하는 일:</p>
+<ul>
+<li>SageMaker Execution Role을 자동 탐색</li>
+<li>Bedrock (모델 호출 + Converse API) 권한 추가</li>
+<li>AWS Marketplace (모델 최초 구독) 권한 추가</li>
+<li>AgentCore (Gateway, Memory, Runtime, Policy) 권한 추가</li>
+<li>Lambda 호출 권한 추가</li>
+</ul>
+<details class="success">
+<summary>정상 출력</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>🔐 SageMaker Code Editor 권한 설정
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>   Account: 123456789012
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>   Region:  us-east-1
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>[1/2] SageMaker Execution Role 탐색...
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  ✅ Role 찾음: AmazonSageMaker-ExecutionRole-xxxxx
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>[2/2] Bedrock + AgentCore 권한 추가...
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  ✅ 인라인 정책 추가: RCGWorkshopBedrockAgentCoreAccess
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>╔══════════════════════════════════════════════════════════╗
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>║  ✅ SageMaker 권한 설정 완료!                           ║
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>║                                                        ║
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>║  Code Editor에서 Bedrock + AgentCore 호출이             ║
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>║  가능합니다.                                            ║
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>╚══════════════════════════════════════════════════════════╝
+</code></pre></div>
+</details>
+<h3 id="a-5">A-5. 환경변수 확인 (메모해두세요!)<a class="headerlink" href="#a-5" title="Permanent link">&para;</a></h3>
+<p><code>onestop.sh</code> 출력 마지막에 나온 환경변수를 <strong>메모</strong>합니다. Code Editor에서 사용합니다:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>cat<span class="w"> </span>.env.w001
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">이 값들을 복사해두세요</p>
+<p>CloudShell과 Code Editor는 <strong>파일 시스템이 분리</strong>되어 있습니다.
+<code>.env.w001</code> 파일은 CloudShell에만 있으므로, 내용을 복사해서 Code Editor에서 붙여넣어야 합니다.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Part A 완료!</p>
+<p>CloudShell 작업 끝. 이제 SageMaker Code Editor로 이동합니다.</p>
+</div>
+<hr />
+<h2 id="part-b-sagemaker-code-editor">Part B: SageMaker Code Editor에서 실습 환경 구성<a class="headerlink" href="#part-b-sagemaker-code-editor" title="Permanent link">&para;</a></h2>
+<h3 id="b-0-code-editor-space">B-0. Code Editor Space 생성 &amp; 진입<a class="headerlink" href="#b-0-code-editor-space" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1.</strong> Console → <strong>SageMaker AI</strong> → <strong>Studio</strong> → Home 화면에서 우측 <strong>Code Editor</strong> 카드 클릭</p>
+<p><img alt="SageMaker Studio Home" src="../assets/images/setup/sagemaker-studio-home.png" /></p>
+<p><strong>Step 2.</strong> 우측 상단 <strong>"+ Create Code Editor space"</strong> 클릭</p>
+<p><img alt="Create Code Editor Space" src="../assets/images/setup/code-editor-create-space.png" /></p>
+<p><strong>Step 3.</strong> Name에 <code>workshop</code> 입력 → <strong>Create space</strong> 클릭</p>
+<p><img alt="Name Space" src="../assets/images/setup/code-editor-name-space.png" /></p>
+<p><strong>Step 4.</strong> Instance: <code>ml.t3.medium</code> (기본값) → <strong>Run space</strong> 클릭</p>
+<p><img alt="Run Space" src="../assets/images/setup/code-editor-run-space.png" /></p>
+<p><strong>Step 5.</strong> Status가 <code>Running</code>이 되면 <strong>Open</strong> 클릭 → VS Code 환경 진입 완료</p>
+<p><img alt="Code Editor VSCode" src="../assets/images/setup/code-editor-vscode.png" /></p>
+<div class="admonition success">
+<p class="admonition-title">여기까지 완료되면</p>
+<p>왼쪽 AWS Explorer에서 배포된 Lambda 함수들이 보입니다.
+하단 터미널(<code>sagemaker-user@default:~$</code>)에서 다음 단계를 진행합니다.</p>
+</div>
+<hr />
+<h3 id="b-1-python">B-1. 코드 클론 &amp; Python 환경<a class="headerlink" href="#b-1-python" title="Permanent link">&para;</a></h3>
+<p>Code Editor 터미널에서:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kjhyuok/rcg-agentcore-workshop.git<span class="w"> </span>~/workshop
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nb">cd</span><span class="w"> </span>~/workshop
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>infra/*.sh
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>./infra/setup-python.sh
+</code></pre></div>
+<details class="note">
+<summary>setup-python.sh이 하는 일</summary>
+<p>Python 가상환경(venv) 생성, 필수 라이브러리 설치, Playwright 브라우저 설치를 자동으로 수행합니다.</p>
+</details>
+<h3 id="b-2">B-2. 가상환경 활성화<a class="headerlink" href="#b-2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nb">source</span><span class="w"> </span>~/workshop/starter-code/.venv/bin/activate
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">터미널을 새로 열 때마다 이 명령을 실행하세요</p>
+<p>Code Editor 세션이 끊겼다 재연결되면 venv가 비활성화됩니다.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">cd</span><span class="w"> </span>~/workshop<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>starter-code/.venv/bin/activate
+</code></pre></div></p>
+</div>
+<h3 id="b-3">B-3. 환경변수 설정<a class="headerlink" href="#b-3" title="Permanent link">&para;</a></h3>
+<p>환경변수 파일을 생성하고 로드합니다:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>~/workshop/.env.w001<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="s">export AWS_REGION=us-east-1</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="s">export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="s">export PARTICIPANT_ID=w001</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="s">export MOCK_SITE_URL=&quot;http://rcg-workshop-mock-$(aws sts get-caller-identity --query Account --output text).s3-website-us-east-1.amazonaws.com&quot;</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s">export GATEWAY_ROLE_ARN=&quot;arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/rcg-workshop-gateway-role&quot;</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s">EOF</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="nb">source</span><span class="w"> </span>~/workshop/.env.w001
+</code></pre></div>
+<p>확인:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$ACCOUNT_ID</span><span class="w">  </span><span class="c1"># 계정 ID가 출력되면 OK</span>
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">세션이 끊겼을 때 복구 방법</p>
+<p>Code Editor 세션이 끊겼다 재연결되면 환경변수가 초기화됩니다. 아래 한 줄로 복구하세요:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nb">cd</span><span class="w"> </span>~/workshop<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>starter-code/.venv/bin/activate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>.env.w001
+</code></pre></div></p>
+</div>
+<h3 id="b-4-bedrock">B-4. Bedrock 모델 접근 확인<a class="headerlink" href="#b-4-bedrock" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="s2">from strands import Agent</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="s2">from strands.models import BedrockModel</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="s2">model = BedrockModel(model_id=&#39;us.anthropic.claude-sonnet-4-6&#39;, region_name=&#39;us-east-1&#39;)</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="s2">agent = Agent(model=model, system_prompt=&#39;테스트&#39;)</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="s2">print(agent(&#39;안녕? 한 줄로 답해.&#39;))</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="s2">print(&#39;✅ Bedrock 모델 접근 OK&#39;)</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="b-5-agentcore-cli">B-5. AgentCore CLI 확인<a class="headerlink" href="#b-5-agentcore-cli" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>agentcore<span class="w"> </span>--help
+</code></pre></div>
+<details class="failure">
+<summary>설치 안 되어 있으면</summary>
+<p>AgentCore CLI는 <strong>pip 패키지</strong>입니다:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>pip<span class="w"> </span>install<span class="w"> </span>bedrock-agentcore-starter-toolkit
+</code></pre></div></p>
+</details>
+<h3 id="b-6-code-interpreter-browser">B-6. Code Interpreter &amp; Browser 확인<a class="headerlink" href="#b-6-code-interpreter-browser" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="s2">from strands_tools.code_interpreter import AgentCoreCodeInterpreter</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="s2">from strands_tools.browser import AgentCoreBrowser</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="s2">ci = AgentCoreCodeInterpreter(region=&#39;us-east-1&#39;)</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="s2">print(&#39;✅ Code Interpreter 초기화 OK&#39;)</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="s2">br = AgentCoreBrowser(region=&#39;us-east-1&#39;)</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="s2">print(&#39;✅ Browser Tool 초기화 OK&#39;)</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="s2">&quot;</span>
+</code></pre></div>
+<details class="failure">
+<summary>권한 에러가 발생하면</summary>
+<p>IAM Role에 다음 권한이 필요합니다:</p>
+<ul>
+<li><code>bedrock-agentcore:InvokeCodeInterpreter</code></li>
+<li><code>bedrock-agentcore:InvokeBrowser</code></li>
+</ul>
+<p>워크샵 환경에서는 이미 설정되어 있어야 합니다. 에러 발생 시 진행자에게 문의하세요.</p>
+</details>
+<hr />
+<h2 id="_3">📋 환경변수 한눈에 보기 (워크샵 전체)<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">이 블록을 저장해두세요</p>
+<p>아래 환경변수는 워크샵 진행하며 채워집니다. Phase 시작 전에 이 값들이 설정되어 있는지 확인하세요.</p>
+</div>
+<div class="env-block">
+<span class="env-label"># --- Part A에서 설정됨 (.env.w001) ---</span><br>
+export AWS_REGION=us-east-1<br>
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)<br>
+export MOCK_SITE_URL="http://rcg-workshop-mock-${ACCOUNT_ID}.s3-website-us-east-1.amazonaws.com"<br>
+export GATEWAY_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/rcg-workshop-gateway-role"<br>
+<br>
+<span class="env-label"># --- Phase 1 (Gateway 생성 후 채워짐) ---</span><br>
+export AGENTCORE_GATEWAY_URL=&lt;setup-gateway.py 출력값&gt;<br>
+export GATEWAY_ID=&lt;Gateway ID&gt;<br>
+<br>
+<span class="env-label"># --- Phase 2 (Memory 생성 후 채워짐) ---</span><br>
+export AGENTCORE_MEMORY_ID=&lt;setup-memory.py 출력값&gt;<br>
+<br>
+<span class="env-label"># --- Phase 3 (배포 후 채워짐) ---</span><br>
+export MY_AGENT_ARN=&lt;agentcore deploy 출력값&gt;<br>
+</div>
+
+<hr />
+<h2 id="phase">🔍 환경변수 체크 (Phase 시작 전 확인용)<a class="headerlink" href="#phase" title="Permanent link">&para;</a></h2>
+<p>각 Phase 시작 전에 아래 명령어로 환경변수가 설정되어 있는지 확인하세요. 빈 줄이 있으면 해당 값이 누락된 것입니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Part A (기본) ===&quot;</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;AWS_REGION: </span><span class="nv">$AWS_REGION</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ACCOUNT_ID: </span><span class="nv">$ACCOUNT_ID</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;MOCK_SITE_URL: </span><span class="nv">$MOCK_SITE_URL</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;GATEWAY_ROLE_ARN: </span><span class="nv">$GATEWAY_ROLE_ARN</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Phase 1 (Gateway 생성 후) ===&quot;</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;AGENTCORE_GATEWAY_URL: </span><span class="nv">$AGENTCORE_GATEWAY_URL</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;GATEWAY_ID: </span><span class="nv">$GATEWAY_ID</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Phase 2 (Memory 생성 후) ===&quot;</span>
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;AGENTCORE_MEMORY_ID: </span><span class="nv">$AGENTCORE_MEMORY_ID</span><span class="s2">&quot;</span>
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Phase 3 (배포 후) ===&quot;</span>
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;MY_AGENT_ARN: </span><span class="nv">$MY_AGENT_ARN</span><span class="s2">&quot;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">값이 비어 있으면</p>
+<ul>
+<li>Part A 값이 비었으면: <code>source ~/workshop/.env.w001</code></li>
+<li>Phase 1~3 값이 비었으면: 해당 Phase의 setup 스크립트를 아직 실행하지 않은 것 (정상)</li>
+</ul>
+</div>
+<hr />
+<div class="admonition success">
+<p class="admonition-title">준비 완료!</p>
+<p>모든 체크가 통과했으면 <a href="../phase1/">Phase 1: Gateway + Runtime + Observability</a>로 이동하세요.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="이전: Home">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../phase1/" class="md-footer__link md-footer__link--next" aria-label="다음: 개요">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                개요
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.path", "navigation.top", "navigation.footer", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@11/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
