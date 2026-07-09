@@ -1,0 +1,101 @@
+site_name: "Build! Deploy! Observe! 리테일 Agent 실전 구축하기"
+site_description: "From PoC to Production: Strands Agents + AgentCore Hands-On"
+site_url: ""
+
+theme:
+  name: material
+  language: ko
+  palette:
+    - scheme: slate
+      primary: deep orange
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep orange
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  font:
+    text: Noto Sans KR
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/git-alt
+
+extra_css:
+  - assets/custom.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - 시작하기 전에: setup.md
+  - "Phase 1: 첫 Agent, 세상에 내보내기":
+    - 개요: phase1/index.md
+    - "Agent에게 도구를 쥐어주자": phase1/step1-gateway.md
+    - "똑똑한 두뇌를 달아주자": phase1/step2-agent.md
+    - "세상에 공개하기": phase1/step3-runtime.md
+    - "Agent의 생각을 들여다보기": phase1/step4-observability.md
+  - "Phase 2A: 어제 온 고객을 기억하는 CS Agent":
+    - 개요: phase2a/index.md
+    - "고객을 기억하게 만들자": phase2a/step1-memory.md
+    - "경쟁사 가격도 조회하게 하자": phase2a/step2-gateway.md
+    - "맥락을 이해하는 Agent 완성": phase2a/step3-agent.md
+    - "규칙을 지키게 하자": phase2a/step4-policy.md
+  - "Phase 2B: 알아서 발주하는 수요예측 Agent":
+    - 개요: phase2b/index.md
+    - "지난 발주를 기억하게 만들자": phase2b/step1-memory.md
+    - "뉴스와 날씨도 수집하게 하자": phase2b/step2-gateway.md
+    - "데이터로 판단하는 Agent 완성": phase2b/step3-agent.md
+    - "승인 규칙을 적용하자": phase2b/step4-policy.md
+  - "Phase 3: 우리 회사 Agent, 팀으로 일하게 하기":
+    - 개요: phase3/index.md
+    - "Orchestrator에 내 Agent 연결하기": phase3/step1-usecase.md
+    - "Agent 실력 측정하기": phase3/step2-fullstack.md
+    - "최종 점검하기": phase3/step3-deploy.md
+    - "동료들 앞에서 시연하기": phase3/step4-present.md
+  - 부록:
+    - "AgentCore 서비스 한눈에 보기": appendix/service-map.md
+    - "우리 회사에서 이어가기": appendix/next-steps.md
+    - "FAQ & 트러블슈팅": appendix/faq.md
+    - "SA 운영 가이드 (환경 구축 & 배포)": appendix/sa-guide.md
