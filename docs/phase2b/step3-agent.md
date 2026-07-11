@@ -21,18 +21,14 @@
 
 ```python
 import os
-import json
-import asyncio
-import nest_asyncio
+import uuid
+import boto3
 from strands import Agent
 from strands.models import BedrockModel
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from bedrock_agentcore.memory import MemoryClient
+from strands.tools.mcp import MCPClient
 from strands_tools.browser import AgentCoreBrowser
-from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
-
-nest_asyncio.apply()
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 # --- 설정 ---
 GATEWAY_URL = os.environ.get("AGENTCORE_GATEWAY_URL", "")
@@ -40,17 +36,10 @@ MEMORY_ID = os.environ.get("AGENTCORE_MEMORY_ID", "")
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 # --- Memory 클라이언트 ---
-memory_client = MemoryClient(region_name=REGION)
+memory_client = boto3.client("bedrock-agentcore", region_name=REGION)
 
 # --- Browser Tool ---
 browser_tool = AgentCoreBrowser(region=REGION)
-
-# --- Gateway에서 Tool 가져오기 ---
-async def get_gateway_tools(gateway_url: str, headers: dict) -> list:
-    async with streamablehttp_client(gateway_url, headers=headers) as (read, write, _):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-            return (await session.list_tools()).tools
 
 # --- System Prompt ---
 SYSTEM_PROMPT = """당신은 리테일 매장의 수요 예측 & 발주 전문가입니다.
@@ -97,45 +86,44 @@ def get_order_history(store_id: str) -> str:
 
 # --- Agent 생성 ---
 model = BedrockModel(
-    model_id="us.anthropic.claude-sonnet-4-6-20250514-v1:0",
-    region_name="us-east-1"
+    model_id="us.anthropic.claude-sonnet-4-6",
+    region_name=REGION,
 )
 
-agent = Agent(
-    model=model,
-    system_prompt=SYSTEM_PROMPT,
-    tools=tools
-)
+app = BedrockAgentCoreApp()
 
 
-# --- 엔트리 포인트 ---
-def handler(event, context):
-    """AgentCore Runtime 핸들러"""
-    user_input = event.get("input", "")
-    store_id = event.get("store_id", "store-001")
+@app.entrypoint
+def demand_agent(payload: dict) -> dict:
+    """AgentCore Runtime 진입점"""
+    user_message = payload.get("message", payload.get("input", ""))
+    session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
+    actor_id = payload.get("actor_id", payload.get("store_id", "store-manager"))
 
-    # Memory에서 이력 가져와서 컨텍스트에 추가
-    history = get_order_history(store_id)
-    enriched_input = f"""[매장: {store_id}]
-[이전 발주 이력]
-{history}
+    # Memory에서 이전 발주 이력 조회
+    history = get_order_history(actor_id)
+    augmented_prompt = f"[이전 발주 이력]\n{history}\n\n[요청]\n{user_message}"
 
-[요청] {user_input}"""
-
-    # Agent 실행
-    response = agent(enriched_input)
-
-    # 발주 결과를 Memory에 저장
-    memory_client.store(
-        namespace=f"/orders/{store_id}/",
-        content=f"발주 요청: {user_input}\n결과: {str(response)[:500]}",
-        metadata={"store_id": store_id}
+    # Gateway MCP + Browser Tool
+    mcp_client = MCPClient(
+        lambda: streamablehttp_client(GATEWAY_URL)
     )
 
+    agent = Agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=[mcp_client, browser_tool.browser],
+    )
+    result = agent(augmented_prompt)
+
     return {
-        "statusCode": 200,
-        "body": str(response)
+        "response": str(result),
+        "session_id": session_id,
     }
+
+
+if __name__ == "__main__":
+    app.run()
 ```
 
 ---
@@ -143,13 +131,7 @@ def handler(event, context):
 ## 배포
 
 ```bash
-cd agents/
-
-agentcore deploy \
-  --name "demand-forecast-agent" \
-  --entry-point "phase2b_demand.handler" \
-  --env MEMORY_ID=$MEMORY_ID \
-  --env GATEWAY_URL=$GATEWAY_URL
+./scripts/deploy-agent.sh agents/phase2b_demand.py rcg-demand-agent
 ```
 
 ---

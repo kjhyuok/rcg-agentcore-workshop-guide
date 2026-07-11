@@ -43,12 +43,11 @@ import os
 import uuid
 from strands import Agent
 from strands.models import BedrockModel
+from strands.tools.mcp import MCPClient
 from strands_tools.code_interpreter import AgentCoreCodeInterpreter
 from strands_tools.browser import AgentCoreBrowser
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from mcp import ClientSession
-
 from mcp.client.streamable_http import streamablehttp_client
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 # --- 설정 ---
 GATEWAY_URL = os.environ.get("AGENTCORE_GATEWAY_URL", "")
@@ -56,7 +55,7 @@ REGION = "us-east-1"
 
 # --- 모델 ---
 model = BedrockModel(
-    model_id="us.anthropic.claude-sonnet-4-6-20250514-v1:0",
+    model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
 
@@ -111,20 +110,17 @@ def custom_agent(payload: dict) -> dict:
     user_message = payload.get("message", "")
     session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
 
-    mcp = MCPClient(lambda: streamablehttp_client(GATEWAY_URL, auth=auth))
+    # Gateway MCP + 추가 Tools 조합
+    mcp_client = MCPClient(
+        lambda: streamablehttp_client(GATEWAY_URL)
+    )
 
-    with mcp:
-        gateway_tools = mcp.list_tools_sync()
-
-        # Gateway Tools + 추가 Tools 조합
-        all_tools = gateway_tools + EXTRA_TOOLS
-
-        agent = Agent(
-            model=model,
-            system_prompt=SYSTEM_PROMPT,
-            tools=all_tools
-        )
-        result = agent(user_message)
+    agent = Agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=[mcp_client] + EXTRA_TOOLS,
+    )
+    result = agent(user_message)
 
     return {
         "response": str(result),

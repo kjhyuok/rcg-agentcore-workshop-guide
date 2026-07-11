@@ -39,24 +39,27 @@ Agent 호출 **전후**로 Memory 작업이 추가됩니다.
 핵심 구조를 확인합니다:
 
 ```python title="agents/phase2a_cs.py — Import & 설정"
+import os
+import uuid
+import boto3
 from strands import Agent
 from strands.models import BedrockModel
-from mcp import ClientSession
-
+from strands.tools.mcp import MCPClient
+from strands_tools.browser import AgentCoreBrowser
 from mcp.client.streamable_http import streamablehttp_client
-from bedrock_agentcore.memory import MemoryClient
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 GATEWAY_URL = os.environ.get("AGENTCORE_GATEWAY_URL", "")
 MEMORY_ID = os.environ.get("AGENTCORE_MEMORY_ID", "")
-REGION = "us-east-1"
+REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 model = BedrockModel(
-    model_id="us.anthropic.claude-sonnet-4-6-20250514-v1:0",
+    model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
 
-memory_client = MemoryClient(region_name=REGION)
+memory_client = boto3.client("bedrock-agentcore", region_name=REGION)
+browser_tool = AgentCoreBrowser(region=REGION)
 ```
 
 ---
@@ -160,13 +163,17 @@ def cs_agent(payload: dict) -> dict:
     # 2️⃣ 맥락을 System Prompt에 주입
     prompt = SYSTEM_PROMPT.format(customer_context=context or "없음 (첫 대화)")
     
-    # 3️⃣ Agent 실행 (Gateway에서 Tool 로드)
-    mcp = MCPClient(lambda: streamablehttp_client(GATEWAY_URL, auth=auth))
-    
-    with mcp:
-        tools = mcp.list_tools_sync()
-        agent = Agent(model=model, system_prompt=prompt, tools=tools)
-        result = agent(user_message)
+    # 3️⃣ Agent 실행 (Gateway MCP + Browser Tool)
+    mcp_client = MCPClient(
+        lambda: streamablehttp_client(GATEWAY_URL)
+    )
+
+    agent = Agent(
+        model=model,
+        system_prompt=prompt,
+        tools=[mcp_client, browser_tool.browser],
+    )
+    result = agent(user_message)
     
     response_text = str(result)
     
