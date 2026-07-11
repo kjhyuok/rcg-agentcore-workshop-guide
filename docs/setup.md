@@ -80,6 +80,7 @@ chmod +x infra/*.sh
 - ✅ IAM Role 2개 생성 (Lambda 실행용, Gateway용)
 - ✅ Lambda 11개 배포 (Phase 1~2B Tool 함수)
 - ✅ Mock 사이트 S3 배포 (Browser Tool용)
+- ✅ Observability 사전 설정 (Transaction Search + Tracing 활성화)
 - ✅ 환경변수 파일 생성 (`.env.w001`)
 
 ??? success "정상 출력 예시"

@@ -45,8 +45,8 @@ graph LR
 ```bash
 # 실제 호출
 agentcore invoke \
-  --name "my-custom-agent" \
-  --payload '{"input": "테스트 질문", "actor_id": "demo-user"}'
+  --agent "my-custom-agent" \
+  '{"input": "테스트 질문", "actor_id": "demo-user"}'
 ```
 
 동시에 Observability Dashboard를 보여주며:

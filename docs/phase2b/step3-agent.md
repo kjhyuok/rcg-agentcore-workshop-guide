@@ -158,11 +158,8 @@ agentcore deploy \
 
 ```bash
 agentcore invoke \
-  --name "demand-forecast-agent" \
-  --payload '{
-    "input": "현재 재고 분석하고 긴급 발주 진행해",
-    "store_id": "store-001"
-  }'
+  --agent "demand-forecast-agent" \
+  '{"input": "현재 재고 분석하고 긴급 발주 진행해", "store_id": "store-001"}'
 ```
 
 ---

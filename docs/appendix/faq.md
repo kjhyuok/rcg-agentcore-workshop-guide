@@ -87,8 +87,8 @@
     **해결**: 5만원 이하 환불은 정상적으로 ALLOW됩니다. 7만원 이상으로 테스트하세요:
     ```bash
     # 에스컬레이션 테스트 (69,000원 상품)
-    agentcore invoke --name rcg-cs-agent \
-      --payload '{"message": "ORD-2024-999 환불 요청합니다", "actor_id": "C003"}'
+    agentcore invoke --agent rcg-cs-agent \
+      '{"message": "ORD-2024-999 환불 요청합니다", "actor_id": "C003"}'
     ```
 
 ??? question "Q10. Observability Dashboard가 비어있다"

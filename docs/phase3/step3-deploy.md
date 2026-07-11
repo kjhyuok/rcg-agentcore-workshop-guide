@@ -43,11 +43,8 @@ Agent deployed successfully!
 ```bash
 # Step 1에서 준비한 테스트 질문으로 호출
 agentcore invoke \
-  --name "my-custom-agent" \
-  --payload '{
-    "input": "여기에 Step 1에서 작성한 테스트 질문",
-    "actor_id": "user-001"
-  }'
+  --agent "my-custom-agent" \
+  '{"input": "여기에 Step 1에서 작성한 테스트 질문", "actor_id": "user-001"}'
 ```
 
 !!! warning "에러가 나면?"
@@ -120,11 +117,8 @@ sequenceDiagram
 
 ```bash
 agentcore invoke \
-  --name "my-custom-agent" \
-  --payload '{
-    "input": "같은 질문을 다시",
-    "actor_id": "user-001"
-  }'
+  --agent "my-custom-agent" \
+  '{"input": "같은 질문을 다시", "actor_id": "user-001"}'
 ```
 
 **기대 결과:** 이번에는 Memory에서 이전 대화 기록을 가져와서 **더 맥락에 맞는 응답**을 합니다.

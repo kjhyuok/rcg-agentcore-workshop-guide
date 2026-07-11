@@ -43,26 +43,6 @@ chmod +x scripts/deploy-agent.sh
 ./scripts/deploy-agent.sh agents/phase1_recommend.py rcg_recommend_agent
 ```
 
-또는 직접 명령어로:
-
-```bash
-# Configure
-agentcore configure \
-  --entrypoint agents/phase1_recommend.py \
-  --name rcg_recommend_agent \
-  --runtime PYTHON_3_12 \
-  --deployment-type direct_code_deploy \
-  --execution-role "${RUNTIME_ROLE_ARN}" \
-  --disable-memory \
-  --non-interactive
-
-# Deploy
-agentcore deploy \
-  --env AGENTCORE_GATEWAY_URL="${AGENTCORE_GATEWAY_URL}" \
-  --env AWS_REGION="${AWS_REGION}" \
-  --auto-update-on-conflict
-```
-
 !!! warning "Deprecated 경고 무시"
     `agentcore` CLI 실행 시 "Starter Toolkit is deprecated" 경고가 나올 수 있습니다.
     **무시해도 안전합니다.** 워크샵에서는 정상 동작합니다.
@@ -104,51 +84,40 @@ agentcore status --agent rcg_recommend_agent
 
 ```bash
 agentcore invoke \
-  --name rcg_recommend_agent \
-  --payload '{"message": "고객 C001에게 상품 3개 추천해주세요. 알러지 고려.", "session_id": "test-001"}'
-```
-
-또는 Python으로:
-
-```python
-import boto3, json
-
-client = boto3.client("bedrock-agentcore", region_name="us-east-1")
-resp = client.invoke_agent_runtime(
-    agentRuntimeId="rcg_recommend_agent",
-    runtimeSessionId="test-session-001-abcdef",  # 33자 이상!
-    payload=json.dumps({
-        "message": "고객 C001에게 적합한 상품 추천해주세요",
-    }),
-)
-print(json.loads(resp["response"].read()))
+  --agent rcg_recommend_agent \
+  '{"message": "고객 C001에게 상품 3개 추천해주세요. 알러지 고려.", "session_id": "test-001"}'
 ```
 
 ---
 
-## 3-4. Harness Playground에서 채팅으로 테스트
+## 3-4. Console에서 Runtime Test로 확인
 
-배포된 Agent를 **웹 UI로 직접 대화**해볼 수 있습니다:
+배포된 Agent를 **AWS Console에서 직접 테스트**할 수 있습니다:
 
-1. Console → **Amazon Bedrock** → **AgentCore** → 좌측 **Harness** → **Playground**
-2. Agent 선택: `rcg_recommend_agent`
-3. 채팅창에 입력:
+1. Console → **Amazon Bedrock** → **AgentCore** → 좌측 **Runtime**
+2. `rcg_recommend_agent` 클릭 → 우측 상단 **Test** 버튼 클릭
 
+![Runtime 상세 페이지](../assets/images/phase1/runtime-test-page.png)
+
+3. Input에 아래 JSON을 붙여넣고 **Run** 클릭:
+
+![Runtime Test 결과](../assets/images/phase1/runtime-test-result.png)
+
+```json
+{"prompt": "고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요."}
 ```
-고객 C001에게 적합한 상품 추천해주세요. 알러지 고려해서요.
-```
 
-!!! tip "Playground의 가치"
-    - 터미널이 아닌 **채팅 UI**로 Agent 동작 확인
-    - Tool 호출 과정이 실시간으로 표시됨
-    - 여러 메시지를 연속으로 보내며 Agent 행동 관찰 가능
-    - 팀원이나 비개발자에게 시연할 때 유용
+!!! tip "Runtime Test의 가치"
+    - CLI 타임아웃 걱정 없이 **긴 응답도 확인 가능**
+    - Session ID가 자동 생성됨 (33자 이상 필요)
+    - Output에서 Agent 전체 응답을 JSON으로 확인
+    - 배포 직후 정상 동작 여부를 빠르게 검증
 
 다양한 질문으로 테스트해보세요:
 
-- "고객 C002에게 뷰티 상품 추천해줘"
-- "가장 평점 높은 음료 3개는?"
-- "견과류 없는 간식 찾아줘"
+- `{"prompt": "고객 C002에게 뷰티 상품 추천해줘"}`
+- `{"prompt": "가장 평점 높은 음료 3개는?"}`
+- `{"prompt": "견과류 없는 간식 찾아줘"}`
 
 ---
 
