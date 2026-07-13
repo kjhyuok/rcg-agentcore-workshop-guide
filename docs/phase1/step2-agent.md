@@ -90,7 +90,7 @@ REGION = "us-east-1"
 
 # 모델
 model = BedrockModel(
-    model_id="us.anthropic.claude-sonnet-5",
+    model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
 ```

@@ -86,7 +86,7 @@ def get_order_history(store_id: str) -> str:
 
 # --- Agent 생성 ---
 model = BedrockModel(
-    model_id="us.anthropic.claude-sonnet-5",
+    model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
 

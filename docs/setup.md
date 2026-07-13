@@ -75,7 +75,7 @@ agentcore --help
 python -c "
 from strands import Agent
 from strands.models.bedrock import BedrockModel
-model = BedrockModel(model_id='us.anthropic.claude-sonnet-5', region_name='us-west-2')
+model = BedrockModel(model_id='us.anthropic.claude-sonnet-4-6', region_name='us-west-2')
 agent = Agent(model=model, system_prompt='테스트')
 print(agent('안녕? 한 줄로 답해.'))
 print('✅ Bedrock 모델 접근 OK')
