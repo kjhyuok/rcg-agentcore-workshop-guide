@@ -180,32 +180,22 @@ async def recommend_agent(payload: dict):
 배포 전에 로컬에서 동작을 확인합니다:
 
 ```bash
-cd ~/workshop/starter-code
-python3 agents/phase1_recommend.py
+cd ~/workshop/starter-code/agents/phase1
+agentcore dev --no-browser
 ```
 
-이 명령은 Agent를 로컬 서버로 시작합니다. 다른 터미널에서 호출하세요:
+해당 명령어를 실행하면 아래와 Terminal에서 Agent를 테스트 해볼수 있습니다.
+![Open Folder](../assets/images/phase1/phase1_2-3.png)
 
+예시 입력값
 ```bash
-agentcore invoke --local '{"message": "고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요."}'
+고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요
 ```
 
 ??? success "정상 출력 예시"
-    entrypoint가 async generator라서 실제로는 `{"type": "chunk", ...}` 이벤트가 여러 번 출력되다가 마지막에 `{"type": "done", ...}`으로 마무리됩니다(3-3 참고). 최종 텍스트만 보면 대략 이런 내용입니다:
-    ```
-    김건강 고객님 (VIP) 맞춤 추천
+    ![Open Folder](../assets/images/phase1/phase1_2-3-result.png)
 
-    - 알러지: 견과류 | 선호: 건강식품, 고단백, 유기농
-    - 기구매 제외: 오트밀 프로틴바(P001), 프로틴 쉐이크 초코맛(P008)
 
-    추천 상품
-    1. 저당 프로틴 워터 (2,500원, ★4.2) — 고단백/무설탕, 견과류 미포함
-    2. 유기농 현미 누룽지 (3,800원, ★4.4) — 유기농, 견과류 미포함
-
-    알러지로 제외한 상품
-    - 유기농 그래놀라 (견과류 포함)
-    - 오트밀 프로틴바 (견과류 포함 + 기구매)
-    ```
     조건을 만족하는 상품이 3개보다 적으면 Agent는 있는 만큼만 추천합니다 — 억지로 3개를 채우려고 존재하지 않는 상품을 만들어내지 않도록 System Prompt에 명시되어 있습니다.
 
 ---
