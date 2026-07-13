@@ -23,7 +23,7 @@
     
     **확인 방법**:
     ```bash
-    aws bedrock list-foundation-models --query 'modelSummaries[?modelId==`anthropic.claude-sonnet-4-6-20250514-v1:0`].modelId'
+    aws bedrock list-foundation-models --query 'modelSummaries[?modelId==`anthropic.claude-sonnet-5`].modelId'
     ```
 
 ??? question "Q3. `AGENTCORE_GATEWAY_URL` 환경변수가 비어있다"

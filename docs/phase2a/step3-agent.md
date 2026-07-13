@@ -55,7 +55,7 @@ MEMORY_ID = os.environ.get("AGENTCORE_MEMORY_ID", "")
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 model = BedrockModel(
-    model_id="us.anthropic.claude-sonnet-4-6",
+    model_id="us.anthropic.claude-sonnet-5",
     region_name=REGION,
 )
 

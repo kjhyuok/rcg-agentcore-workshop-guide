@@ -107,7 +107,7 @@ AWS Console에서 직접 확인해봅시다:
 
 ![Spans 목록](../assets/images/phase1/genai-dashboard-spans-list.png)
 
-- `chat us.anthropic.claude-sonnet-4-6` — LLM 호출 (모델, 토큰 수)
+- `chat us.anthropic.claude-sonnet-5` — LLM 호출 (모델, 토큰 수)
 - `mcp tools/call product-search___product_search` — Gateway Tool 호출
 - `execute_event_loop_cycle` — Agent 실행 루프
 
@@ -152,7 +152,7 @@ agentcore invoke \
 1~2분 후 GenAI Dashboard → **Spans** 탭에서 확인:
 
 - [ ] **Tool 호출 순서** — `mcp tools/call customer-profile`, `product-search` 등이 보이는가?
-- [ ] **LLM 호출** — `chat us.anthropic.claude-sonnet-4-6` span이 몇 개인가?
+- [ ] **LLM 호출** — `chat us.anthropic.claude-sonnet-5` span이 몇 개인가?
 - [ ] **전체 소요시간** — Timeline에서 병목 구간이 어디인가?
 - [ ] **토큰 사용량** — 우측 패널에서 Input tokens / Output tokens 확인
 
