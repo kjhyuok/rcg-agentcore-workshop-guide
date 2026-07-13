@@ -88,3 +88,11 @@ graph TB
     - Policy = "이 금액 이상은 무조건 승인을 받아야 발주 실행"
     - Browser = "트렌드 뉴스와 날씨를 직접 확인하여 수요 예측에 반영"
     - 같은 AgentCore 서비스를 **도메인만 바꿔서** 재활용하는 패턴 체험
+
+---
+
+!!! warning "시작 전 환경 확인"
+    터미널에서 아래 명령으로 환경을 복구하세요 (세션 끊겼을 때):
+    ```bash
+    cd ~/workshop/starter-code && source .venv/bin/activate && source ~/workshop/.env.w001
+    ```

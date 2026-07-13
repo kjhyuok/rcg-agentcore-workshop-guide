@@ -94,3 +94,11 @@ graph TB
     - Orchestrator가 고객 의도를 분석하여 **최적의 Agent로 라우팅**
     - Evaluations가 Agent의 품질을 **객관적 점수로 측정**
     - 단독 Agent에서 → **협업하는 Agent 생태계**로 진화합니다
+
+---
+
+!!! warning "시작 전 환경 확인"
+    터미널에서 아래 명령으로 환경을 복구하세요 (세션 끊겼을 때):
+    ```bash
+    cd ~/workshop/starter-code && source .venv/bin/activate && source ~/workshop/.env.w001
+    ```

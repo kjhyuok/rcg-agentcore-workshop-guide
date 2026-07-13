@@ -87,3 +87,11 @@ graph TB
     - Memory = "이 고객과 전에 무슨 대화를 했는지 기억"
     - Policy = "이 조건에서는 반드시 이렇게 행동해야 한다"
     - Browser = "경쟁사 가격을 실시간으로 조회하여 고객에게 비교 정보 제공"
+
+---
+
+!!! warning "시작 전 환경 확인"
+    터미널에서 아래 명령으로 환경을 복구하세요 (세션 끊겼을 때):
+    ```bash
+    cd ~/workshop/starter-code && source .venv/bin/activate && source ~/workshop/.env.w001
+    ```

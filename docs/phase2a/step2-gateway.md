@@ -12,9 +12,9 @@
 
 !!! info "이 Step의 목표"
     Phase 1에서 만든 Gateway에 **CS Tool 4개**를 추가 등록하고,
-    **Browser Tool**을 연결하여 경쟁사 사이트 실시간 조회를 가능하게 합니다.
+    **Browser Tool**을 이해합니다.
     
-    기존 3개 + CS 4개 + Browser = 총 8개 Tool이 Agent에서 사용 가능합니다.
+    Gateway 7개 Target + Browser Tool (코드에서 추가) = Agent가 사용할 수 있는 **총 8개 Tool**
 
 <div class="file-target">scripts/add-cs-targets.py</div>
 ---
@@ -24,14 +24,19 @@
 Phase 1에서 이미 Gateway를 생성했습니다. 같은 Gateway에 Target을 추가합니다:
 
 ```
-Phase 1: customer-profile, product-search, purchase-history (3개)
-Phase 2A: lookup-order, return-policy, process-return, delivery-status (4개 추가)
-Browser: 경쟁사/외부 사이트 실시간 조회 (1개 추가)
+Phase 1: customer-profile, product-search, purchase-history (Gateway 3개)
+Phase 2A: cs-lookup-order, cs-return-policy, cs-process-return, cs-delivery-status (Gateway 4개 추가)
+───────────────────────────────────────────────────────────────
+Gateway 합계: 7개 Target
+
++ Browser Tool (Gateway가 아닌, Agent 코드에서 직접 추가): 1개
+───────────────────────────────────────────────────────────────
+Agent가 사용하는 총 Tool: 8개
 ```
 
-!!! tip "Gateway + Browser의 조합"
-    Gateway에 등록된 Tool은 정형화된 데이터를 제공하고,
-    Browser Tool은 외부 웹사이트에서 실시간 정보를 가져옵니다.
+!!! tip "Gateway vs Browser Tool의 차이"
+    - **Gateway Tool** = 사전 배포된 Lambda를 호출 → 정형화된 내부 데이터 (주문, 정책, 재고 등)
+    - **Browser Tool** = AgentCore 클라우드 브라우저로 외부 웹사이트 방문 → 실시간 비정형 정보
     
     예: 고객이 "다른 곳에서 더 싸게 파는데?" → Browser로 경쟁사 가격 확인 → 정확한 비교 응답
 
@@ -40,161 +45,80 @@ Browser: 경쟁사/외부 사이트 실시간 조회 (1개 추가)
 ## 2-1. CS Target 추가 스크립트 실행
 
 ```bash
+cd ~/workshop/starter-code
 python3 scripts/add-cs-targets.py
 ```
 
+Console에서 확인 — **Bedrock → AgentCore → Gateways** → 우리 Gateway 클릭하면 7개 Target이 모두 Ready 상태로 보입니다:
+
+![Gateway Targets 목록](../assets/images/phase2a/gateway-targets-list.png)
+
 ??? example "스크립트가 하는 일 (내부)"
+    기존 Gateway에 CS용 Lambda 4개를 MCP Tool Target으로 등록합니다:
+    
+    | Target 이름 | Lambda 함수 | 역할 |
+    |------------|-------------|------|
+    | `cs-lookup-order` | `rcg-workshop-cs-lookup-order` | 주문 상세 조회 |
+    | `cs-return-policy` | `rcg-workshop-cs-return-policy` | 반품/교환 정책 확인 |
+    | `cs-process-return` | `rcg-workshop-cs-process-return` | 반품 처리 (5만원 초과 시 에스컬레이션) |
+    | `cs-delivery-status` | `rcg-workshop-cs-delivery-status` | 배송 추적 |
+
     ```python
-    import json
-    import boto3
-
-    client = boto3.client("bedrock-agentcore-control", region_name="us-east-1")
-    gateway_id = os.environ["GATEWAY_ID"]
-
-    # CS Tool 4개 정의
-    cs_tools = [
-        {
-            "name": "lookup-order",
-            "lambda_arn": LOOKUP_ORDER_ARN,
-            "schema": {
-                "name": "lookup_order",
-                "description": "주문번호로 주문 상세 조회. 주문 상태, 상품목록, 결제금액, 배송정보를 반환한다.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "order_id": {
-                            "type": "string",
-                            "description": "주문번호 (예: ORD-2024-001)"
-                        }
-                    },
-                    "required": ["order_id"]
-                }
-            }
-        },
-        {
-            "name": "return-policy",
-            "lambda_arn": RETURN_POLICY_ARN,
-            "schema": {
-                "name": "return_policy",
-                "description": "상품 카테고리별 반품/교환 정책 조회. 반품 가능 기한, 조건, 환불 방식을 반환한다.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "type": "string",
-                            "description": "상품 카테고리 (예: 식품, 화장품, 전자기기)"
-                        }
-                    },
-                    "required": ["category"]
-                }
-            }
-        },
-        {
-            "name": "process-return",
-            "lambda_arn": PROCESS_RETURN_ARN,
-            "schema": {
-                "name": "process_return",
-                "description": "반품/환불 처리 요청. 사유와 금액을 기반으로 처리하며, 5만원 초과 시 needs_escalation=true를 반환한다.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "order_id": {
-                            "type": "string",
-                            "description": "주문번호"
-                        },
-                        "reason": {
-                            "type": "string",
-                            "description": "반품 사유 (예: 상품불량, 단순변심, 오배송)"
-                        },
-                        "refund_amount": {
-                            "type": "number",
-                            "description": "환불 요청 금액 (원)"
-                        }
-                    },
-                    "required": ["order_id", "reason", "refund_amount"]
-                }
-            }
-        },
-        {
-            "name": "delivery-status",
-            "lambda_arn": DELIVERY_STATUS_ARN,
-            "schema": {
-                "name": "delivery_status",
-                "description": "주문의 배송 추적 정보 조회. 현재 위치, 예상 도착일, 배송 단계를 반환한다.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "order_id": {
-                            "type": "string",
-                            "description": "주문번호"
-                        }
-                    },
-                    "required": ["order_id"]
-                }
-            }
-        },
-    ]
-
-    # Gateway Target 등록
-    for tool in cs_tools:
+    # 핵심 로직 (add-cs-targets.py)
+    for target in CS_TARGETS:
+        lambda_arn = f"arn:aws:lambda:{REGION}:{ACCOUNT_ID}:function:{target['lambda_name']}"
+        tool_schema = {
+            "name": target["name"].replace("-", "_"),
+            "description": target["description"],
+            "inputSchema": target["input_schema"],
+        }
         client.create_gateway_target(
-            gatewayIdentifier=gateway_id,
-            name=tool["name"],
+            gatewayIdentifier=GATEWAY_ID,
+            name=target["name"],
             targetConfiguration={
                 "mcp": {
                     "lambda": {
-                        "lambdaArn": tool["lambda_arn"],
-                        "toolSchema": {
-                            "inlinePayload": json.dumps(tool["schema"])
-                        }
+                        "lambdaArn": lambda_arn,
+                        "toolSchema": {"inlinePayload": [tool_schema]},
                     }
                 }
             },
+            credentialProviderConfigurations=[{"credentialProviderType": "GATEWAY_IAM_ROLE"}],
         )
-        print(f"  ✅ {tool['name']} 등록 완료")
     ```
 
 ---
 
-## 2-2. Browser Tool 추가
+## 2-2. Browser Tool 이해
 
-경쟁사 가격 비교, 리뷰 확인 등 외부 웹 데이터가 필요할 때 **Browser Tool**을 사용합니다:
+경쟁사 가격 비교 등 외부 웹 데이터가 필요할 때 **Browser Tool**을 사용합니다. Gateway Target이 아니라 **Agent 코드에서 직접 추가**합니다.
 
-```python title="Browser Tool 설정"
-from strands import Agent
-from strands.models import BedrockModel
+Console에서 **Built-in tools → Browser** 에서 확인할 수 있습니다:
+
+![AgentCore Browser Tool](../assets/images/phase2a/browser-tool-detail.png)
+
+AWS가 관리하는 클라우드 브라우저 서비스이며, Agent 코드에서 import만 하면 사용 가능합니다:
+
+```python title="phase2a_cs.py에서 Browser Tool 사용 (이미 포함됨)"
 from strands_tools.browser import AgentCoreBrowser
-from mcp import ClientSession
 
-from mcp.client.streamable_http import streamablehttp_client
+browser_tool = AgentCoreBrowser(region=REGION)
 
-# Browser Tool 초기화
-browser_tool = AgentCoreBrowser(region="us-east-1")
-
-# Gateway에서 CS Tools 가져오기
-mcp = MCPClient(lambda: streamablehttp_client(GATEWAY_URL, auth=auth))
-
-with mcp:
-    gateway_tools = mcp.list_tools_sync()
-
-    # Gateway Tools + Browser Tool 합치기
-    tools = gateway_tools + [browser_tool.browser]
-
-    agent = Agent(
-        model=model,
-        system_prompt=CS_SYSTEM_PROMPT,
-        tools=tools
-    )
-    result = agent("ORD-2024-003 주문한 상품이 다른 사이트에서 더 싸요. 가격 확인해주세요.")
+# Agent에 Gateway + Browser 함께 부여
+agent = Agent(
+    model=model,
+    system_prompt=prompt,
+    tools=[mcp_client, browser_tool.browser],
+)
 ```
 
 !!! info "Mock 경쟁사 사이트"
     워크샵에서는 Mock 사이트를 제공합니다:
     
     - 경쟁사 가격 비교: `${MOCK_SITE_URL}/competitor-prices.html`
-    - 리뷰 조회: `${MOCK_SITE_URL}/competitor-prices.html`
     
-    Browser Tool이 이 사이트를 방문하여 가격, 리뷰 정보를 가져옵니다.
+    Agent가 Browser Tool로 이 사이트를 방문하여 가격 정보를 가져옵니다.
+    별도 설정 불필요 — `phase2a_cs.py`에 이미 포함되어 있습니다.
 
 ---
 
@@ -202,11 +126,15 @@ with mcp:
 
 | Tool 이름 | 설명 (Agent가 읽는 것) | 파라미터 |
 |-----------|----------------------|---------|
-| `lookup_order` | 주문번호로 주문 상세 조회 (상태, 상품, 결제금액, 배송정보) | `order_id` (string) |
-| `return_policy` | 상품 카테고리별 반품/교환 정책 조회 | `category` (string) |
-| `process_return` | 반품/환불 처리. 5만원 초과 시 `needs_escalation=true` 반환 | `order_id`, `reason`, `refund_amount` |
-| `delivery_status` | 배송 추적 정보 조회 (현재 위치, 예상 도착일) | `order_id` (string) |
-| `browser` | 외부 웹사이트 방문 및 정보 추출 | URL, action 등 |
+| `cs_lookup_order` | 주문번호로 주문 상세 조회 (상태, 상품, 결제금액, 배송정보) | `order_id` (string) |
+| `cs_return_policy` | 상품 카테고리별 반품/교환 정책 조회 | `category` (string) |
+| `cs_process_return` | 반품/환불 처리. 5만원 초과 시 `needs_escalation=true` 반환 | `order_id`, `reason`, `refund_amount` |
+| `cs_delivery_status` | 배송 추적 정보 조회 (현재 위치, 예상 도착일) | `order_id` (string) |
+| `browser` | 외부 웹사이트 방문 및 정보 추출 (AgentCore 클라우드 브라우저) | URL, action 등 |
+
+Gateway에서 Target을 클릭하면 **Tool Schema**(Agent가 읽는 입출력 정의)를 직접 확인할 수 있습니다:
+
+![Gateway Target Schema 예시 (cs_delivery_status)](../assets/images/phase2a/gateway-target-schema.png)
 
 !!! warning "`process_return`의 특별한 점"
     이 Tool은 단순 조회가 아니라 **상태를 변경**합니다.
@@ -229,60 +157,20 @@ aws bedrock-agentcore-control list-gateway-targets \
     ---------------------------------
     |      ListGatewayTargets       |
     +-------------------+-----------+
-    |  customer-profile  |  ACTIVE  |
-    |  product-search    |  ACTIVE  |
-    |  purchase-history  |  ACTIVE  |
-    |  lookup-order      |  ACTIVE  |
-    |  return-policy     |  ACTIVE  |
-    |  process-return    |  ACTIVE  |
-    |  delivery-status   |  ACTIVE  |
+    |  customer-profile    |  READY  |
+    |  product-search      |  READY  |
+    |  purchase-history    |  READY  |
+    |  cs-lookup-order     |  READY  |
+    |  cs-return-policy    |  READY  |
+    |  cs-process-return   |  READY  |
+    |  cs-delivery-status  |  READY  |
     +-------------------+-----------+
     ```
 
-!!! info "7개 모두 ACTIVE 확인"
+!!! info "7개 모두 READY 확인"
     Status가 `CREATING`이면 30초 정도 기다린 후 다시 확인하세요.
+    (일부 환경에서 `ACTIVE`로 표시될 수도 있습니다 — 둘 다 정상입니다)
     Browser Tool은 Gateway Target이 아니라 Agent 코드에서 직접 추가하므로 여기에 표시되지 않습니다.
-
----
-
-## 2-5. Agent가 인식하는지 빠르게 확인
-
-```bash
-python3 -c "
-from strands_tools.browser import AgentCoreBrowser
-from mcp import ClientSession
-
-from mcp.client.streamable_http import streamablehttp_client
-import os
-
-url = os.environ['AGENTCORE_GATEWAY_URL']
-mcp = MCPClient(lambda: streamablehttp_client(url, auth=auth))
-
-# Browser Tool 초기화
-browser_tool = AgentCoreBrowser(region='us-east-1')
-
-with mcp:
-    gateway_tools = mcp.list_tools_sync()
-    all_tools = gateway_tools + [browser_tool.browser]
-    print(f'총 {len(all_tools)} 개 Tool 인식됨:')
-    for t in gateway_tools:
-        print(f'  - {t.name} (Gateway)')
-    print(f'  - browser (AgentCore Browser)')
-"
-```
-
-??? success "정상 출력"
-    ```
-    총 8 개 Tool 인식됨:
-      - customer_profile (Gateway)
-      - product_search (Gateway)
-      - purchase_history (Gateway)
-      - lookup_order (Gateway)
-      - return_policy (Gateway)
-      - process_return (Gateway)
-      - delivery_status (Gateway)
-      - browser (AgentCore Browser)
-    ```
 
 ---
 
@@ -291,8 +179,6 @@ with mcp:
 - [x] 같은 Gateway에 Target을 **추가**만 하면 Agent가 자동 인식
 - [x] Agent 코드 수정 없이 Gateway Tool 확장 가능 (Gateway의 핵심 가치)
 - [x] Browser Tool은 Gateway와 별개로 Agent 코드에서 직접 추가
-- [x] `tools = gateway_tools + [browser_tool.browser]` 패턴으로 조합
-- [x] `process_return`은 에스컬레이션 판단을 위한 `needs_escalation` 필드를 반환
 
 ---
 

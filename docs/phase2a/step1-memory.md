@@ -47,60 +47,33 @@ python3 scripts/setup-memory.py
 ```
 
 ??? example "스크립트가 하는 일 (내부)"
+    `bedrock-agentcore-control` API로 Memory를 생성하고, 3개 Strategy(CustomerFacts, SessionSummaries, CustomerPreferences)를 함께 등록합니다.
+
     ```python
-    from bedrock_agentcore.memory import MemoryClient
-
-    client = MemoryClient(region_name="us-east-1")
-
-    # 1. Memory 생성
-    memory = client.create_memory(
-        name="rcg-cs-memory-XXXX",
-        description="CS Agent용 고객 맥락 저장소",
-    )
-
-    # 2. Strategy 추가 — UserPreference (고객 선호 자동 추출)
-    client.create_memory_strategy(
-        memoryId=memory["memoryId"],
-        name="user-preferences",
-        strategy={
-            "extractionStrategy": {
-                "type": "UserPreference",
-                "namespacePattern": "/preferences/{actorId}/",
-                "description": "고객의 선호도, 관심사, 스타일 자동 추출",
-            }
-        },
-    )
-
-    # 3. Strategy 추가 — Summary (대화 요약)
-    client.create_memory_strategy(
-        memoryId=memory["memoryId"],
-        name="conversation-summary",
-        strategy={
-            "extractionStrategy": {
-                "type": "Summary",
-                "namespacePattern": "/summaries/{actorId}/{sessionId}/",
-                "description": "각 세션 종료 시 대화 내용 자동 요약",
-            }
-        },
-    )
-
-    # 4. Strategy 추가 — Semantic (의미 기반 검색용)
-    client.create_memory_strategy(
-        memoryId=memory["memoryId"],
-        name="semantic-facts",
-        strategy={
-            "extractionStrategy": {
-                "type": "Semantic",
-                "namespacePattern": "/facts/{actorId}/",
-                "description": "대화에서 추출한 사실 정보 (주문번호, 이슈 등)",
-            }
-        },
+    client = boto3.client("bedrock-agentcore-control", region_name=REGION)
+    client.create_memory(
+        name=MEMORY_NAME,
+        description="RCG Workshop — 고객 맥락 및 대화 이력 저장",
+        eventExpiryDuration=30,
+        memoryStrategies=[
+            {"semanticMemoryStrategy": {"name": "CustomerFacts", "namespaces": ["users/{actorId}/facts"]}},
+            {"summaryMemoryStrategy": {"name": "SessionSummaries", "namespaces": ["users/{actorId}/summaries/{sessionId}"]}},
+            {"userPreferenceMemoryStrategy": {"name": "CustomerPreferences", "namespaces": ["users/{actorId}/preferences"]}},
+        ],
     )
     ```
+
+Console에서 확인 — **Bedrock → AgentCore → Memory** 에서 생성된 Memory를 볼 수 있습니다:
+
+![Memory 상세](../assets/images/phase2a/memory-detail.png)
 
 ---
 
 ## 1-2. Strategy 이해하기
+
+Console의 Memory 상세 페이지 하단에서 3개 Strategy가 모두 **Active** 상태인지 확인하세요:
+
+![Memory Strategies](../assets/images/phase2a/memory-strategies.png)
 
 | Strategy | 용도 | Namespace 패턴 | 예시 |
 |----------|------|---------------|------|

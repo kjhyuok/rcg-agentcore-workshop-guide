@@ -25,9 +25,9 @@
 agent("주문 조회해주세요")  # 매번 새로운 대화
 
 # Phase 2A: Memory 연동 Agent
-memories = retrieve_memories(customer_id)   # 이전 맥락 가져오기
-agent(message, context=memories)            # 맥락과 함께 실행
-save_turn(customer_id, message, response)   # 이번 대화 저장
+context = fetch_customer_context(actor_id, message)   # 이전 맥락 가져오기 (retrieve_memory_records)
+agent(message, context=context)                        # 맥락과 함께 실행
+save_turn(actor_id, session_id, message, response)     # 이번 대화 저장 (create_event)
 ```
 
 Agent 호출 **전후**로 Memory 작업이 추가됩니다.
@@ -42,6 +42,7 @@ Agent 호출 **전후**로 Memory 작업이 추가됩니다.
 import os
 import uuid
 import boto3
+from datetime import datetime, timezone
 from strands import Agent
 from strands.models import BedrockModel
 from strands.tools.mcp import MCPClient
@@ -69,38 +70,29 @@ browser_tool = AgentCoreBrowser(region=REGION)
 Agent 호출 **전에** 고객의 이전 맥락을 가져옵니다:
 
 ```python title="Memory에서 고객 맥락 가져오기"
-def fetch_customer_context(customer_id: str, current_message: str) -> str:
+def fetch_customer_context(actor_id: str, query: str) -> str:
     """Memory에서 이 고객의 이전 맥락을 검색"""
-    
-    # 의미 기반 검색 (현재 질문과 관련된 기억 우선)
-    results = memory_client.retrieve_memories(
-        memoryId=MEMORY_ID,
-        query=current_message,
-        actorId=customer_id,
-        maxResults=5,
-    )
-    
-    if not results.get("records"):
-        return ""  # 첫 대화인 경우
-    
-    # 맥락을 텍스트로 조합
-    context_parts = []
-    for record in results["records"]:
-        namespace = record.get("namespace", "")
-        content = record.get("content", "")
-        
-        if "/preferences/" in namespace:
-            context_parts.append(f"[고객 선호] {content}")
-        elif "/summaries/" in namespace:
-            context_parts.append(f"[이전 대화 요약] {content}")
-        elif "/facts/" in namespace:
-            context_parts.append(f"[참고 정보] {content}")
-    
-    return "\n".join(context_parts)
+    if not MEMORY_ID:
+        return "신규 고객 (Memory 미설정)"
+    try:
+        results = memory_client.retrieve_memory_records(
+            memoryId=MEMORY_ID,
+            namespace=f"/users/{actor_id}/facts/",
+            searchCriteria={
+                "searchQuery": query,
+                "topK": 5,
+            },
+        )
+        records = results.get("memoryRecordSummaries", [])
+        if records:
+            return "\n".join(r["content"]["text"] for r in records)
+    except Exception as e:
+        print(f"[Memory Retrieve Error] {e}")
+    return "신규 고객 (이전 맥락 없음)"
 ```
 
-!!! tip "retrieve_memories의 동작"
-    `query` 파라미터로 **의미 기반 검색**을 합니다.
+!!! tip "retrieve_memory_records의 동작"
+    `searchQuery`로 **의미 기반 검색**을 합니다.
     
     "반품하고 싶어요"라고 물으면, 이전 대화에서 반품 관련 내용을 우선 검색합니다.
 
@@ -111,18 +103,23 @@ def fetch_customer_context(customer_id: str, current_message: str) -> str:
 Agent 응답 **후에** 이번 대화를 Memory에 저장합니다:
 
 ```python title="이번 대화를 Memory에 저장"
-def save_turn(customer_id: str, session_id: str, user_msg: str, agent_response: str):
+def save_turn(actor_id: str, session_id: str, user_msg: str, agent_response: str):
     """이번 턴(user + agent)을 Memory Event로 저장"""
-    
-    memory_client.create_memory_event(
-        memoryId=MEMORY_ID,
-        actorId=customer_id,
-        sessionId=session_id,
-        messages=[
-            {"role": "user", "content": user_msg},
-            {"role": "assistant", "content": agent_response},
-        ],
-    )
+    if not MEMORY_ID:
+        return
+    try:
+        memory_client.create_event(
+            memoryId=MEMORY_ID,
+            actorId=actor_id,
+            sessionId=session_id,
+            eventTimestamp=datetime.now(timezone.utc),
+            payload=[
+                {"conversational": {"role": "USER", "content": {"text": user_msg}}},
+                {"conversational": {"role": "ASSISTANT", "content": {"text": agent_response}}},
+            ],
+        )
+    except Exception as e:
+        print(f"[Memory Save Error] {e}")
 ```
 
 !!! info "Event vs Record"
@@ -154,15 +151,15 @@ SYSTEM_PROMPT = """당신은 리테일 CS 전문 상담사입니다.
 @app.entrypoint
 def cs_agent(payload: dict) -> dict:
     user_message = payload.get("message", "")
-    customer_id = payload.get("customer_id", "unknown")
     session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
-    
+    actor_id = payload.get("actor_id", "anonymous")
+
     # 1️⃣ Memory에서 고객 맥락 가져오기
-    context = fetch_customer_context(customer_id, user_message)
-    
+    context = fetch_customer_context(actor_id, user_message)
+
     # 2️⃣ 맥락을 System Prompt에 주입
-    prompt = SYSTEM_PROMPT.format(customer_context=context or "없음 (첫 대화)")
-    
+    prompt_with_context = SYSTEM_PROMPT.format(customer_context=context)
+
     # 3️⃣ Agent 실행 (Gateway MCP + Browser Tool)
     mcp_client = MCPClient(
         lambda: streamablehttp_client(GATEWAY_URL)
@@ -170,21 +167,22 @@ def cs_agent(payload: dict) -> dict:
 
     agent = Agent(
         model=model,
-        system_prompt=prompt,
+        system_prompt=prompt_with_context,
         tools=[mcp_client, browser_tool.browser],
     )
     result = agent(user_message)
-    
-    response_text = str(result)
-    
+
     # 4️⃣ 이번 대화를 Memory에 저장
-    save_turn(customer_id, session_id, user_message, response_text)
-    
+    save_turn(actor_id, session_id, user_message, str(result))
+
     return {
-        "response": response_text,
+        "response": str(result),
         "session_id": session_id,
-        "memory_used": bool(context),
     }
+
+
+if __name__ == "__main__":
+    app.run()
 ```
 
 ---
@@ -192,58 +190,50 @@ def cs_agent(payload: dict) -> dict:
 ## 3-5. 배포
 
 ```bash
-./scripts/deploy-agent.sh agents/phase2a_cs.py rcg-cs-agent \
-  --env AGENTCORE_MEMORY_ID=$AGENTCORE_MEMORY_ID
+cd ~/workshop/starter-code
+chmod +x scripts/*.sh
+./scripts/deploy-agent.sh agents/phase2a_cs.py rcg_cs_agent
 ```
 
-??? example "deploy-agent.sh가 하는 일"
-    1. Agent 코드를 컨테이너로 패키징
-    2. AgentCore Runtime에 배포 (or 업데이트)
-    3. 환경변수 `AGENTCORE_MEMORY_ID`를 Runtime에 전달
-    4. Endpoint URL 출력
+!!! note "Memory ID 전달"
+    `deploy-agent.sh`가 `AGENTCORE_GATEWAY_URL`, `AGENTCORE_MEMORY_ID`, `AWS_REGION`을 모두 자동으로 Runtime 환경변수에 전달합니다.
+    실행 전에 `echo $AGENTCORE_MEMORY_ID`로 값이 비어있지 않은지 먼저 확인하세요.
 
-배포 완료 후:
-
-```
-🚀 CS Agent 배포 완료!
-   Runtime:  rcg-cs-agent
-   Endpoint: https://rcg-cs-agent.runtime.agentcore.us-east-1.amazonaws.com
-   
-   export CS_AGENT_ENDPOINT=https://rcg-cs-agent.runtime...
-```
+!!! warning "RUNTIME_ROLE_ARN 확인 필수"
+    새 터미널을 열었다면 `source ~/workshop/.env.w001` 후 `echo $RUNTIME_ROLE_ARN`으로 값이 채워졌는지 반드시 확인하세요.
+    비어있는 상태로 배포하면 `deploy-agent.sh`가 즉시 에러로 중단합니다(과거에는 Memory 권한 없는 fallback IAM role이 자동 생성되어 Memory 저장/조회가 조용히 실패했음 — 현재는 명확한 에러로 막혀 있습니다).
 
 ---
 
 ## 3-6. 테스트 (Memory 동작 확인)
 
+!!! tip "테스트 방법"
+    같은 터미널에서 순서대로 실행합니다. `session_id`만 다르게 — 실제 고객이 채팅창을 닫고 다시 열었을 때를 시뮬레이션합니다.
+
 **첫 번째 대화:**
 
 ```bash
-python3 scripts/invoke-agent.py \
-  --endpoint "$CS_AGENT_ENDPOINT" \
-  --customer-id "C001" \
-  --message "주문 ORD-2024-789 배송이 어디쯤 왔는지 알 수 있을까요?"
+agentcore invoke --agent rcg_cs_agent \
+  '{"message": "주문 ORD-20260620-001 배송 상태 확인해주세요", "actor_id": "C001", "session_id": "cs-test-001"}'
 ```
 
 **두 번째 대화 (같은 고객, 새 세션):**
 
 ```bash
-python3 scripts/invoke-agent.py \
-  --endpoint "$CS_AGENT_ENDPOINT" \
-  --customer-id "C001" \
-  --message "아까 그 주문 반품하고 싶어요"
+agentcore invoke --agent rcg_cs_agent \
+  '{"message": "아까 그 주문 반품하고 싶어요", "actor_id": "C001", "session_id": "cs-test-002"}'
 ```
 
 ??? success "Memory 연동 확인 포인트"
     두 번째 대화에서 Agent가:
     
-    - "아까 그 주문" = ORD-2024-789를 **기억**하고 있음
+    - "아까 그 주문" = ORD-20260620-001을 **기억**하고 있음
     - 주문번호를 다시 물어보지 않음
     - Memory에서 이전 세션의 맥락을 가져왔기 때문
     
     ```
-    🤖 Agent: ORD-2024-789 반품을 도와드리겠습니다.
-    지난번 배송 추적하셨던 그 주문이시죠?
+    🤖 Agent: ORD-20260620-001 반품을 도와드리겠습니다.
+    지난번 배송 확인하셨던 유기농 프로틴바 주문이시죠?
     반품 사유를 알려주시겠어요?
     ```
 
