@@ -77,9 +77,9 @@ Console의 Memory 상세 페이지 하단에서 3개 Strategy가 모두 **Active
 
 | Strategy | 용도 | Namespace 패턴 | 예시 |
 |----------|------|---------------|------|
-| **UserPreference** | 고객 선호 자동 추출 | `/preferences/{actorId}/` | "이 고객은 빠른 배송을 선호" |
-| **Summary** | 세션별 대화 요약 | `/summaries/{actorId}/{sessionId}/` | "지난 대화: 반품 문의 → 처리 완료" |
-| **Semantic** | 의미 기반 사실 저장 | `/facts/{actorId}/` | "주문 ORD-2024-789 관련 불만 제기" |
+| **CustomerPreferences** (userPreferenceMemoryStrategy) | 고객 선호 자동 추출 | `users/{actorId}/preferences` | "이 고객은 빠른 배송을 선호" |
+| **SessionSummaries** (summaryMemoryStrategy) | 세션별 대화 요약 | `users/{actorId}/summaries/{sessionId}` | "지난 대화: 반품 문의 → 처리 완료" |
+| **CustomerFacts** (semanticMemoryStrategy) | 의미 기반 사실 저장 | `users/{actorId}/facts` | "주문 ORD-20260620-001 관련 불만 제기" |
 
 !!! info "Namespace 패턴의 역할"
     `{actorId}`는 고객 ID로 대체됩니다. 이를 통해:
@@ -126,12 +126,12 @@ aws bedrock-agentcore-control get-memory \
 
 ??? success "정상 출력"
     ```yaml
-    name: rcg-cs-memory-XXXX
+    name: rcg_workshop_memory_XXXX
     status: ACTIVE
     strategies:
-      - user-preferences
-      - conversation-summary
-      - semantic-facts
+      - CustomerFacts
+      - SessionSummaries
+      - CustomerPreferences
     ```
 
 ---

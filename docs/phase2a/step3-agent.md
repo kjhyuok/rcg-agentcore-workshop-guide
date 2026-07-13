@@ -200,8 +200,9 @@ chmod +x scripts/*.sh
     실행 전에 `echo $AGENTCORE_MEMORY_ID`로 값이 비어있지 않은지 먼저 확인하세요.
 
 !!! warning "RUNTIME_ROLE_ARN 확인 필수"
-    새 터미널을 열었다면 `source ~/workshop/.env.w001` 후 `echo $RUNTIME_ROLE_ARN`으로 값이 채워졌는지 반드시 확인하세요.
-    비어있는 상태로 배포하면 `deploy-agent.sh`가 즉시 에러로 중단합니다(과거에는 Memory 권한 없는 fallback IAM role이 자동 생성되어 Memory 저장/조회가 조용히 실패했음 — 현재는 명확한 에러로 막혀 있습니다).
+    `RUNTIME_ROLE_ARN`은 `./infra/onestop.sh`가 CloudShell에서 생성한 값으로, `.env.w001`에 저장되어 있습니다.
+    Code Editor 터미널을 새로 열었다면 반드시 `source ~/workshop/.env.w001` 후 `echo $RUNTIME_ROLE_ARN`으로 값이 채워졌는지 확인하세요.
+    이 값이 비어있으면 Memory 접근 권한이 없는 Role로 잘못 배포될 수 있어, `deploy-agent.sh`가 값이 없을 경우 즉시 에러로 중단하도록 되어 있습니다.
 
 ---
 

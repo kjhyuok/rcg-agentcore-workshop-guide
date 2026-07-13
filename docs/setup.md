@@ -61,6 +61,10 @@ graph LR
     콘솔 상단 바에서 `>_` 아이콘을 클릭하면 CloudShell이 열립니다.
     리전을 **us-east-1 (N. Virginia)**로 설정하세요.
 
+!!! danger "1인 1계정 필수"
+    `onestop.sh`가 만드는 Lambda·IAM Role·Mock 사이트 S3 버킷 이름은 **AWS 계정 단위**로 고정되어 있어, 같은 계정에서 두 번째 참가자가 실행하면 첫 참가자의 리소스를 덮어씁니다.
+    Workshop Studio 등 참가자 1명당 별도 AWS 계정이 배정된 환경에서만 진행하세요.
+
 ### A-1. 코드 클론
 
 ```bash
@@ -288,9 +292,13 @@ export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export PARTICIPANT_ID=w001
 export MOCK_SITE_URL="http://rcg-workshop-mock-$(aws sts get-caller-identity --query Account --output text).s3-website-us-east-1.amazonaws.com"
 export GATEWAY_ROLE_ARN="arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/rcg-workshop-gateway-role"
+export RUNTIME_ROLE_ARN="arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/rcg-workshop-runtime-role"
 EOF
 source ~/workshop/.env.w001
 ```
+
+!!! tip "RUNTIME_ROLE_ARN은 CloudShell의 .env.w001에서 그대로 복사해오는 게 가장 안전합니다"
+    A-5에서 확인한 `.env.w001` 내용에 이미 `RUNTIME_ROLE_ARN`이 들어있습니다. 위 heredoc은 CloudShell 파일이 없을 때의 재구성용입니다.
 
 확인:
 
@@ -363,8 +371,11 @@ print('✅ Browser Tool 초기화 OK')
 <span class="env-label"># --- Part A에서 설정됨 (.env.w001) ---</span><br>
 export AWS_REGION=us-east-1<br>
 export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)<br>
+export PARTICIPANT_ID=w001<br>
 export MOCK_SITE_URL="http://rcg-workshop-mock-${ACCOUNT_ID}.s3-website-us-east-1.amazonaws.com"<br>
 export GATEWAY_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/rcg-workshop-gateway-role"<br>
+export RUNTIME_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/rcg-workshop-runtime-role"<br>
+<span class="env-label"># ↳ Phase 2A/2B Step 3에서 deploy-agent.sh가 이 값을 사용합니다. 새 터미널에선 반드시 재확인!</span><br>
 <br>
 <span class="env-label"># --- Phase 1 (Gateway 생성 후 채워짐) ---</span><br>
 export AGENTCORE_GATEWAY_URL=&lt;setup-gateway.py 출력값&gt;<br>
@@ -389,6 +400,7 @@ echo "AWS_REGION: $AWS_REGION"
 echo "ACCOUNT_ID: $ACCOUNT_ID"
 echo "MOCK_SITE_URL: $MOCK_SITE_URL"
 echo "GATEWAY_ROLE_ARN: $GATEWAY_ROLE_ARN"
+echo "RUNTIME_ROLE_ARN: $RUNTIME_ROLE_ARN"
 echo ""
 echo "=== Phase 1 (Gateway 생성 후) ==="
 echo "AGENTCORE_GATEWAY_URL: $AGENTCORE_GATEWAY_URL"

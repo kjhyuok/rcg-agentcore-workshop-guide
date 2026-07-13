@@ -104,7 +104,7 @@ agentcore invoke \
 ![Runtime Test 결과](../assets/images/phase1/runtime-test-result.png)
 
 ```json
-{"prompt": "고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요."}
+{"message": "고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요."}
 ```
 
 !!! tip "Runtime Test의 가치"
@@ -113,11 +113,14 @@ agentcore invoke \
     - Output에서 Agent 전체 응답을 JSON으로 확인
     - 배포 직후 정상 동작 여부를 빠르게 검증
 
+!!! info "message vs prompt"
+    `phase1_recommend.py`는 `payload.get("message", payload.get("prompt", ""))`로 두 키를 모두 받지만, CLI invoke와 통일하기 위해 이 가이드에서는 항상 `message`를 사용합니다.
+
 다양한 질문으로 테스트해보세요:
 
-- `{"prompt": "고객 C002에게 뷰티 상품 추천해줘"}`
-- `{"prompt": "가장 평점 높은 음료 3개는?"}`
-- `{"prompt": "견과류 없는 간식 찾아줘"}`
+- `{"message": "고객 C002에게 뷰티 상품 추천해줘"}`
+- `{"message": "가장 평점 높은 음료 3개는?"}`
+- `{"message": "견과류 없는 간식 찾아줘"}`
 
 ---
 

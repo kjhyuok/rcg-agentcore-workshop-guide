@@ -142,20 +142,20 @@ SYSTEM_PROMPT = """당신은 리테일 CS 전문 상담사입니다.
 
 ## 4-4. 3가지 시나리오 테스트
 
+Phase 2A Step 3에서 썼던 `agentcore invoke` CLI 패턴을 그대로 사용합니다 (같은 Runtime, `rcg_cs_agent`):
+
 ### 테스트 1: 상품 불량 반품 (35,000원 — 에스컬레이션 없음)
 
 ```bash
-python3 scripts/invoke-agent.py \
-  --endpoint "$CS_AGENT_ENDPOINT" \
-  --customer-id "C001" \
-  --message "주문 ORD-2024-101 상품이 불량이에요. 반품하고 싶습니다."
+agentcore invoke --agent rcg_cs_agent \
+  '{"message": "주문 ORD-2024-101 상품이 불량이에요. 반품하고 싶습니다.", "actor_id": "C001", "session_id": "policy-test-001"}'
 ```
 
 ??? success "예상 결과"
     ```
     🤖 Agent: ORD-2024-101 주문을 확인했습니다.
     
-    - 상품: 비타민C 세럼 (35,000원)
+    - 상품: 무선 이어폰 (화이트) (35,000원)
     - 반품 사유: 상품불량
     
     ✅ 환불 처리가 완료되었습니다.
@@ -168,10 +168,8 @@ python3 scripts/invoke-agent.py \
 ### 테스트 2: 배송 추적 (단순 조회)
 
 ```bash
-python3 scripts/invoke-agent.py \
-  --endpoint "$CS_AGENT_ENDPOINT" \
-  --customer-id "C002" \
-  --message "주문 ORD-2024-555 배송 어디쯤 왔나요?"
+agentcore invoke --agent rcg_cs_agent \
+  '{"message": "주문 ORD-2024-555 배송 어디쯤 왔나요?", "actor_id": "C002", "session_id": "policy-test-002"}'
 ```
 
 ??? success "예상 결과"
@@ -189,17 +187,15 @@ python3 scripts/invoke-agent.py \
 ### 테스트 3: 고가 반품 (69,000원 — 에스컬레이션 발동!)
 
 ```bash
-python3 scripts/invoke-agent.py \
-  --endpoint "$CS_AGENT_ENDPOINT" \
-  --customer-id "C003" \
-  --message "주문 ORD-2024-999 환불 요청합니다. 단순변심이에요."
+agentcore invoke --agent rcg_cs_agent \
+  '{"message": "주문 ORD-2024-999 환불 요청합니다. 단순변심이에요.", "actor_id": "C003", "session_id": "policy-test-003"}'
 ```
 
 ??? success "예상 결과 — 에스컬레이션"
     ```
     🤖 Agent: ORD-2024-999 주문을 확인했습니다.
     
-    - 상품: 프리미엄 스킨케어 세트 (69,000원)
+    - 상품: 고속 보조배터리 20000mAh (69,000원)
     - 반품 사유: 단순변심
     
     ⚠️ 환불 금액이 50,000원을 초과하여, 

@@ -3,6 +3,9 @@
 !!! abstract "이 페이지는 SA(운영진) 전용입니다"
     참가자에게는 공개하지 않습니다. 워크샵 인프라 준비, Git Repo 세팅, SageMaker Code Editor 환경 구성을 다룹니다.
 
+!!! danger "mkdocs.yml nav에서 제외되어 있지만 URL 직접 접근은 막히지 않습니다"
+    이 파일은 참가자용 CloudFront 배포본에는 **포함시키지 마세요**. `mkdocs build` 시 `docs/appendix/sa-guide.md`를 site 빌드 대상에서 제외(별도 브랜치/별도 빌드 또는 `exclude` 플러그인 사용)하거나, 참가자 공개용 배포 직전에 이 파일을 리포지토리에서 빼고 빌드하세요.
+
 ---
 
 ## 전체 아키텍처 (운영 관점)

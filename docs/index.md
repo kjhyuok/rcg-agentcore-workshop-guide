@@ -4,7 +4,7 @@
 
 ---
 
-온라인 쇼핑몰에서 고객이 "저번에 산 운동화랑 어울리는 양말 추천해줘"라고 물었을 때, 여러분의 Agent가 구매이력을 조회하고, 재고를 확인하고, 취향에 맞는 상품을 골라 답변합니다. 오늘 이 Agent를 직접 만들고 배포합니다.
+온라인 쇼핑몰에서 견과류 알러지가 있는 고객이 "간단히 먹을 단백질 식품 추천해줘"라고 물었을 때, 여러분의 Agent가 고객 프로필(알러지)을 조회하고, 구매이력을 확인하고, 재고 있는 상품 중 알러지 성분을 제외하고 답변합니다. 오늘 이 Agent를 직접 만들고 배포합니다.
 
 !!! tip "이 워크샵이 특별한 이유"
     처음부터 끝까지 **AgentCore 위에서** 동작합니다. 로컬 Python 실행이 아닙니다.
@@ -71,7 +71,7 @@ graph TD
 
 체크하며 따라가세요:
 
-- [ ] **환경 세팅** — `source bootstrap.sh` 실행 완료
+- [ ] **환경 세팅** — `./infra/onestop.sh w001` (CloudShell) + `./infra/setup-python.sh` (Code Editor) 실행 완료
 - [ ] **Phase 1** — Gateway 생성, Agent 작성, Runtime 배포, Trace 확인
 - [ ] **Phase 2 (택1)** — Memory + Policy + Browser 추가
 - [ ] **Phase 3** — Orchestrator 등록, Evaluations 실행, 발표
