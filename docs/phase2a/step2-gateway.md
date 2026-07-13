@@ -100,15 +100,20 @@ Console에서 **Built-in tools → Browser** 에서 확인할 수 있습니다:
 AWS가 관리하는 클라우드 브라우저 서비스이며, Agent 코드에서 import만 하면 사용 가능합니다:
 
 ```python title="phase2a_cs.py에서 Browser Tool 사용 (이미 포함됨)"
-from strands_tools.browser import AgentCoreBrowser
-
-browser_tool = AgentCoreBrowser(region=REGION)
+# 지연 생성 + 싱글톤 캐싱 — import 시점에 즉시 만들면 Playwright 초기화가
+# Runtime의 30초 콜드스타트 타임아웃에 걸릴 수 있어, 첫 요청에서만 생성합니다
+def get_browser_tool():
+    global _browser_tool
+    if _browser_tool is None:
+        from strands_tools.browser import AgentCoreBrowser
+        _browser_tool = AgentCoreBrowser(region=REGION)
+    return _browser_tool
 
 # Agent에 Gateway + Browser 함께 부여
 agent = Agent(
     model=model,
     system_prompt=prompt,
-    tools=[mcp_client, browser_tool.browser],
+    tools=[mcp_client, get_browser_tool().browser],
 )
 ```
 

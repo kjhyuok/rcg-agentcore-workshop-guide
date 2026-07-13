@@ -41,12 +41,12 @@ Agent 호출 **전후**로 Memory 작업이 추가됩니다.
 ```python title="agents/phase2a_cs.py — Import & 설정"
 import os
 import uuid
+import threading
 import boto3
 from datetime import datetime, timezone
 from strands import Agent
 from strands.models import BedrockModel
 from strands.tools.mcp import MCPClient
-from strands_tools.browser import AgentCoreBrowser
 from mcp.client.streamable_http import streamablehttp_client
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
@@ -58,6 +58,26 @@ model = BedrockModel(
     model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
+
+# MCPClient는 모듈 로드 시 1회만 생성 (요청마다 재생성하면 매번 핸드셰이크 비용)
+mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
+
+# Browser Tool은 "지연 생성 + 싱글톤 캐싱" — import 시점에 즉시 만들면
+# Playwright 초기화가 Runtime의 30초 콜드스타트 타임아웃에 걸릴 수 있어(과거 실제로 겪은 문제),
+# 첫 요청에서만 생성하고 이후 요청은 캐시된 인스턴스를 재사용합니다.
+_browser_tool = None
+_browser_tool_lock = threading.Lock()
+
+
+def get_browser_tool():
+    global _browser_tool
+    if _browser_tool is None:
+        with _browser_tool_lock:
+            if _browser_tool is None:
+                from strands_tools.browser import AgentCoreBrowser
+                _browser_tool = AgentCoreBrowser(region=REGION)
+    return _browser_tool
+```
 
 memory_client = boto3.client("bedrock-agentcore", region_name=REGION)
 browser_tool = AgentCoreBrowser(region=REGION)
@@ -149,7 +169,7 @@ SYSTEM_PROMPT = """당신은 리테일 CS 전문 상담사입니다.
 """
 
 @app.entrypoint
-def cs_agent(payload: dict) -> dict:
+async def cs_agent(payload: dict):
     user_message = payload.get("message", "")
     session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
     actor_id = payload.get("actor_id", "anonymous")
@@ -161,29 +181,36 @@ def cs_agent(payload: dict) -> dict:
     prompt_with_context = SYSTEM_PROMPT.format(customer_context=context)
 
     # 3️⃣ Agent 실행 (Gateway MCP + Browser Tool)
-    mcp_client = MCPClient(
-        lambda: streamablehttp_client(GATEWAY_URL)
-    )
-
     agent = Agent(
         model=model,
         system_prompt=prompt_with_context,
-        tools=[mcp_client, browser_tool.browser],
+        tools=[mcp_client, get_browser_tool().browser],
     )
-    result = agent(user_message)
 
-    # 4️⃣ 이번 대화를 Memory에 저장
-    save_turn(actor_id, session_id, user_message, str(result))
+    # 4️⃣ return 대신 yield — 토큰이 생성되는 즉시 흘려보냄 (SSE 스트리밍)
+    full_text = ""
+    async for event in agent.stream_async(user_message):
+        chunk = event.get("data")
+        if chunk:
+            full_text += chunk
+            yield {"type": "chunk", "response": chunk, "session_id": session_id}
 
-    return {
-        "response": str(result),
-        "session_id": session_id,
-    }
+    # 5️⃣ Memory 저장은 응답 완료 후 백그라운드 스레드로 — 사용자를 기다리게 하지 않음
+    threading.Thread(
+        target=save_turn,
+        args=(actor_id, session_id, user_message, full_text),
+        daemon=True,
+    ).start()
+
+    yield {"type": "done", "response": full_text, "session_id": session_id}
 
 
 if __name__ == "__main__":
     app.run()
 ```
+
+!!! info "왜 async generator + 백그라운드 스레드인가"
+    Phase 1과 마찬가지로 `yield`를 쓰면 토큰이 생성되는 즉시 스트리밍됩니다. 여기에 더해 CS Agent는 응답 후 Memory 저장(`save_turn`)이라는 추가 네트워크 호출이 있는데, 이걸 응답을 다 보여준 뒤 백그라운드 스레드에서 처리하도록 분리했습니다 — 참가자가 Memory 쓰기 완료까지 기다릴 필요가 없어집니다.
 
 ---
 
@@ -253,6 +280,25 @@ agentcore invoke --agent rcg_cs_agent \
     ```
 
     주문번호를 다시 묻지 않고 "그 주문"만으로 바로 상세 정보를 이어서 안내하는 것이 Memory가 정상 동작하고 있다는 핵심 증거입니다. 이후 반품 사유·개봉 여부에 따라 `process_return` Tool을 호출해 실제 환불/에스컬레이션 여부가 결정됩니다 (Step 4에서 다룹니다).
+
+!!! info "출력이 여러 줄의 JSON으로 나옵니다"
+    entrypoint가 async generator라서 `{"type": "chunk", ...}` 이벤트가 여러 번 나오다가 마지막 `{"type": "done", ...}`에 전체 텍스트가 담깁니다 (Phase 1 Step 3-3 참고). 위 예시는 최종 텍스트만 정리한 것입니다.
+
+**세 번째 대화 (존재하지 않는 주문번호 — 환각 방지 확인):**
+
+```bash
+agentcore invoke --agent rcg_cs_agent \
+  '{"message": "주문 ORD-9999-999 배송 상태 알려주세요", "actor_id": "C001", "session_id": "cs-test-003"}'
+```
+
+??? success "환각 방지 확인 포인트"
+    존재하지 않는 주문번호를 물어봤을 때, Agent가:
+
+    - `lookup_order` Tool 호출 결과가 404(실패)임을 확인하고
+    - 배송 상태를 그럴듯하게 지어내지 않고 **"해당 주문을 찾을 수 없습니다"**라고 정직하게 답함
+    - 참고로 고객이 실제로 가진 다른 주문번호를 안내에 덧붙일 수 있음 (Memory에 남은 맥락 활용)
+
+    Tool 응답에 없는 정보는 절대 지어내지 않는다는 System Prompt 규칙이 이 시나리오를 위한 것입니다. 만약 Agent가 존재하지 않는 주문에 대해 배송 상태를 답한다면 환각이 발생한 것이므로, `phase2a_cs.py`의 System Prompt에 있는 "절대 규칙 — Tool 결과만 사용" 섹션을 확인하세요.
 
 ---
 
