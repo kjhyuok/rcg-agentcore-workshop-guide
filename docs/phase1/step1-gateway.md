@@ -75,7 +75,7 @@ python3.12 scripts/setup-gateway.py
 ```
 🎉 Gateway 설정 완료!
    Gateway ID:  gw-abc123def456
-   Gateway URL: https://gw-abc123def456.gateway.agentcore.us-east-1.amazonaws.com
+   Gateway URL: https://gw-abc123def456.gateway.agentcore.us-west-2.amazonaws.com
 
    export AGENTCORE_GATEWAY_URL=https://gw-abc123...
 ```

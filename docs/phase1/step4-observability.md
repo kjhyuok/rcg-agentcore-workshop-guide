@@ -92,7 +92,7 @@ agentcore obs show --last 1
 AWS Console에서 직접 확인해봅시다:
 
 1. AWS Console → CloudWatch → 좌측 **GenAI Observability** → **Bedrock AgentCore**
-2. 또는 직접 URL: `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#gen-ai-observability/agent-core`
+2. 또는 직접 URL: `https://console.aws.amazon.com/cloudwatch/home?region=us-west-2#gen-ai-observability/agent-core`
 3. Agent 드롭다운에서 `rcg_recommend_agent` 선택
 
 ### Traces 탭 — 호출 이력 확인

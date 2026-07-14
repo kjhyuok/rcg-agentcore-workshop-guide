@@ -34,7 +34,7 @@ from mcp.client.streamable_http import streamablehttp_client
 mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
 
 # Code Interpreter 추가
-code_interpreter_tool = AgentCoreCodeInterpreter(region="us-east-1")
+code_interpreter_tool = AgentCoreCodeInterpreter(region="us-west-2")
 
 # Agent 조립: Gateway(MCPClient) + Code Interpreter
 agent = Agent(
@@ -83,13 +83,16 @@ from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 # Gateway URL (환경변수에서 읽음)
 GATEWAY_URL = os.environ.get("AGENTCORE_GATEWAY_URL", "")
-REGION = "us-east-1"
+REGION = "us-west-2"
 
 # 모델
 model = BedrockModel(
     model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
+
+# Code Interpreter (모듈 로드 시 1회만 생성)
+code_interpreter_tool = AgentCoreCodeInterpreter(region=REGION)
 ```
 
 !!! tip "Code Interpreter가 필요한 이유"
@@ -149,7 +152,7 @@ async def recommend_agent(payload: dict):
     agent = Agent(
         model=model,
         system_prompt=SYSTEM_PROMPT,
-        tools=[mcp_client],
+        tools=[mcp_client, code_interpreter_tool.code_interpreter],
     )
 
     # return 대신 yield — 토큰이 생성되는 즉시 흘려보냄 (SSE 스트리밍)
