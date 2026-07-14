@@ -26,12 +26,21 @@
 Runtime 배포: agentcore deploy                    → HTTPS 엔드포인트 (전세계)
 ```
 
+**AgentCore Runtime**은 Agent/Tool 코드를 컨테이너로 감싸 완전관리형 서버리스 환경에서 실행하는 AgentCore의 핵심 서비스입니다. Strands, LangGraph, CrewAI 등 **프레임워크에 상관없이**, Claude·GPT 등 **모델에 상관없이** 동일한 방식으로 배포할 수 있고, 세션마다 격리된 실행 환경에서 동작해 한 사용자의 대화가 다른 사용자에게 섞이지 않습니다.
+
+![AgentCore Runtime 개념](../assets/images/phase1/agentcore-runtime-concept.png)
+
+Agent 개발자는 코드에 **AgentCore Runtime 데코레이터**(Observability·Identity 설정)를 붙이고 `configure`(① Dockerfile + Config yaml 생성) → `launch`(② Amazon ECR에 push해 Runtime 리소스 생성)를 거칩니다. 이후 사용자는 애플리케이션을 통해 `invoke_agent_runtime()`(③)으로 Runtime 엔드포인트를 호출합니다.
+
+!!! info "이 워크샵은 configure/launch를 한 번에 처리합니다"
+    Starter Toolkit의 원래 CLI는 `agentcore configure` → `agentcore launch` 두 단계로 나뉘어 있지만, 이 워크샵의 `deploy-agent.sh`는 최신 CDK 기반 CLI인 **`agentcore deploy -y`** 한 명령으로 위 ①②를 함께 처리합니다. 개념적으로는 위 그림과 동일한 과정이 내부에서 일어납니다.
+
 **Runtime의 가치:**
 
-- Agent 코드를 서버리스로 실행 (인프라 관리 불필요)
-- HTTPS + SigV4 인증 (보안)
-- 자동 스케일링 (동시 호출 처리)
-- Observability 자동 활성화 (Trace, Logs)
+- Agent 코드를 서버리스로 실행 (인프라 관리 불필요, Amazon ECR 이미지 기반)
+- HTTPS + SigV4 인증 (보안) — `invoke_agent_runtime()` API로 호출
+- 세션 단위로 격리된 실행 환경 (동시 다중 사용자에도 대화가 서로 섞이지 않음)
+- Observability 자동 활성화 (Trace, Logs) — Step 4에서 바로 확인
 
 ---
 
