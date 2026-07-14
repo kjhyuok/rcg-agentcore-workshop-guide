@@ -52,11 +52,20 @@ Console → Bedrock → AgentCore → Runtime → `phase1_phase1` → 하단 **L
 
 ## 4-1. CLI로 Trace 확인
 
+`agentcore` 명령은 프로젝트 디렉토리 안에서 실행해야 합니다. 먼저 이동하세요:
+
 ```bash
-agentcore traces list --runtime phase1_phase1
+cd ~/workshop/starter-code/agents/phase1
 ```
 
-Trace ID, Duration, Status를 확인할 수 있습니다. 기본적으로 최근 12시간, 최대 20개까지 표시됩니다 (`--since`, `--limit` 옵션으로 조정 가능). 특정 Trace의 상세 내용을 JSON 파일로 내려받으려면 위 목록에서 확인한 Trace ID를 넣어 실행하세요:
+```bash
+agentcore traces list --runtime phase1
+```
+
+!!! warning "--runtime 값은 프로젝트 별칭입니다 (Runtime 리소스 이름과 다름!)"
+    `--runtime`에는 AgentCore Runtime 리소스 이름(`phase1_phase1-2jGPAQEdsM` 같은 실제 ARN에 들어가는 이름)이 아니라, **로컬 `agentcore.json`에 등록된 프로젝트 별칭**(이 워크샵에서는 `phase1`)을 넣습니다. `--runtime phase1_phase1`로 실행하면 `Runtime 'phase1_phase1' not found. Available: phase1`처럼 사용 가능한 별칭을 알려줍니다.
+
+Trace ID, Timestamp, Session ID 목록과 CloudWatch Console 딥링크가 함께 출력됩니다. 기본적으로 최근 12시간, 최대 20개까지 표시됩니다 (`--since`, `--limit` 옵션으로 조정 가능). 특정 Trace의 상세 내용을 JSON 파일로 내려받으려면 위 목록에서 확인한 Trace ID를 넣어 실행하세요:
 
 ```bash
 agentcore traces get <traceId>
@@ -67,7 +76,7 @@ agentcore traces get <traceId>
     목록이 비어 있으면 잠시 대기 후 재시도하세요.
 
 !!! info "CLI 버전에 따라 명령어가 다릅니다"
-    이 워크샵은 최신 CDK 기반 CLI(`@aws/agentcore`)를 사용하며, Trace 조회는 `agentcore obs list/show`가 아니라 **`agentcore traces list`/`agentcore traces get`**입니다. `--agent` 대신 **`--runtime`** 옵션으로 Runtime 이름(`phase1_phase1`)을 지정합니다.
+    이 워크샵은 최신 CDK 기반 CLI(`@aws/agentcore`)를 사용하며, Trace 조회는 `agentcore obs list/show`가 아니라 **`agentcore traces list`/`agentcore traces get`**입니다.
 
 ---
 
