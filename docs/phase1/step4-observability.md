@@ -71,6 +71,12 @@ Trace ID, Timestamp, Session ID 목록과 CloudWatch Console 딥링크가 함께
 agentcore traces get <traceId>
 ```
 
+`Trace saved to: .../agentcore/.cli/traces/phase1-<traceId>.json`처럼 로컬 JSON 파일 경로와, 같은 Trace를 CloudWatch Console에서 바로 열 수 있는 딥링크가 함께 출력됩니다. 그 Console 링크를 열면 아래처럼 Span 트리와 각 Span의 상세(모델, latency, 토큰 수, 실제 System Prompt/응답 내용)를 확인할 수 있습니다:
+
+![Trace 상세 — Console에서 확인](../assets/images/phase1/genai-dashboard-trace-detail-real.png)
+
+이 예시는 `execute_event_loop_cycle`이 2번 반복되며 `customer_profile` → `purchase_history` → `product_search` 순서로 3개 Tool을 호출한 뒤, 두 번의 `chat`(LLM 호출)으로 응답을 완성한 과정을 보여줍니다 — 전체 21개 Span, 18.7초, 7,275 토큰.
+
 !!! note "Trace 데이터 지연"
     첫 invoke 후 Trace가 나타나기까지 **최대 10분**이 걸릴 수 있습니다.
     목록이 비어 있으면 잠시 대기 후 재시도하세요.
