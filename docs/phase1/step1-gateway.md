@@ -100,11 +100,15 @@ aws bedrock-agentcore-control list-gateway-targets \
     ----------------------------
     |   ListGatewayTargets     |
     +------------------+-------+
-    |  customer-profile | ACTIVE |
-    |  product-search   | ACTIVE |
-    |  purchase-history | ACTIVE |
+    |  customer-profile | READY |
+    |  product-search   | READY |
+    |  purchase-history | READY |
     +------------------+-------+
     ```
+
+!!! info "READY 상태 확인"
+    Status가 `CREATING`이면 30초 정도 기다린 후 다시 확인하세요.
+    (일부 환경에서 `ACTIVE`로 표시될 수도 있습니다 — 둘 다 정상입니다)
 
 ---
 
