@@ -83,6 +83,7 @@ python3.12 scripts/setup-gateway.py
 !!! warning "환경변수 설정 필수"
     ```bash
     export AGENTCORE_GATEWAY_URL=<위에서 출력된 URL>
+    export GATEWAY_ID=<위에서 출력된 URL>
     ```
 
 ---

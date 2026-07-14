@@ -55,24 +55,22 @@ agentcore gateway update-target \
 
 ---
 
-### Week 3: 멀티 Agent & Guardrails
+### Week 3: Guardrails & 에러 핸들링
 
 | 할 일 | 방법 |
 |--------|------|
-| Agent 간 연동 | Identity로 Agent-to-Agent 호출 |
 | Guardrails 추가 | 유해 콘텐츠/민감정보 필터링 |
 | 에러 핸들링 | Fallback Agent, 재시도 로직 |
+| Tool 확장 | 나만의 Agent에 실무 Tool 추가 (Gateway Target 등록) |
 
 ```mermaid
 graph LR
-    OR["Orchestrator<br/>Agent"] --> CS["CS Agent<br/>(Phase 2A)"]
-    OR --> DM["발주 Agent<br/>(Phase 2B)"]
-    OR --> GR["🛡️ Guardrails<br/>PII 마스킹<br/>부적절 응답 차단"]
+    MY["나만의 Agent<br/>(Phase 3)"] --> GR["🛡️ Guardrails<br/>PII 마스킹<br/>부적절 응답 차단"]
+    MY --> FB["♻️ Fallback<br/>재시도 로직<br/>규칙 기반 대응"]
 
-    style OR fill:#f3e5f5,stroke:#6a1b9a
-    style CS fill:#e3f2fd,stroke:#1565c0
-    style DM fill:#e8f5e9,stroke:#2e7d32
+    style MY fill:#fff3e0,stroke:#e65100
     style GR fill:#fce4ec,stroke:#c62828
+    style FB fill:#e8f5e9,stroke:#2e7d32
 ```
 
 ---
@@ -84,7 +82,7 @@ graph LR
 | 부하 테스트 | Runtime 스케일링 확인 |
 | 평가 파이프라인 | 정확도/만족도/비용 자동 측정 |
 | 모니터링 알림 | Observability → CloudWatch Alarm |
-| 사내 시연 | Phase 3 발표 형식 재활용 |
+| 사내 시연 | Phase 3에서 만든 나만의 Agent를 시연 소재로 활용 |
 
 ---
 
@@ -101,7 +99,6 @@ graph LR
 
 ### 권장 항목
 
-- [ ] **멀티 Agent** — Orchestrator 패턴으로 복잡한 워크플로우 분해
 - [ ] **평가 자동화** — 주기적 정확도 테스트
 - [ ] **A/B 테스트** — System Prompt 변형으로 성능 비교
 - [ ] **Memory 정리** — 오래된 기록 TTL 설정

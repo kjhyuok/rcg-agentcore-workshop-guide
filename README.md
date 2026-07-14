@@ -26,11 +26,9 @@
 | **Runtime** | Agent를 HTTPS 엔드포인트로 배포 | Phase 1 |
 | **Observability** | 실시간 Trace + GenAI Dashboard | Phase 1 |
 | **Code Interpreter** | Agent가 Python 코드를 실행하여 시각화 생성 | Phase 1 |
-| **Memory** | 고객 맥락/대화 이력 저장 & 조회 | Phase 2 |
-| **Policy** | 가드레일 + 에스컬레이션 규칙 | Phase 2 |
+| **Memory** | 고객 맥락/대화 이력 저장 & 조회 | Phase 2A / Phase 3 |
+| **Policy** | 가드레일 + 에스컬레이션 규칙 | Phase 2A |
 | **Browser** | Mock 사이트에서 실시간 정보 수집 | Phase 2 |
-| **Multi-Agent (A2A)** | Orchestrator가 여러 Agent를 라우팅 | Phase 3 |
-| **Evaluations** | Agent 품질 점수 자동 측정 | Phase 3 |
 
 ## 워크샵 구조 (5시간)
 
@@ -38,8 +36,8 @@
 graph TD
     A["Phase 1: 추천 Agent + 시각화<br/>Gateway + Runtime + Observability + Code Interpreter<br/><b>공통 60분</b>"] --> B{분기 선택}
     B --> C["Phase 2A: CS Agent<br/>+ Memory + Policy + Browser<br/>60분"]
-    B --> D["Phase 2B: 수요예측 Agent<br/>+ Memory + Policy + Browser<br/>60분"]
-    C --> E["Phase 3: Multi-Agent + Evaluations<br/>Orchestrator 연결 + 품질 측정 + 발표<br/><b>60분</b>"]
+    B --> D["Phase 2B: 뉴스/날씨 수집 Agent<br/>+ Browser + Gateway 확장<br/>60분"]
+    C --> E["Phase 3: 바이브코딩으로 나만의 Agent<br/>설계 + 구현 + 배포 + Memory<br/><b>60분</b>"]
     D --> E
 ```
 
@@ -47,10 +45,10 @@ graph TD
 |-------|----------|-----------------|
 | **Phase 1** | 상품 추천 Agent + 매출 시각화 | Gateway, Runtime, Observability, Code Interpreter |
 | **Phase 2A** | CS 자동화 Agent + 경쟁사 가격 비교 | + Memory, Policy, Browser |
-| **Phase 2B** | 수요 예측 Agent + 트렌드 수집 | + Memory, Policy, Browser |
-| **Phase 3** | Multi-Agent 연결 + 품질 점수 | + Multi-Agent(A2A), Evaluations |
+| **Phase 2B** | 뉴스/날씨 수집 Agent | + Browser, Gateway 확장 |
+| **Phase 3** | 나만의 Agent (바이브코딩) | Runtime + Gateway + Memory 조합 |
 
-참가자는 Phase 1을 공통으로 진행한 뒤, Phase 2A(CS Agent) 또는 Phase 2B(수요예측 Agent) 중 하나를 선택해 진행합니다.
+참가자는 Phase 1을 공통으로 진행한 뒤, Phase 2A(CS Agent) 또는 Phase 2B(뉴스/날씨 수집 Agent) 중 하나를 선택해 진행하고, Phase 3에서 바이브코딩으로 나만의 Agent를 만듭니다.
 
 ---
 
@@ -83,8 +81,8 @@ docs/
 ├── setup.md               # 환경 세팅 — Event Outputs 확인, Code Server 접속
 ├── phase1/                 # 첫 Agent, 세상에 내보내기 (Gateway/Runtime/Observability)
 ├── phase2a/                # CS Agent (Memory/Policy/Browser)
-├── phase2b/                # 수요예측 Agent (Memory/Policy/Browser)
-├── phase3/                 # Multi-Agent + Evaluations + 발표
+├── phase2b/                # 뉴스/날씨 수집 Agent (Gateway 확장/Browser)
+├── phase3/                 # 바이브코딩으로 나만의 Agent 만들기 (Runtime/Gateway/Memory)
 └── appendix/                # 서비스 맵, Next Steps, FAQ
 ```
 

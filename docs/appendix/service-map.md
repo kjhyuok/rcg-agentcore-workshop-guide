@@ -1,8 +1,8 @@
 # 부록: AgentCore 서비스 한눈에 보기
 
-!!! abstract "오늘 사용한 9개 서비스"
+!!! abstract "오늘 사용한 7개 서비스"
     AgentCore는 Agent를 **만들고 → 배포하고 → 관찰하는** 풀스택 플랫폼입니다.
-    오늘 Workshop에서 9개 서비스를 직접 체험했습니다.
+    오늘 Workshop에서 7개 서비스를 직접 체험했습니다.
 
 ---
 
@@ -26,13 +26,8 @@ graph TB
         PO["<b>Policy</b><br/>가드레일 규칙"]
     end
 
-    subgraph "👁️ 관측 & 평가"
+    subgraph "👁️ 관측"
         OB["<b>Observability</b><br/>Trace + Dashboard"]
-        EV["<b>Evaluations</b><br/>품질 자동 측정"]
-    end
-
-    subgraph "🤝 협업"
-        MA["<b>Multi-Agent</b><br/>A2A 오케스트레이션"]
     end
 
     RT --> GW
@@ -41,9 +36,7 @@ graph TB
     RT --> ME
     RT --> PO
     GW --> ID
-    MA --> RT
     OB -.->|자동 수집| RT
-    EV -.->|품질 측정| RT
 ```
 
 ---
@@ -54,10 +47,10 @@ graph TB
 graph LR
     P1["<b>Phase 1</b><br/>🟠 Gateway<br/>🟠 Runtime<br/>🟠 Observability"]
     P2["<b>Phase 2</b><br/>🔵 Memory<br/>🔵 Policy<br/>🔵 Browser"]
-    P3["<b>Phase 3</b><br/>🟣 Multi-Agent<br/>🟣 Evaluations<br/>🟣 Code Interpreter(선택)"]
+    P3["<b>Phase 3</b><br/>🟣 조합<br/>(Runtime + Gateway + Memory)"]
 
     P1 -->|"+3 서비스"| P2
-    P2 -->|"+2 서비스"| P3
+    P2 -->|"바이브코딩으로 조합"| P3
 
     style P1 fill:#fff3e0,stroke:#e65100,color:#000
     style P2 fill:#e3f2fd,stroke:#1565c0,color:#000
@@ -95,7 +88,7 @@ sequenceDiagram
 
 ---
 
-## 9개 서비스 상세
+## 7개 서비스 상세
 
 ### 🟠 Phase 1 서비스
 
@@ -150,7 +143,7 @@ sequenceDiagram
 | **한 줄 요약** | 대화 이력, 사용자 선호, 과거 결과를 저장/검색 |
 | **핵심 코드** | `memory_client.retrieve_memories()`, `create_event()` |
 | **비유** | CRM이 고객 정보를 기억하듯, Memory는 **Agent의 경험을 기억** |
-| **사용 Phase** | Phase 2A (대화 맥락), Phase 2B (발주 이력) |
+| **사용 Phase** | Phase 2A (대화 맥락), Phase 3 (나만의 Agent 고도화) |
 
 !!! info "단기 기억 vs 장기 기억"
     - **단기 기억** (현재 대화): LLM Context Window가 담당
@@ -163,7 +156,7 @@ sequenceDiagram
 | **한 줄 요약** | 특정 조건에서 Agent 행동을 제한/승인 요구 |
 | **핵심 코드** | `agentcore policy create --rules [...]` |
 | **비유** | 결재 시스템이 금액별 승인을 요구하듯, Policy는 **Agent 행동을 통제** |
-| **사용 Phase** | Phase 2A (5만원 환불), Phase 2B (50만원 발주) |
+| **사용 Phase** | Phase 2A (5만원 환불 에스컬레이션) |
 
 | | System Prompt | Policy |
 |--|--|--|
@@ -179,29 +172,12 @@ sequenceDiagram
 | **한 줄 요약** | Agent가 웹사이트를 방문하여 정보를 추출 |
 | **핵심 코드** | `AgentCoreBrowser(region="us-east-1")` |
 | **비유** | Agent에게 브라우저를 주면 — 경쟁사 가격, 뉴스, 날씨를 직접 확인 |
-| **사용 Phase** | Phase 2A (경쟁사 가격), Phase 2B (트렌드/날씨) |
+| **사용 Phase** | Phase 2A (경쟁사 가격), Phase 2B (뉴스/날씨 수집) |
 
----
-
-### 🟣 Phase 3 서비스
-
-#### Multi-Agent (A2A) — Agent 팀으로 일하기
-
-| 항목 | 설명 |
-|------|------|
-| **한 줄 요약** | Orchestrator가 사용자 의도를 분석하여 적절한 전문 Agent로 라우팅 |
-| **핵심 코드** | `boto3.client("bedrock-agent-runtime").invoke_agent_runtime()` |
-| **비유** | 콜센터 ARS가 "상품문의 1번, CS 2번"으로 연결하듯, Orchestrator가 **Agent를 선택** |
-| **사용 Phase** | Phase 3 (참가자 Agent를 Orchestrator에 등록) |
-
-#### Evaluations — Agent 품질 측정
-
-| 항목 | 설명 |
-|------|------|
-| **한 줄 요약** | Agent 응답의 유용성, 정확도, 도구 활용도를 자동 점수화 |
-| **핵심 코드** | `run-evaluation.py` (LLM-as-Judge) |
-| **비유** | 시험을 보는 Agent — 테스트 케이스를 주고 얼마나 잘 응답하는지 채점 |
-| **사용 Phase** | Phase 3 (발표 점수 = Evaluations 결과) |
+!!! tip "Phase 3는 새 서비스가 아니라 '조합'입니다"
+    Phase 3에서는 새로운 서비스를 배우는 대신, 위 서비스들(Runtime + Gateway + Memory)을
+    **바이브코딩으로 조합**하여 나만의 Agent를 만들었습니다.
+    이것이 AgentCore의 핵심 — 서비스는 재료이고, Agent는 조합입니다.
 
 ---
 
@@ -217,8 +193,6 @@ graph TD
     Q1 -->|뭘 하는지 보고 싶다| OB2[Observability]
     Q1 -->|코드를 실행하게 하고 싶다| CI2[Code Interpreter]
     Q1 -->|웹 정보를 가져오게 하고 싶다| BR2[Browser]
-    Q1 -->|여러 Agent를 협업시키고 싶다| MA2[Multi-Agent]
-    Q1 -->|품질을 측정하고 싶다| EV2[Evaluations]
 
     style RT2 fill:#fff3e0,stroke:#e65100
     style GW2 fill:#fff3e0,stroke:#e65100
@@ -226,8 +200,6 @@ graph TD
     style ME2 fill:#e3f2fd,stroke:#1565c0
     style PO2 fill:#e3f2fd,stroke:#1565c0
     style BR2 fill:#e3f2fd,stroke:#1565c0
-    style MA2 fill:#f3e5f5,stroke:#6a1b9a
-    style EV2 fill:#f3e5f5,stroke:#6a1b9a
     style CI2 fill:#f3e5f5,stroke:#6a1b9a
 ```
 
@@ -244,8 +216,7 @@ graph TD
 | **관측 = 자동** | 배포만 하면 Trace 활성화 | 설정 불필요 |
 | **시각화 = Code Interpreter** | Agent가 직접 차트 생성 | `tools=[ci.code_interpreter]` |
 | **실시간 = Browser** | 웹사이트 방문 & 추출 | `tools=[browser.browser]` |
-| **협업 = Multi-Agent** | 의도 분류 → 전문가 라우팅 | `invoke_agent_runtime(...)` |
-| **품질 = Evaluations** | 자동 채점 (1~5점) | `run-evaluation.py` |
+| **조합 = 바이브코딩** | 설계서 + 참고 코드 → 나만의 Agent | "이 설계서대로 만들어줘" |
 
 !!! success "핵심 메시지"
     Agent 개발은 **"코드를 짜는 것"**이 아니라 **"서비스를 조합하는 것"**입니다.

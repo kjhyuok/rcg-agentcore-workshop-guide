@@ -1,28 +1,31 @@
-# Phase 2B: 능동적으로 판단하는 수요예측 Agent + 트렌드 수집
+# Phase 2B: 뉴스와 날씨를 수집하는 Agent
 
-폭염이 시작됐습니다. 콜드브루 재고가 3일 치밖에 안 남았는데, 이번 주말에 여름 세일까지 겹칩니다. 이 Agent는 재고를 스캔하고, 브라우저로 트렌드 뉴스와 날씨를 직접 확인해서, 알아서 긴급 발주를 넣습니다.
+이 Phase에서는 Agent에게 **바깥세상을 보는 눈**을 쥐어줍니다 — 뉴스와 날씨를 수집할 수 있는 **툴**을 준비하고, 그 툴을 쓰는 Agent를 직접 만들어 배포합니다.
+
+가이드는 **툴 사용법까지만** 안내합니다. 이 툴로 무엇을 할지 — 예를 들어 날씨를 보고 음료 발주를 제안하게 할지, 지역 이벤트를 모니터링해서 알려주게 할지, 뉴스에서 우리 상품 관련 이슈를 찾게 할지 — **시나리오는 여러분이 직접 정합니다**.
 
 !!! abstract "이 Phase에서 추가하는 것"
-    - **Memory** — 주문 이력과 발주 패턴을 기억
-    - **Policy** — 50만원 초과 발주 시 승인 필요
-    - **Gateway 확장** — 수요 예측 Tool 4개 추가 등록
-    - **Browser** — Mock 뉴스/날씨 사이트에서 트렌드 & 기상 정보 수집
+    - **Gateway 확장** — 재고/트렌드/외부요인/발주 등 데이터 Tool 4개 추가 등록
+    - **나만의 수집 Agent 배포** — 시나리오는 여러분이 정하고, Tool 조합으로 구현
 
-!!! info "Browser는 사전 배포된 Mock 사이트를 조회합니다"
-    실제 뉴스/기상청 사이트가 아닌, 운영진이 미리 배포한 Mock 트렌드 뉴스 + 날씨 예보 사이트에 접속합니다.
-    Agent가 브라우저로 해당 사이트를 탐색하여 수요에 영향을 주는 외부 요인을 수집합니다.
+!!! tip "이 Phase는 Phase 3의 재료 준비입니다"
+    점심 후 Phase 3에서 **바이브코딩으로 나만의 Agent**를 만듭니다.
+    여기서 등록하는 데이터 Tool이 그때 조합할 **재료**가 되고,
+    여기서 배포하는 Agent 코드가 바이브코딩의 **참고 코드**가 됩니다.
+
+!!! info "날씨와 이벤트는 `external_factors` Tool이 제공합니다"
+    실제 기상청 API가 아닌, 워크샵용 Mock Lambda가 날씨 예보/지역 이벤트/공휴일 데이터를 반환합니다.
+    실무 적용 시에는 이 Lambda를 실제 API를 호출하는 Lambda로 교체하면 됩니다 (Agent 코드 변경 불필요).
 
 ---
 
 ## Phase 2A와의 차이
 
-| Phase 2A (CS Agent) | Phase 2B (수요 예측 + Browser) |
-|---------------------|-------------------------------|
-| 고객 대화 맥락 기억 | **주문/발주 이력 기억** |
-| 에스컬레이션 (5만원) | **발주 승인 (50만원)** |
-| 반품/배송 조회 Tool | **재고/트렌드/발주 Tool** |
-| Browser: 경쟁사 가격 조회 | Browser: **트렌드 뉴스 + 날씨 예보 수집** |
-| 고객 응대 시나리오 | **분석 → 의사결정 시나리오** |
+| Phase 2A (CS Agent) | Phase 2B (뉴스/날씨 수집 Agent) |
+|---------------------|--------------------------------|
+| 정해진 시나리오 (CS 응대) | **시나리오를 직접 정함** (수집 툴 활용) |
+| 반품/배송 조회 Tool | **재고/트렌드/외부요인 Tool** |
+| Memory/Policy 포함 | Memory/Policy 없음 — **Phase 3에서 직접 연동** |
 
 ---
 
@@ -30,64 +33,39 @@
 
 ```mermaid
 graph TB
+    U["👤 나의 질문<br/>(시나리오는 여러분이 정합니다)"]
+
     subgraph RT["🚀 AgentCore Runtime"]
-        AG["🤖 Demand Agent<br/>System Prompt: 수요예측 전문가"]
+        AG["🤖 Collector Agent<br/>System Prompt: 내가 정한 역할"]
     end
 
-    subgraph ME["🧠 Memory"]
-        MR["주문 이력 / 발주 패턴<br/>/orders/{actorId}/"]
+    subgraph GW["🔗 Gateway (Data Tools)"]
+        T1["inventory_status<br/>(재고)"]
+        T2["sales_trend<br/>(트렌드)"]
+        T3["external_factors<br/>(날씨/이벤트)"]
+        T4["purchase_order<br/>(발주)"]
     end
 
-    subgraph GW["🔗 Gateway (Demand Tools)"]
-        T1["inventory_status"]
-        T2["sales_trend"]
-        T3["external_factors"]
-        T4["purchase_order"]
-    end
-
-    subgraph BR["🌐 Browser"]
-        WB["Mock 뉴스/날씨 사이트<br/>트렌드 기사 수집<br/>기온/강수량 확인"]
-    end
-
-    subgraph PO["🛡️ Policy"]
-        PL["발주 > 500,000원<br/>→ 점장 승인 필수"]
-    end
-
-    AG -->|retrieve_memories| ME
+    U --> RT
     AG -->|MCP tool_use| GW
-    AG -->|트렌드/날씨 수집| BR
-    AG -->|발주 실행 시| PO
-    PO -->|ALLOW / PENDING| AG
 
     style RT fill:#fff3e0,stroke:#e65100
-    style ME fill:#e8eaf6,stroke:#3f51b5
     style GW fill:#e3f2fd,stroke:#1565c0
-    style BR fill:#e0f2f1,stroke:#00695c
-    style PO fill:#fce4ec,stroke:#c62828
 ```
-
-<!-- AWS 아이콘 버전 (롤백 시 이 블록만 삭제) -->
-<figure markdown>
-  ![Phase 2B Architecture](../assets/phase2b_architecture.png){ width="700" }
-  <figcaption>AWS 서비스 아이콘 기반 아키텍처</figcaption>
-</figure>
 
 ---
 
 ## Steps
 
-1. [Memory 네임스페이스 추가](step1-memory.md) — 주문 이력 저장 구조 설계
-2. [트렌드/날씨 수집 연결 (Gateway + Browser)](step2-gateway.md) — 분석 Tool 4개 + Browser로 Mock 사이트 수집
-3. [Agent + Memory + Browser 연동](step3-agent.md) — 분석 결과 + 외부 요인 기반 발주 판단
-4. [Policy (발주 승인)](step4-policy.md) — 금액 기반 자동 승인/보류
+1. [데이터 재료 준비하기 (Gateway 확장)](step1-gateway.md) — 데이터 Tool 4개 추가 등록
+2. [나만의 수집 Agent 만들어 배포하기](step2-agent.md) — 내가 정한 시나리오를 Tool 조합으로 구현
 
 ---
 
 !!! tip "핵심 학습"
-    - Memory = "이전에 어떤 발주를 했고, 어떤 패턴이 있었는지 기억"
-    - Policy = "이 금액 이상은 무조건 승인을 받아야 발주 실행"
-    - Browser = "트렌드 뉴스와 날씨를 직접 확인하여 수요 예측에 반영"
+    - Gateway Tool로 **날씨, 이벤트, 재고, 트렌드** 데이터를 Agent에게 제공
     - 같은 AgentCore 서비스를 **도메인만 바꿔서** 재활용하는 패턴 체험
+    - System Prompt로 Tool 사용 시점을 지시 → Agent가 자율적으로 선택
 
 ---
 

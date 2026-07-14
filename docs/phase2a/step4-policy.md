@@ -277,4 +277,6 @@ Phase 2A: Memory → Gateway → Agent → Policy → Observability
 !!! success "Phase 2A 완료!"
     Memory + Policy를 추가하여 **실제 CS 업무에 투입 가능한** Agent가 되었습니다.
     
-    다음 Phase에서는 더 복잡한 시나리오를 다룹니다.
+    점심 후 [Phase 3: 바이브코딩으로 나만의 Agent 만들기](../phase3/index.md)에서
+    오늘 배운 서비스들을 조합해 **여러분 회사의 문제를 푸는 Agent**를 직접 만듭니다.
+    `agents/phase2a_cs.py`가 그때의 **참고 코드**가 됩니다.

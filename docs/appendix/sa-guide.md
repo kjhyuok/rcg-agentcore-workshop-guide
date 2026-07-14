@@ -33,13 +33,13 @@ rcg-agentcore-workshop/
 │   ├── agents/
 │   │   ├── phase1_recommend.py
 │   │   ├── phase2a_cs.py
-│   │   ├── phase2b_demand.py
-│   │   └── phase3_orchestrator.py
+│   │   └── phase2b_collector.py
 │   ├── scripts/
 │   │   ├── setup-gateway.py
 │   │   ├── setup-memory.py
-│   │   ├── deploy-agent.sh
-│   │   └── run-evaluation.py
+│   │   ├── add-cs-targets.py
+│   │   ├── add-demand-targets.py
+│   │   └── deploy-agent.sh
 │   ├── lambdas/                 # SA가 사전 배포 (참가자 참고용)
 │   │   ├── customer_profile/
 │   │   ├── product_search/
@@ -66,6 +66,14 @@ rcg-agentcore-workshop/
     ├── trend-news.html
     └── weather-forecast.html
 ```
+
+!!! warning "⚠️ starter-code 저장소 필요 변경사항 (Phase 2B/3 재구성 반영)"
+    가이드 문서가 "나만의 Agent 만들기" 테마로 재구성되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
+
+    1. **`agents/phase2b_collector.py` 신규 작성** — 정보 수집 Agent 골격(System Prompt는 참가자가 채우는 빈칸 템플릿). **참조 구현이 이 가이드 저장소의 `agents/phase2b_collector.py`에 있습니다** — starter-code 저장소로 복사하면 됩니다. `phase2a_cs.py`와 동일 구조(모듈 레벨 MCPClient, 지연 생성 Browser, async generator 스트리밍)에서 Memory 코드를 빼고, System Prompt에 `MOCK_SITE_URL` 기반 정보원 안내를 넣은 형태입니다
+    2. **`scripts/add-demand-targets.py` 작성/확인** — `add-cs-targets.py`를 복제해 `rcg-workshop-demand-*` Lambda 4개를 Gateway Target으로 등록
+    3. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
+    4. **`deploy-agent.sh`가 `MOCK_SITE_URL`도 Runtime 환경변수로 전달**하는지 확인 (phase2b_collector가 사용)
 
 ### 1-2. GitHub Repo 생성
 
@@ -97,7 +105,6 @@ __pycache__/
 Thumbs.db
 
 # Workshop output
-evaluation-results/
 *.json.bak
 ```
 
@@ -424,10 +431,10 @@ aws s3 sync site/ s3://rcg-workshop-guide-${ACCOUNT_ID}/ \
 
 ### D-7 (1주 전)
 
-- [ ] SA 5명 전원 리허설 (bootstrap → Phase 3 전체 실행)
+- [ ] SA 5명 전원 리허설 (bootstrap → Phase 3 바이브코딩 전체 실행)
 - [ ] MkDocs 가이드 CloudFront 배포
 - [ ] Workshop Studio 테스트 계정 1개로 end-to-end 확인
-- [ ] Orchestrator Agent 사전 배포 (Phase 3용)
+- [ ] 참가자용 AI 코딩 도구 접근 확인 (Claude Code / Amazon Q 등 — Phase 3 바이브코딩용)
 - [ ] 네트워크 환경 테스트 (고객사 방화벽 이슈 등)
 
 ### D-1 (전날)
@@ -435,7 +442,6 @@ aws s3 sync site/ s3://rcg-workshop-guide-${ACCOUNT_ID}/ \
 - [ ] Lambda warm-up (각 1회 호출)
 - [ ] 가이드 URL 최종 확인
 - [ ] 참가자 안내 메일 발송 (URL, 사전 준비 없음 안내)
-- [ ] 시상품 준비
 
 ### D-Day
 
