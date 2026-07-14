@@ -53,43 +53,21 @@ Console → Bedrock → AgentCore → Runtime → `phase1_phase1` → 하단 **L
 ## 4-1. CLI로 Trace 확인
 
 ```bash
-agentcore obs list --agent phase1_phase1
+agentcore traces list --runtime phase1_phase1
 ```
 
-![obs list 결과](../assets/images/phase1/obs-list-result.png)
-
-Trace ID, Duration, Status를 확인할 수 있습니다. 상세 Trace를 보려면:
+Trace ID, Duration, Status를 확인할 수 있습니다. 기본적으로 최근 12시간, 최대 20개까지 표시됩니다 (`--since`, `--limit` 옵션으로 조정 가능). 특정 Trace의 상세 내용을 JSON 파일로 내려받으려면 위 목록에서 확인한 Trace ID를 넣어 실행하세요:
 
 ```bash
-agentcore obs show --last 1
+agentcore traces get <traceId>
 ```
-
-![obs show 결과](../assets/images/phase1/obs-show-result.png)
-
-`AgentCore.Runtime.Invoke` span에서 전체 소요 시간과 상태(OK)를 확인할 수 있습니다.
 
 !!! note "Trace 데이터 지연"
     첫 invoke 후 Trace가 나타나기까지 **최대 10분**이 걸릴 수 있습니다.
-    "No spans found"가 나오면 잠시 대기 후 재시도하세요.
+    목록이 비어 있으면 잠시 대기 후 재시도하세요.
 
-??? success "Trace 출력 예시"
-    ```
-    Trace: ac-tr-67aa52c5
-    Duration: 3,439ms
-    Status: SUCCESS
-    
-    Spans:
-    ├─ [RUNTIME] Invoke received (2ms)
-    ├─ [MODEL] Claude Sonnet 4.6 — in:1,200 out:89 — tool_use (2.1s)
-    ├─ [GATEWAY] customer_profile — PERMIT (184ms)
-    ├─ [MODEL] Claude Sonnet 4.6 — in:1,450 out:67 — tool_use (1.8s)
-    ├─ [GATEWAY] purchase_history — PERMIT (92ms)
-    ├─ [MODEL] Claude Sonnet 4.6 — in:1,680 out:112 — tool_use (2.0s)
-    ├─ [GATEWAY] product_search — PERMIT (156ms)
-    ├─ [GATEWAY] product_search — PERMIT (148ms)
-    ├─ [MODEL] Claude Sonnet 4.6 — in:2,100 out:423 — end_turn (2.8s)
-    └─ [RUNTIME] Complete — SUCCESS (3,439ms)
-    ```
+!!! info "CLI 버전에 따라 명령어가 다릅니다"
+    이 워크샵은 최신 CDK 기반 CLI(`@aws/agentcore`)를 사용하며, Trace 조회는 `agentcore obs list/show`가 아니라 **`agentcore traces list`/`agentcore traces get`**입니다. `--agent` 대신 **`--runtime`** 옵션으로 Runtime 이름(`phase1_phase1`)을 지정합니다.
 
 ---
 
