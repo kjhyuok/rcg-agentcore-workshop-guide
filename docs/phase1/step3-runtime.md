@@ -135,6 +135,12 @@ agentcore invoke --prompt "고객 C001에게 상품 3개 추천해주세요"
 
 CLI·Console로 배포를 확인했다면, 이제 웹 화면에서 대화형으로 테스트해봅니다. 방금 확인한 **Agent ARN**(`arn:aws:bedrock-agentcore:...:runtime/phase1_phase1-...`)을 Agent Playground에 등록하면 됩니다.
 
+먼저 Playground 접속 URL을 확인합니다. 계정 Console → **CloudFormation** → Stacks → `workshop-resources` → **Outputs** 탭에서 `PlaygroundUrl` 값을 찾으세요:
+
+![CloudFormation Outputs에서 PlaygroundUrl 확인](../assets/images/phase1/cfn-playground-url.png)
+
+이 URL을 별도 브라우저 탭으로 열어봅시다.
+
 1. Workshop Studio **Event Outputs**의 `PlaygroundUrl`로 접속
 2. 우측 상단 **⚙️ Settings** 클릭 → **추천 Agent (Phase 1)** 입력란에 Agent ARN 붙여넣기 → **저장**
 
