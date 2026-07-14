@@ -1,4 +1,4 @@
-# Step 2: Agent 코드 작성 + Code Interpreter 연동 <span class="badge-time">⏱️ 20분</span> <span class="badge-difficulty">★★☆</span>
+# Step 2: Agent 코드 작성 + 시나리오 테스트 <span class="badge-time">⏱️ 20분</span> <span class="badge-difficulty">★★☆</span>
 
 <div class="step-progress">
   <span class="step done">✓ Step 1 Gateway</span>
@@ -11,9 +11,10 @@
 </div>
 
 !!! info "이 Step의 목표"
-    Gateway에서 Tool 목록을 가져오고, **Code Interpreter**를 추가하여 **Agent를 구성**합니다.
-    
-    Agent = Model + System Prompt + Gateway(Tools) + Code Interpreter
+    Gateway에서 가져온 3개 Tool로 Agent를 구성하고, **여러 시나리오**로 호출하며
+    Agent가 상황에 따라 Tool을 얼마나, 어떤 순서로 쓰는지 관찰합니다.
+
+    Agent = Model + System Prompt + Gateway(Tools)
 
 <div class="file-target">agents/phase1_recommend.py</div>
 
@@ -26,21 +27,17 @@
 from strands import Agent
 from strands.models import BedrockModel
 from strands.tools.mcp import MCPClient
-from strands_tools.code_interpreter import AgentCoreCodeInterpreter
 from mcp.client.streamable_http import streamablehttp_client
 
 # Gateway를 MCPClient로 래핑 (Tool 목록을 자동으로 가져옴)
 # 모듈 로드 시 1회만 생성 — 요청마다 새로 만들면 매번 MCP 핸드셰이크 비용이 붙음
 mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
 
-# Code Interpreter 추가
-code_interpreter_tool = AgentCoreCodeInterpreter(region="us-west-2")
-
-# Agent 조립: Gateway(MCPClient) + Code Interpreter
+# Agent 조립: Gateway(MCPClient)의 Tool을 그대로 전달
 agent = Agent(
     model=model,
     system_prompt=SYSTEM_PROMPT,
-    tools=[mcp_client, code_interpreter_tool.code_interpreter]
+    tools=[mcp_client]
 )
 
 # stream_async로 토큰이 생성되는 즉시 yield — 답을 다 만들 때까지 기다리지 않음
@@ -50,11 +47,11 @@ async for event in agent.stream_async("사용자 질문"):
 ```
 
 `MCPClient`가 Gateway 연결과 Tool 목록 조회를 자동으로 처리합니다. Lambda ARN을 몰라도 됩니다.
-Code Interpreter를 추가하면 Agent가 데이터 분석이나 계산이 필요할 때 Python 코드를 실행할 수 있습니다.
+Agent는 System Prompt의 지시에 따라 `customer_profile` → `purchase_history` → `product_search` 순서로 Tool을 호출합니다.
 
 !!! tip "agent(prompt) vs agent.stream_async(prompt)"
     `agent("질문")`은 Agent가 답을 전부 만든 뒤에야 결과를 반환합니다 — Tool 호출이 몇 번 도는 동안 아무 반응이 없어 느리게 느껴집니다.
-    `agent.stream_async("질문")`은 토큰이 생성되는 즉시 하나씩 넘겨줍니다. `phase1_recommend.py`의 entrypoint는 이 방식을 씁니다(2-3 참고).
+    `agent.stream_async("질문")`은 토큰이 생성되는 즉시 하나씩 넘겨줍니다. `phase1_recommend.py`의 entrypoint는 이 방식을 씁니다(2-2 참고).
 
 ---
 
@@ -69,9 +66,9 @@ cd ~/workshop/starter-code
 source ~/workshop/.env.w001
 ```
 
-Explorer에서 `starter-code/agents/phase1_recommend.py`를 클릭하면, 아래처럼 **아직 Code Interpreter가 없는 상태**의 코드가 보입니다:
+Explorer에서 `starter-code/agents/phase1_recommend.py`를 클릭하여 코드를 확인하세요:
 
-```python title="agents/phase1_recommend.py — 현재 상태 (Code Interpreter 추가 전)"
+```python title="agents/phase1_recommend.py — 핵심 부분"
 import os
 import uuid
 from strands import Agent
@@ -96,65 +93,15 @@ model = BedrockModel(
 
 !!! warning "AWS_REGION 폴백값 확인"
     `REGION = os.environ.get("AWS_REGION", "us-west-2")`처럼 폴백값이 실제 배포 리전(`us-west-2`)과 같은지 확인하세요.
-    `.env.w001`을 source하지 않은 채로 실행하면 `AWS_REGION`이 비어 폴백값으로 넘어가는데, 이 값이 `us-east-1` 등 실제 배포 리전과 다르면 Gateway/Bedrock 모델 호출이 access-denied나 timeout으로 실패합니다 — region mismatch라는 게 에러 메시지에 명확히 드러나지 않아 헷갈리기 쉬우니 미리 확인해두세요.
-
-!!! tip "Code Interpreter가 필요한 이유"
-    상품 추천 시 가격 비교, 할인율 계산, 통계 분석 등을 Agent가 직접 Python 코드로 수행할 수 있습니다.
-    Gateway Tool만으로는 "이 상품들 중 가성비 1위는?"에 대한 정확한 계산이 어렵습니다.
+    `.env.w001`을 source하지 않은 채로 실행하면 `AWS_REGION`이 비어 폴백값으로 넘어가는데, 이 값이 실제 배포 리전과 다르면 Gateway/Bedrock 모델 호출이 access-denied나 timeout으로 실패합니다 — region mismatch라는 게 에러 메시지에 명확히 드러나지 않아 헷갈리기 쉬우니 미리 확인해두세요.
 
 ---
 
-## 2-2. Code Interpreter 추가 (직접 수정!)
+## 2-2. Gateway 연결 + entrypoint 코드
 
-!!! example "실습: 직접 코드를 수정합니다"
-    지금부터 3곳을 직접 고칩니다: **① import 추가 → ② Code Interpreter 인스턴스 생성 → ③ System Prompt에 사용 지시 추가.**
-    Tool을 만드는 것과 Tool을 쓰게 만드는 것은 별개입니다 — 셋 다 있어야 동작합니다.
+Agent가 Gateway에서 Tool을 가져와 호출하는 핵심 코드:
 
-**① import 추가** — 파일 상단 import 블록에 추가:
-
-```python
-from strands_tools.code_interpreter import AgentCoreCodeInterpreter
-```
-
-**② Code Interpreter 인스턴스 생성** — `mcp_client` 생성 코드 바로 아래에 추가:
-
-```python
-# Code Interpreter (모듈 로드 시 1회만 생성)
-code_interpreter_tool = AgentCoreCodeInterpreter(region=REGION)
-```
-
-**③ System Prompt에 사용 지시 추가** — `SYSTEM_PROMPT`의 `## 제약` 위에 아래 블록을 추가하세요:
-
-```python
-## 계산이 필요할 때
-- 가격 비교, 할인율 계산, 평점 분석은 code_interpreter를 사용하세요
-- 수치 기반 판단은 반드시 코드로 검증하세요
-- 추천 근거를 시각화할 때도 code_interpreter로 차트 생성
-```
-
-!!! tip "왜 이걸 추가하나요?"
-    Agent에게 Code Interpreter를 Tool로 줘도, **"언제 쓰라"고 안 알려주면 안 씁니다.**
-    
-    | System Prompt | Agent 행동 |
-    |--------------|-----------|
-    | Code Interpreter 지시 없음 | 텍스트로만 추천 (차트 없이 글로만 설명) |
-    | "code_interpreter로 차트 생성" 추가 | 추천 근거를 matplotlib 차트로 시각화하여 응답에 포함 |
-    
-    **Tool을 주는 것 ≠ Tool을 쓰게 하는 것.** Prompt로 행동을 유도해야 합니다.
-
-!!! tip "System Prompt = Agent의 행동을 결정하는 핵심"
-    같은 Tool이라도 Prompt가 다르면 Agent의 행동이 완전히 달라집니다.
-    
-    - "알러지 제외" 규칙이 없으면 → 견과류 상품도 추천할 수 있음
-    - "프로필 먼저 조회" 규칙이 없으면 → 바로 검색부터 할 수 있음
-
----
-
-## 2-3. entrypoint의 tools 리스트에 Code Interpreter 반영
-
-`agents/phase1_recommend.py` 아래쪽의 `recommend_agent` entrypoint를 확인하세요. `Agent(...)` 생성 부분의 `tools=[mcp_client]`에 **2-2에서 만든 `code_interpreter_tool.code_interpreter`를 추가**해야 합니다 — 여기를 빠뜨리면 System Prompt에 지시를 넣어도 Agent가 실제로 Code Interpreter를 호출할 수 없습니다.
-
-```python title="agents/phase1_recommend.py 내부 — 수정 후"
+```python title="agents/phase1_recommend.py 내부"
 @app.entrypoint
 async def recommend_agent(payload: dict):
     user_message = payload.get("message", payload.get("prompt", ""))
@@ -163,7 +110,7 @@ async def recommend_agent(payload: dict):
     agent = Agent(
         model=model,
         system_prompt=SYSTEM_PROMPT,
-        tools=[mcp_client, code_interpreter_tool.code_interpreter],
+        tools=[mcp_client],
     )
 
     # return 대신 yield — 토큰이 생성되는 즉시 흘려보냄 (SSE 스트리밍)
@@ -184,9 +131,15 @@ async def recommend_agent(payload: dict):
     함수가 `return`이 아니라 `yield`를 쓰면, `BedrockAgentCoreApp`이 이를 자동으로 SSE(Server-Sent Events) 스트리밍 응답으로 변환합니다.
     참가자가 `agentcore invoke`로 호출하면 답을 다 만들 때까지 기다리지 않고, 토큰이 생성되는 즉시 화면에 흘러나옵니다 (3-3 참고).
 
+!!! tip "System Prompt = Agent의 행동을 결정하는 핵심"
+    같은 Tool이라도 Prompt가 다르면 Agent의 행동이 완전히 달라집니다.
+
+    - "알러지 제외" 규칙이 없으면 → 견과류 상품도 추천할 수 있음
+    - "프로필 먼저 조회" 규칙이 없으면 → 바로 검색부터 할 수 있음
+
 ---
 
-## 2-4. 로컬 테스트
+## 2-3. 로컬 테스트 — 여러 시나리오로 Tool 호출 전략 관찰
 
 배포 전에 로컬에서 동작을 확인합니다:
 
@@ -198,7 +151,10 @@ agentcore dev --no-browser
 해당 명령어를 실행하면 아래와 Terminal에서 Agent를 테스트 해볼수 있습니다.
 ![Open Folder](../assets/images/phase1/phase1_2-3.png)
 
-예시 입력값
+같은 Agent에게 아래 4가지 시나리오를 순서대로 입력해보고, **매번 Tool을 어떤 순서·횟수로 호출하는지** 비교하세요.
+
+### 시나리오 1 — 기본 추천 (알러지 고려)
+
 ```bash
 고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요
 ```
@@ -206,17 +162,47 @@ agentcore dev --no-browser
 ??? success "정상 출력 예시"
     ![Open Folder](../assets/images/phase1/phase1_2-3-result.png)
 
-
     조건을 만족하는 상품이 3개보다 적으면 Agent는 있는 만큼만 추천합니다 — 억지로 3개를 채우려고 존재하지 않는 상품을 만들어내지 않도록 System Prompt에 명시되어 있습니다.
+
+### 시나리오 2 — 목록에 없는 고객 ID
+
+```bash
+고객 C099에게 상품을 추천해주세요
+```
+
+!!! tip "C099는 워크샵 Mock 데이터에 없는 임의의 ID입니다"
+    `customer_profile`/`purchase_history`가 이 ID를 빈 결과로 주는지, 에러를 내는지는 Mock Lambda 구현에 따라 다를 수 있습니다.
+    어느 쪽이든 **관찰 대상**입니다 — Agent가 빈 결과/에러를 받고도 상품을 지어내서 추천하면 안 됩니다.
+
+**관찰 포인트**: Tool 결과가 비어있거나 에러일 때, Agent가 이를 어떻게 처리하는지 확인하세요. "이미 구매한 상품은 추천하지 않음" 규칙을 지킬 데이터가 없을 때 Agent가 임의로 상품을 지어내지 않고, 있는 정보만으로 정직하게 답하는지가 핵심입니다.
+
+### 시나리오 3 — 조건을 만족하는 상품이 0개인 경우
+
+```bash
+고객 C001에게 견과류 성분이 들어간 상품만 추천해주세요
+```
+
+**관찰 포인트**: System Prompt의 "알러지 성분 포함 상품은 절대 제외" 규칙과 "견과류만 추천해달라"는 사용자 요청이 충돌합니다. Agent가 규칙을 우선시해서 "추천 가능한 상품이 없습니다"라고 정직하게 답하는지, 아니면 사용자 요청에 따라 규칙을 어기는지 확인하세요.
+
+### 시나리오 4 — 모호한 질문 (Tool 호출 범위 판단)
+
+```bash
+요즘 잘 나가는 상품이 뭐예요?
+```
+
+**관찰 포인트**: 특정 고객 ID가 없는 질문입니다. Agent가 `customer_profile`을 호출하지 않고 바로 `product_search`만으로 답하는지, 아니면 고객 정보를 먼저 물어보는지 확인하세요. System Prompt의 "고객 프로필을 먼저 조회" 규칙이 특정 고객을 전제로 한 규칙인지, 모든 질문에 무조건 적용되는 규칙인지가 여기서 드러납니다.
 
 ---
 
-## 관찰 포인트
+## 관찰 포인트 정리
 
-!!! abstract "실행 결과에서 아래를 확인하세요"
+!!! abstract "4가지 시나리오에서 공통으로 확인할 것"
     - ✅ Agent가 Gateway를 통해 **3개 Tool을 자동으로 인식**했는가?
-    - ✅ `customer_profile` → `purchase_history` → `product_search` 순서로 호출했는가?
-    - ✅ 알러지(견과류) 상품을 정확히 제외했는가?
+    - ✅ 상황에 따라 Tool 호출 순서·횟수가 달라지는가, 아니면 항상 고정된 순서로 호출하는가?
+    - ✅ Tool 결과가 비어있거나 조건에 안 맞을 때, 있는 그대로 정직하게 답하는가 (지어내지 않는가)?
+    - ✅ System Prompt의 규칙과 사용자 요청이 충돌할 때 어느 쪽을 우선하는가?
+
+    Step 4의 Observability에서 이 시나리오들의 Trace를 다시 확인하며 "왜 이렇게 호출했는지"를 검증합니다.
 
 ---
 

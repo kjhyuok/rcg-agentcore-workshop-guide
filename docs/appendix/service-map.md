@@ -52,9 +52,9 @@ graph TB
 
 ```mermaid
 graph LR
-    P1["<b>Phase 1</b><br/>🟠 Gateway<br/>🟠 Runtime<br/>🟠 Observability<br/>🟠 Code Interpreter"]
+    P1["<b>Phase 1</b><br/>🟠 Gateway<br/>🟠 Runtime<br/>🟠 Observability"]
     P2["<b>Phase 2</b><br/>🔵 Memory<br/>🔵 Policy<br/>🔵 Browser"]
-    P3["<b>Phase 3</b><br/>🟣 Multi-Agent<br/>🟣 Evaluations"]
+    P3["<b>Phase 3</b><br/>🟣 Multi-Agent<br/>🟣 Evaluations<br/>🟣 Code Interpreter(선택)"]
 
     P1 -->|"+3 서비스"| P2
     P2 -->|"+2 서비스"| P3
@@ -135,9 +135,9 @@ sequenceDiagram
 | 항목 | 설명 |
 |------|------|
 | **한 줄 요약** | Agent가 Python 코드를 작성 & 실행하여 계산/시각화 |
-| **핵심 코드** | `AgentCoreCodeInterpreter(region="us-east-1")` |
+| **핵심 코드** | `AgentCoreCodeInterpreter(region="us-west-2")` |
 | **비유** | 계산기를 가진 Agent — 숫자를 "추측"이 아닌 "계산"으로 |
-| **사용 Phase** | Phase 1 (추천 결과 차트 생성) |
+| **사용 Phase** | Phase 3 (선택 — ROI/할인율 계산 등) |
 
 ---
 
@@ -223,12 +223,12 @@ graph TD
     style RT2 fill:#fff3e0,stroke:#e65100
     style GW2 fill:#fff3e0,stroke:#e65100
     style OB2 fill:#fff3e0,stroke:#e65100
-    style CI2 fill:#fff3e0,stroke:#e65100
     style ME2 fill:#e3f2fd,stroke:#1565c0
     style PO2 fill:#e3f2fd,stroke:#1565c0
     style BR2 fill:#e3f2fd,stroke:#1565c0
     style MA2 fill:#f3e5f5,stroke:#6a1b9a
     style EV2 fill:#f3e5f5,stroke:#6a1b9a
+    style CI2 fill:#f3e5f5,stroke:#6a1b9a
 ```
 
 ---
