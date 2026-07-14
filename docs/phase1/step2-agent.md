@@ -158,6 +158,7 @@ agentcore dev --no-browser
 ??? success "정상 출력 예시"
     ![Open Folder](../assets/images/phase1/phase1_2-3-result.png)
 
+    고객 프로필(알러지: 견과류)과 구매 이력을 먼저 조회한 뒤, 남은 후보 중 알러지·구매 이력과 겹치지 않는 상품 3개를 정확히 추천합니다.
     조건을 만족하는 상품이 3개보다 적으면 Agent는 있는 만큼만 추천합니다 — 억지로 3개를 채우려고 존재하지 않는 상품을 만들어내지 않도록 System Prompt에 명시되어 있습니다.
 
 ### 시나리오 2 — 목록에 없는 고객 ID
