@@ -91,10 +91,6 @@ model = BedrockModel(
 )
 ```
 
-!!! warning "AWS_REGION 폴백값 확인"
-    `REGION = os.environ.get("AWS_REGION", "us-west-2")`처럼 폴백값이 실제 배포 리전(`us-west-2`)과 같은지 확인하세요.
-    `.env.w001`을 source하지 않은 채로 실행하면 `AWS_REGION`이 비어 폴백값으로 넘어가는데, 이 값이 실제 배포 리전과 다르면 Gateway/Bedrock 모델 호출이 access-denied나 timeout으로 실패합니다 — region mismatch라는 게 에러 메시지에 명확히 드러나지 않아 헷갈리기 쉬우니 미리 확인해두세요.
-
 같은 파일에서 `SYSTEM_PROMPT`를 찾아보면, 4개 섹션으로 짜여 있습니다:
 
 ```python title="agents/phase1_recommend.py — SYSTEM_PROMPT"
