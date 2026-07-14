@@ -26,6 +26,12 @@
 AgentCore: Agent → Gateway(MCP) → Lambda (자동 라우팅)
 ```
 
+**AgentCore Gateway**는 Agent(MCP Client)가 보낸 MCP 요청(툴 목록 조회 List, 툴 호출 Invoke, 검색 Search)을 받아 뒤에 등록된 **Target**으로 라우팅하는 서비스입니다. Target은 크게 두 종류입니다 — 기존 **OpenAPI 스키마 기반 RESTful API**를 그대로 연결하는 API Endpoint Target, 그리고 이 워크샵에서 쓰는 **AWS Lambda 함수**를 연결하는 Lambda Target. Gateway가 Target 뒤의 실제 API/함수 각각을 MCP Tool 하나씩으로 자동 변환해주기 때문에, Agent는 Gateway URL 하나만 알면 여러 Tool에 동시에 접근할 수 있습니다.
+
+![AgentCore Gateway 개념](../assets/images/phase1/agentcore-gateway-concept.png)
+
+이 워크샵에서는 **Lambda Target** 경로를 사용합니다: `customer-profile`, `product-search`, `purchase-history` 3개 Lambda 함수를 Gateway에 등록하면, 각각이 Tool 4·5·6처럼 독립된 MCP Tool로 노출됩니다.
+
 **Gateway의 가치:**
 
 - Agent 코드에 Lambda ARN을 하드코딩하지 않음
