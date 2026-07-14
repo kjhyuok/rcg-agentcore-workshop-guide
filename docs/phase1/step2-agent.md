@@ -69,31 +69,34 @@ cd ~/workshop/starter-code
 source ~/workshop/.env.w001
 ```
 
-Explorer에서 `starter-code/agents/phase1_recommend.py`를 클릭하여 코드를 확인하세요:
+Explorer에서 `starter-code/agents/phase1_recommend.py`를 클릭하면, 아래처럼 **아직 Code Interpreter가 없는 상태**의 코드가 보입니다:
 
-```python title="agents/phase1_recommend.py — 핵심 부분"
+```python title="agents/phase1_recommend.py — 현재 상태 (Code Interpreter 추가 전)"
 import os
 import uuid
 from strands import Agent
 from strands.models import BedrockModel
 from strands.tools.mcp import MCPClient
-from strands_tools.code_interpreter import AgentCoreCodeInterpreter
 from mcp.client.streamable_http import streamablehttp_client
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
-# Gateway URL (환경변수에서 읽음)
+# 환경변수 (agentcore deploy --env 로 주입)
 GATEWAY_URL = os.environ.get("AGENTCORE_GATEWAY_URL", "")
-REGION = "us-west-2"
+REGION = os.environ.get("AWS_REGION", "us-west-2")
+
+# MCPClient는 모듈 로드 시 1회만 생성 (요청마다 새로 만들면 매번 핸드셰이크 비용)
+mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
 
 # 모델
 model = BedrockModel(
     model_id="us.anthropic.claude-sonnet-4-6",
     region_name=REGION,
 )
-
-# Code Interpreter (모듈 로드 시 1회만 생성)
-code_interpreter_tool = AgentCoreCodeInterpreter(region=REGION)
 ```
+
+!!! warning "AWS_REGION 폴백값 확인"
+    `REGION = os.environ.get("AWS_REGION", "us-west-2")`처럼 폴백값이 실제 배포 리전(`us-west-2`)과 같은지 확인하세요.
+    `.env.w001`을 source하지 않은 채로 실행하면 `AWS_REGION`이 비어 폴백값으로 넘어가는데, 이 값이 `us-east-1` 등 실제 배포 리전과 다르면 Gateway/Bedrock 모델 호출이 access-denied나 timeout으로 실패합니다 — region mismatch라는 게 에러 메시지에 명확히 드러나지 않아 헷갈리기 쉬우니 미리 확인해두세요.
 
 !!! tip "Code Interpreter가 필요한 이유"
     상품 추천 시 가격 비교, 할인율 계산, 통계 분석 등을 Agent가 직접 Python 코드로 수행할 수 있습니다.
@@ -101,14 +104,26 @@ code_interpreter_tool = AgentCoreCodeInterpreter(region=REGION)
 
 ---
 
-## 2-2. System Prompt에 Code Interpreter 지시 추가 (직접 수정!)
+## 2-2. Code Interpreter 추가 (직접 수정!)
 
 !!! example "실습: 직접 코드를 수정합니다"
-    `agents/phase1_recommend.py`를 열고 `SYSTEM_PROMPT` 부분을 찾으세요.
-    
-    기존에는 "행동 규칙"만 있습니다. 여기에 **Code Interpreter 활용 지시**를 추가합니다.
+    지금부터 3곳을 직접 고칩니다: **① import 추가 → ② Code Interpreter 인스턴스 생성 → ③ System Prompt에 사용 지시 추가.**
+    Tool을 만드는 것과 Tool을 쓰게 만드는 것은 별개입니다 — 셋 다 있어야 동작합니다.
 
-현재 코드의 System Prompt 끝부분 (`## 제약` 위)에 아래 블록을 추가하세요:
+**① import 추가** — 파일 상단 import 블록에 추가:
+
+```python
+from strands_tools.code_interpreter import AgentCoreCodeInterpreter
+```
+
+**② Code Interpreter 인스턴스 생성** — `mcp_client` 생성 코드 바로 아래에 추가:
+
+```python
+# Code Interpreter (모듈 로드 시 1회만 생성)
+code_interpreter_tool = AgentCoreCodeInterpreter(region=REGION)
+```
+
+**③ System Prompt에 사용 지시 추가** — `SYSTEM_PROMPT`의 `## 제약` 위에 아래 블록을 추가하세요:
 
 ```python
 ## 계산이 필요할 때
@@ -135,15 +150,11 @@ code_interpreter_tool = AgentCoreCodeInterpreter(region=REGION)
 
 ---
 
-## 2-3. Gateway 연결 + Tool 조합 코드
+## 2-3. entrypoint의 tools 리스트에 Code Interpreter 반영
 
-Agent가 Gateway에서 Tool을 가져오고, Code Interpreter와 합치는 핵심 코드:
+`agents/phase1_recommend.py` 아래쪽의 `recommend_agent` entrypoint를 확인하세요. `Agent(...)` 생성 부분의 `tools=[mcp_client]`에 **2-2에서 만든 `code_interpreter_tool.code_interpreter`를 추가**해야 합니다 — 여기를 빠뜨리면 System Prompt에 지시를 넣어도 Agent가 실제로 Code Interpreter를 호출할 수 없습니다.
 
-```python title="Gateway + Code Interpreter → Agent 연결 (phase1_recommend.py 내부)"
-# MCPClient는 모듈 로드 시 1회만 생성 (요청마다 새로 만들면 매번 핸드셰이크 비용)
-mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
-
-
+```python title="agents/phase1_recommend.py 내부 — 수정 후"
 @app.entrypoint
 async def recommend_agent(payload: dict):
     user_message = payload.get("message", payload.get("prompt", ""))
