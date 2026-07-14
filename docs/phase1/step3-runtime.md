@@ -69,7 +69,7 @@ chmod +x scripts/deploy-agent.sh
 ## 3-2. 배포 상태 확인
 
 ```bash
-cd workshop/starter-code/agents/phase1
+cd ~/workshop/starter-code/agents/phase1
 agentcore status 
 ```
 
