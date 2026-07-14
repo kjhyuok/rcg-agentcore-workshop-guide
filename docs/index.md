@@ -13,6 +13,22 @@
 
 ---
 
+## Agent Playground — 내가 만든 Agent를 바로 테스트
+
+오늘 여러분이 만드는 Agent는 코드로만 끝나지 않습니다. EC2에 미리 준비된 **Agent Playground** 웹 화면에서 실시간으로 대화하며 확인할 수 있습니다.
+
+![Agent Playground 화면](assets/images/playground/playground-overview.png)
+
+- **테스트에 쓰이는 데이터**는 실제 데이터가 아니라, 이 워크샵을 위해 만든 **Mock 데이터**입니다 (Lambda 함수 + 별도 Mock 사이트 URL에서 제공).
+- Phase별로 `agentcore deploy`로 Agent를 배포하면 **Runtime ARN**이 출력됩니다. 이 ARN을 Playground 우측 상단 **⚙️ Settings**에서 입력하면, 별도 배포 작업 없이 **즉시 화면에서 내 Agent를 호출**할 수 있습니다.
+
+![Agent 설정 화면](assets/images/playground/playground-settings.png)
+
+!!! tip "언제 사용하나요?"
+    각 Phase에서 Agent를 배포한 직후, CLI(`agentcore invoke`) 대신 이 Playground에서 대화형으로 테스트하면 더 편합니다. 접속 URL은 Workshop Studio **Event Outputs**의 `PlaygroundUrl`에서 확인하세요 ([환경 세팅](setup.md) 참고).
+
+---
+
 ## 오늘 사용하는 AgentCore 서비스
 
 | 서비스 | 역할 | 도입 시점 |

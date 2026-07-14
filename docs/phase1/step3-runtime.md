@@ -122,6 +122,23 @@ agentcore invoke --prompt "고객 C001에게 상품 3개 추천해주세요"
 
 ---
 
+## 3-4b. Agent Playground에 연결
+
+CLI·Console로 배포를 확인했다면, 이제 웹 화면에서 대화형으로 테스트해봅니다. 방금 확인한 **Agent ARN**(`arn:aws:bedrock-agentcore:...:runtime/phase1_phase1-...`)을 Agent Playground에 등록하면 됩니다.
+
+1. Workshop Studio **Event Outputs**의 `PlaygroundUrl`로 접속
+2. 우측 상단 **⚙️ Settings** 클릭 → **추천 Agent (Phase 1)** 입력란에 Agent ARN 붙여넣기 → **저장**
+
+![Agent 설정 화면](../assets/images/playground/playground-settings.png)
+
+3. 좌측 **상품 추천 Agent** 카드가 `ACTIVE`로 바뀌면 채팅창에서 바로 질문 가능
+
+![Agent Playground 화면](../assets/images/playground/playground-overview.png)
+
+이후 Phase 2, 3에서도 배포할 때마다 이 화면에서 바로 테스트해볼 수 있습니다.
+
+---
+
 ## 3-5. 배포 전 vs 후 비교
 
 | 항목 | 로컬 (Step 2) | Runtime 배포 (지금) |

@@ -302,6 +302,20 @@ agentcore invoke --agent rcg_cs_agent \
 
 ---
 
+## 3-6b. Agent Playground에 연결
+
+CLI로 Memory 동작까지 확인했다면, 이제 웹 화면에서 대화형으로 테스트해봅니다. 배포 시 출력된 **Agent ARN**을 Agent Playground 설정에 등록하면 됩니다.
+
+1. Playground 접속 → **⚙️ Settings** → **CS Agent (Phase 2)** 입력란에 Agent ARN 붙여넣기 → **저장**
+
+![Agent 설정 화면](../assets/images/playground/playground-settings.png)
+
+2. 좌측 **CS 자동화 Agent** 카드가 `ACTIVE`로 바뀌면 채팅창에서 바로 질문 가능
+
+![Agent Playground 화면](../assets/images/playground/playground-overview.png)
+
+---
+
 ## 3-7. Trace 비교 (Observability)
 
 Phase 1 Trace와 비교해봅니다:
