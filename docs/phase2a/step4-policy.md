@@ -78,7 +78,7 @@ def handler(event, context):
 ## 4-2. Policy 생성
 
 ```bash
-python3 scripts/setup-policy.py
+python3.12 scripts/setup-policy.py
 ```
 
 ??? example "스크립트가 하는 일 (내부)"

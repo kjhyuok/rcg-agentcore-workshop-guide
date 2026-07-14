@@ -15,6 +15,11 @@
 - 워크샵 코드 (`~/workshop`)
 - Lambda 11개 + IAM Role + Mock 사이트 (모두 배포 완료)
 
+!!! danger "스크립트는 반드시 `python3.12`로 실행하세요"
+    터미널의 기본 `python3` 명령은 OS 기본 Python(3.9)을 가리키며 `boto3`가 설치되어 있지 않습니다.
+    워크샵용 라이브러리가 설치된 실행 파일은 `python3.12`이므로, 가이드의 모든 `python3 scripts/....py` 명령은
+    **`python3.12 scripts/....py`로 실행**해야 합니다. `python3`으로 실행하면 `ModuleNotFoundError: No module named 'boto3'`가 발생합니다.
+
 ---
 
 ## Step 1. Event Outputs 확인

@@ -46,7 +46,7 @@ Agent가 사용하는 총 Tool: 8개
 
 ```bash
 cd ~/workshop/starter-code
-python3 scripts/add-cs-targets.py
+python3.12 scripts/add-cs-targets.py
 ```
 
 Console에서 확인 — **Bedrock → AgentCore → Gateways** → 우리 Gateway 클릭하면 7개 Target이 모두 Ready 상태로 보입니다:

@@ -39,7 +39,7 @@ AgentCore: Agent → Gateway(MCP) → Lambda (자동 라우팅)
 
 ```bash
 cd ~/workshop/starter-code
-python scripts/setup-gateway.py
+python3.12 scripts/setup-gateway.py
 ```
 
 ??? example "스크립트가 하는 일 (내부)"
