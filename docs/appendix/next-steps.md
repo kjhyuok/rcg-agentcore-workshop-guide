@@ -1,10 +1,9 @@
 # 부록: 돌아가서 할 일 (Next Steps)
 
-!!! abstract "Workshop은 시작입니다"
-    오늘 만든 것은 Mock Lambda 기반 프로토타입입니다.
-    실제 서비스로 전환하려면 아래 로드맵을 따르세요.
-
----
+::: info ℹ️ Workshop은 시작입니다
+오늘 만든 것은 Mock Lambda 기반 프로토타입입니다.
+실제 서비스로 전환하려면 아래 로드맵을 따르세요.
+:::
 
 ## 4주 로드맵
 
@@ -26,12 +25,11 @@ agentcore gateway update-target \
   --endpoint "arn:aws:lambda:ap-northeast-2:${ACCOUNT}:function:real-inventory-api"
 ```
 
-!!! tip "핵심 인사이트"
-    오늘의 가장 중요한 교훈:
-    **Gateway Target을 바꾸면 Agent 코드를 한 줄도 안 고치고 실제 서비스가 됩니다.**
-    이것이 AgentCore의 "관심사 분리" 아키텍처입니다.
-
----
+::: tip 핵심 인사이트
+오늘의 가장 중요한 교훈:
+**Gateway Target을 바꾸면 Agent 코드를 한 줄도 안 고치고 실제 서비스가 됩니다.**
+이것이 AgentCore의 "관심사 분리" 아키텍처입니다.
+:::
 
 ### Week 2: Memory + Policy 고도화
 
@@ -53,8 +51,6 @@ agentcore gateway update-target \
 }
 ```
 
----
-
 ### Week 3: Guardrails & 에러 핸들링
 
 | 할 일 | 방법 |
@@ -73,8 +69,6 @@ graph LR
     style FB fill:#e8f5e9,stroke:#2e7d32
 ```
 
----
-
 ### Week 4: 프로덕션 & 평가
 
 | 할 일 | 방법 |
@@ -83,8 +77,6 @@ graph LR
 | 평가 파이프라인 | 정확도/만족도/비용 자동 측정 |
 | 모니터링 알림 | Observability → CloudWatch Alarm |
 | 사내 시연 | Phase 3에서 만든 나만의 Agent를 시연 소재로 활용 |
-
----
 
 ## 프로덕션 체크리스트
 
@@ -104,8 +96,6 @@ graph LR
 - [ ] **Memory 정리** — 오래된 기록 TTL 설정
 - [ ] **Fallback** — LLM 에러 시 규칙 기반 대응
 
----
-
 ## Mock → Real 전환 가이드
 
 | Layer | Mock (오늘) | Real (적용 시) | 변경 방법 |
@@ -116,25 +106,23 @@ graph LR
 | Model | Claude Sonnet 4 | 요구사항에 맞는 모델 | Agent 코드 model_id 변경 |
 | Agent Code | **그대로 사용 가능** | 필요 시 Prompt만 개선 | System Prompt 수정 |
 
-!!! note "Agent 코드는 거의 안 바뀝니다"
-    오늘 작성한 Agent 코드의 **구조**는 프로덕션에서도 동일합니다.
-    바뀌는 것은 Gateway Target(외부), Policy 규칙(외부), 환경변수뿐입니다.
-
----
+::: info Agent 코드는 거의 안 바뀝니다
+오늘 작성한 Agent 코드의 **구조**는 프로덕션에서도 동일합니다.
+바뀌는 것은 Gateway Target(외부), Policy 규칙(외부), 환경변수뿐입니다.
+:::
 
 ## 3차 행사 연계
 
-!!! info "다음 기회"
-    이번 2차 Workshop에서 만든 Agent를 **3차 행사에서 실전 적용 사례로 발표**할 수 있습니다.
+::: info 다음 기회
+이번 2차 Workshop에서 만든 Agent를 **3차 행사에서 실전 적용 사례로 발표**할 수 있습니다.
 
-    **3차 행사 예정 내용:**
-    
-    - 실제 API 연동 결과 공유
-    - 프로덕션 운영 경험 (Observability 활용)
-    - 멀티 Agent 아키텍처 심화
-    - 참가사 간 Best Practice 교류
+**3차 행사 예정 내용:**
 
----
+- 실제 API 연동 결과 공유
+- 프로덕션 운영 경험 (Observability 활용)
+- 멀티 Agent 아키텍처 심화
+- 참가사 간 Best Practice 교류
+:::
 
 ## 도움이 필요할 때
 
@@ -147,11 +135,13 @@ graph LR
 
 ---
 
-!!! success "마무리"
-    오늘 여러분은 **AgentCore의 5개 서비스를 직접 조합**하여
-    프로덕션 수준의 Agent를 만들었습니다.
+::: tip ✅ 마무리
+오늘 여러분은 **AgentCore의 5개 서비스를 직접 조합**하여
+프로덕션 수준의 Agent를 만들었습니다.
 
-    돌아가서 **Gateway Target만 실제 API로 교체**하면,
-    오늘의 프로토타입이 **내일의 서비스**가 됩니다.
+돌아가서 **Gateway Target만 실제 API로 교체**하면,
+오늘의 프로토타입이 **내일의 서비스**가 됩니다.
 
-    "모델은 선택, **플랫폼은 AWS**"
+"모델은 선택, **플랫폼은 AWS**"
+:::
+

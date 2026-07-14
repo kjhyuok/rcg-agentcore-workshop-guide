@@ -1,0 +1,216 @@
+/* ============================================================
+   RCG AgentCore Workshop — VitePress Custom Theme
+   색 변수만 바꾸면 리브랜딩 완료
+   ============================================================ */
+
+/* --- Brand Colors & Signature Gradient --- */
+:root {
+  --vp-c-brand-1: #e65100;
+  --vp-c-brand-2: #f57c00;
+  --vp-c-brand-3: #ff9800;
+
+  --ws-grad: linear-gradient(100deg, #bf360c 0%, #e65100 45%, #ff9800 100%);
+  --ws-grad-soft: linear-gradient(135deg,
+    rgba(191,54,12,.15), rgba(230,81,0,.13), rgba(255,152,0,.15));
+
+  --vp-c-brand-soft: rgba(255,152,0,.14);
+
+  /* hero gradient text */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: var(--ws-grad);
+
+  /* hero image glow */
+  --vp-home-hero-image-background-image: var(--ws-grad-soft);
+  --vp-home-hero-image-filter: blur(44px);
+}
+
+/* --- Dark Mode: Deep Navy Background + Corner Glows --- */
+.dark {
+  --vp-c-bg: #0f1219;
+  --vp-c-bg-soft: #161b26;
+  --vp-c-bg-mute: #1c2333;
+}
+
+.dark body {
+  background:
+    radial-gradient(ellipse 60% 50% at 0% 0%, rgba(191,54,12,.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 100% 100%, rgba(255,152,0,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 100% 0%, rgba(230,81,0,.05) 0%, transparent 50%),
+    var(--vp-c-bg);
+}
+
+/* --- Navbar: Fix backdrop + divider line (Trap #2, #3) --- */
+.dark .VPNavBar .wrapper {
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: rgba(15,18,25,.75);
+}
+
+.dark .VPNavBar .wrapper .content {
+  background: transparent;
+}
+
+.dark .VPNavBar .divider-line {
+  background-color: rgba(230,81,0,.4) !important;
+}
+
+.VPNavBar.home .divider-line {
+  background-color: transparent !important;
+}
+
+/* --- Buttons --- */
+.VPButton.brand {
+  background: var(--ws-grad) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600;
+  transition: opacity .2s, transform .15s;
+}
+
+.VPButton.brand:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+
+/* --- Feature Cards --- */
+.VPFeature {
+  background: rgba(255,255,255,.03) !important;
+  border: 1px solid rgba(255,152,0,.12) !important;
+  border-radius: 12px !important;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.VPFeature:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(230,81,0,.1);
+}
+
+/* --- Headings --- */
+.vp-doc h1 {
+  border-bottom: 3px solid transparent;
+  border-image: var(--ws-grad) 1;
+  padding-bottom: .3em;
+}
+
+.vp-doc h2 {
+  position: relative;
+  padding-left: 1em;
+}
+
+.vp-doc h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: .18em;
+  height: 1.1em;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--ws-grad);
+}
+
+/* --- Korean word-break --- */
+.vp-doc p, .vp-doc li, .vp-doc td, .vp-doc th {
+  word-break: keep-all;
+}
+
+/* --- Tables --- */
+.vp-doc table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.dark .vp-doc th {
+  background: rgba(230,81,0,.12);
+}
+
+.dark .vp-doc tr:nth-child(even) td {
+  background: rgba(255,255,255,.02);
+}
+
+/* --- Containers (admonitions) --- */
+.vp-doc .custom-block {
+  border-radius: 8px;
+}
+
+.vp-doc .custom-block.tip {
+  border-color: var(--vp-c-brand-2);
+}
+
+/* --- Mermaid: Fix text overflow (Trap #1) --- */
+.mermaid foreignObject {
+  overflow: visible !important;
+}
+
+.mermaid .nodeLabel {
+  line-height: 1.5 !important;
+  white-space: normal !important;
+}
+
+.mermaid .cluster-label {
+  transform: translateY(2px);
+}
+
+.mermaid .cluster rect {
+  rx: 8 !important;
+  ry: 8 !important;
+}
+
+/* --- Right aside (outline/TOC): narrow to half width --- */
+.VPDoc .aside {
+  width: 180px;
+  max-width: 180px;
+  padding-left: 0;
+}
+
+.VPDoc .aside .aside-container {
+  width: 180px;
+}
+
+.VPDocAsideOutline .outline-link {
+  font-size: 12px;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+/* 본문이 줄어든 aside 폭만큼 넓어지도록 */
+.VPDoc.has-aside .content-container {
+  max-width: 792px;
+}
+
+/* --- Sidebar active item highlight --- */
+.dark .VPSidebarItem.is-active > .item .link .text {
+  color: var(--vp-c-brand-2) !important;
+}
+
+/* --- Code blocks --- */
+.dark .vp-doc div[class*='language-'] {
+  background: rgba(22,27,38,.9);
+  border: 1px solid rgba(255,152,0,.08);
+}
+
+/* --- Scrollbar (subtle) --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,152,0,.25);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* --- Accessibility: reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .VPFeature,
+  .VPButton.brand {
+    transition: none !important;
+  }
+
+  .dark body {
+    background: var(--vp-c-bg);
+  }
+}

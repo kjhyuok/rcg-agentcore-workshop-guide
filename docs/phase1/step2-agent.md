@@ -10,15 +10,15 @@
   <span class="step">○ Step 4 Observability</span>
 </div>
 
-!!! info "이 Step의 목표"
-    Gateway에서 가져온 3개 Tool로 Agent를 구성하고, **여러 시나리오**로 호출하며
-    Agent가 상황에 따라 Tool을 얼마나, 어떤 순서로 쓰는지 관찰합니다.
+::: info 이 Step의 목표
+Gateway에서 가져온 3개 Tool로 Agent를 구성하고, **여러 시나리오**로 호출하며
+Agent가 상황에 따라 Tool을 얼마나, 어떤 순서로 쓰는지 관찰합니다.
 
-    Agent = Model + System Prompt + Gateway(Tools)
+Agent = Model + System Prompt + Gateway(Tools)
+:::
+
 
 <div class="file-target">agents/phase1_recommend.py</div>
-
----
 
 ## 핵심 패턴
 
@@ -49,11 +49,10 @@ async for event in agent.stream_async("사용자 질문"):
 `MCPClient`가 Gateway 연결과 Tool 목록 조회를 자동으로 처리합니다. Lambda ARN을 몰라도 됩니다.
 Agent는 System Prompt의 지시에 따라 `customer_profile` → `purchase_history` → `product_search` 순서로 Tool을 호출합니다.
 
-!!! tip "agent(prompt) vs agent.stream_async(prompt)"
-    `agent("질문")`은 Agent가 답을 전부 만든 뒤에야 결과를 반환합니다 — Tool 호출이 몇 번 도는 동안 아무 반응이 없어 느리게 느껴집니다.
-    `agent.stream_async("질문")`은 토큰이 생성되는 즉시 하나씩 넘겨줍니다. `phase1_recommend.py`의 entrypoint는 이 방식을 씁니다(2-2 참고).
-
----
+::: tip agent(prompt) vs agent.stream_async(prompt)
+`agent("질문")`은 Agent가 답을 전부 만든 뒤에야 결과를 반환합니다 — Tool 호출이 몇 번 도는 동안 아무 반응이 없어 느리게 느껴집니다.
+`agent.stream_async("질문")`은 토큰이 생성되는 즉시 하나씩 넘겨줍니다. `phase1_recommend.py`의 entrypoint는 이 방식을 씁니다(2-2 참고).
+:::
 
 ## 2-1. agents/phase1_recommend.py 열기
 
@@ -91,8 +90,6 @@ model = BedrockModel(
 )
 ```
 
----
-
 ## 2-2. Gateway 연결 + entrypoint 코드
 
 Agent가 Gateway에서 Tool을 가져와 호출하는 핵심 코드:
@@ -120,20 +117,23 @@ async def recommend_agent(payload: dict):
     yield {"type": "done", "response": full_text, "session_id": session_id}
 ```
 
-!!! info "MCPClient가 하는 일"
-    `MCPClient`는 Gateway URL에 연결하여 등록된 Tool 목록을 자동으로 가져옵니다. 비동기 연결, 세션 관리, Tool 목록 조회를 모두 내부에서 처리하므로 `asyncio.run()`을 직접 호출할 필요가 없습니다. Runtime 내부에서는 IAM Role 기반으로 인증됩니다.
+::: info MCPClient가 하는 일
+`MCPClient`는 Gateway URL에 연결하여 등록된 Tool 목록을 자동으로 가져옵니다. 비동기 연결, 세션 관리, Tool 목록 조회를 모두 내부에서 처리하므로 `asyncio.run()`을 직접 호출할 필요가 없습니다. Runtime 내부에서는 IAM Role 기반으로 인증됩니다.
+:::
 
-!!! info "entrypoint가 async generator인 이유"
-    함수가 `return`이 아니라 `yield`를 쓰면, `BedrockAgentCoreApp`이 이를 자동으로 SSE(Server-Sent Events) 스트리밍 응답으로 변환합니다.
-    참가자가 `agentcore invoke`로 호출하면 답을 다 만들 때까지 기다리지 않고, 토큰이 생성되는 즉시 화면에 흘러나옵니다 (3-3 참고).
 
-!!! tip "System Prompt = Agent의 행동을 결정하는 핵심"
-    같은 Tool이라도 Prompt가 다르면 Agent의 행동이 완전히 달라집니다.
+::: info entrypoint가 async generator인 이유
+함수가 `return`이 아니라 `yield`를 쓰면, `BedrockAgentCoreApp`이 이를 자동으로 SSE(Server-Sent Events) 스트리밍 응답으로 변환합니다.
+참가자가 `agentcore invoke`로 호출하면 답을 다 만들 때까지 기다리지 않고, 토큰이 생성되는 즉시 화면에 흘러나옵니다 (3-3 참고).
+:::
 
-    - "알러지 제외" 규칙이 없으면 → 견과류 상품도 추천할 수 있음
-    - "프로필 먼저 조회" 규칙이 없으면 → 바로 검색부터 할 수 있음
 
----
+::: tip System Prompt = Agent의 행동을 결정하는 핵심
+같은 Tool이라도 Prompt가 다르면 Agent의 행동이 완전히 달라집니다.
+
+- "알러지 제외" 규칙이 없으면 → 견과류 상품도 추천할 수 있음
+- "프로필 먼저 조회" 규칙이 없으면 → 바로 검색부터 할 수 있음
+:::
 
 ## 2-3. 로컬 테스트 — 여러 시나리오로 Tool 호출 전략 관찰
 
@@ -155,10 +155,12 @@ agentcore dev --no-browser
 고객 C001에게 적합한 상품 3개 추천해주세요. 알러지 고려해서요
 ```
 
-??? success "정상 출력 예시"
-    ![Open Folder](../assets/images/phase1/phase1_2-3-result.png)
+::: details ✅ 정상 출력 예시
+![Open Folder](../assets/images/phase1/phase1_2-3-result.png)
 
-    조건을 만족하는 상품이 3개보다 적으면 Agent는 있는 만큼만 추천합니다 — 억지로 3개를 채우려고 존재하지 않는 상품을 만들어내지 않도록 System Prompt에 명시되어 있습니다.
+조건을 만족하는 상품이 3개보다 적으면 Agent는 있는 만큼만 추천합니다 — 억지로 3개를 채우려고 존재하지 않는 상품을 만들어내지 않도록 System Prompt에 명시되어 있습니다.
+:::
+
 
 ### 시나리오 2 — 목록에 없는 고객 ID
 
@@ -166,9 +168,11 @@ agentcore dev --no-browser
 고객 C099에게 상품을 추천해주세요
 ```
 
-!!! tip "C099는 워크샵 Mock 데이터에 없는 임의의 ID입니다"
-    `customer_profile`/`purchase_history`가 이 ID를 빈 결과로 주는지, 에러를 내는지는 Mock Lambda 구현에 따라 다를 수 있습니다.
-    어느 쪽이든 **관찰 대상**입니다 — Agent가 빈 결과/에러를 받고도 상품을 지어내서 추천하면 안 됩니다.
+::: tip C099는 워크샵 Mock 데이터에 없는 임의의 ID입니다
+`customer_profile`/`purchase_history`가 이 ID를 빈 결과로 주는지, 에러를 내는지는 Mock Lambda 구현에 따라 다를 수 있습니다.
+어느 쪽이든 **관찰 대상**입니다 — Agent가 빈 결과/에러를 받고도 상품을 지어내서 추천하면 안 됩니다.
+:::
+
 
 **관찰 포인트**: Tool 결과가 비어있거나 에러일 때, Agent가 이를 어떻게 처리하는지 확인하세요. "이미 구매한 상품은 추천하지 않음" 규칙을 지킬 데이터가 없을 때 Agent가 임의로 상품을 지어내지 않고, 있는 정보만으로 정직하게 답하는지가 핵심입니다.
 
@@ -188,19 +192,21 @@ agentcore dev --no-browser
 
 **관찰 포인트**: 특정 고객 ID가 없는 질문입니다. Agent가 `customer_profile`을 호출하지 않고 바로 `product_search`만으로 답하는지, 아니면 고객 정보를 먼저 물어보는지 확인하세요. System Prompt의 "고객 프로필을 먼저 조회" 규칙이 특정 고객을 전제로 한 규칙인지, 모든 질문에 무조건 적용되는 규칙인지가 여기서 드러납니다.
 
----
-
 ## 관찰 포인트 정리
 
-!!! abstract "4가지 시나리오에서 공통으로 확인할 것"
-    - ✅ Agent가 Gateway를 통해 **3개 Tool을 자동으로 인식**했는가?
-    - ✅ 상황에 따라 Tool 호출 순서·횟수가 달라지는가, 아니면 항상 고정된 순서로 호출하는가?
-    - ✅ Tool 결과가 비어있거나 조건에 안 맞을 때, 있는 그대로 정직하게 답하는가 (지어내지 않는가)?
-    - ✅ System Prompt의 규칙과 사용자 요청이 충돌할 때 어느 쪽을 우선하는가?
+::: info ℹ️ 4가지 시나리오에서 공통으로 확인할 것
+- ✅ Agent가 Gateway를 통해 **3개 Tool을 자동으로 인식**했는가?
+- ✅ 상황에 따라 Tool 호출 순서·횟수가 달라지는가, 아니면 항상 고정된 순서로 호출하는가?
+- ✅ Tool 결과가 비어있거나 조건에 안 맞을 때, 있는 그대로 정직하게 답하는가 (지어내지 않는가)?
+- ✅ System Prompt의 규칙과 사용자 요청이 충돌할 때 어느 쪽을 우선하는가?
 
-    Step 4의 Observability에서 이 시나리오들의 Trace를 다시 확인하며 "왜 이렇게 호출했는지"를 검증합니다.
+Step 4의 Observability에서 이 시나리오들의 Trace를 다시 확인하며 "왜 이렇게 호출했는지"를 검증합니다.
+:::
+
 
 ---
 
-!!! success "다음"
-    Agent 동작 확인! → [Step 3: Runtime 배포](step3-runtime.md)
+::: tip ✅ 다음
+Agent 동작 확인! → [Step 3: Runtime 배포](step3-runtime.md)
+:::
+

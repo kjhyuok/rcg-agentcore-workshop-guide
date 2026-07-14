@@ -10,13 +10,14 @@
   <span class="step">○ Step 4 Policy</span>
 </div>
 
-!!! info "이 Step의 목표"
-    Agent에 **Memory를 연동**하여 고객 맥락을 기억하게 합니다.
-    
-    패턴: Memory 조회 → 프롬프트에 주입 → Agent 실행 → 대화 기록 저장
+::: info 이 Step의 목표
+Agent에 **Memory를 연동**하여 고객 맥락을 기억하게 합니다.
+
+패턴: Memory 조회 → 프롬프트에 주입 → Agent 실행 → 대화 기록 저장
+:::
+
 
 <div class="file-target">agents/phase2a_cs.py</div>
----
 
 ## 핵심 패턴
 
@@ -31,8 +32,6 @@ save_turn(actor_id, session_id, message, response)     # 이번 대화 저장 (c
 ```
 
 Agent 호출 **전후**로 Memory 작업이 추가됩니다.
-
----
 
 ## 3-1. agents/phase2a_cs.py 열기
 
@@ -83,8 +82,6 @@ memory_client = boto3.client("bedrock-agentcore", region_name=REGION)
 browser_tool = AgentCoreBrowser(region=REGION)
 ```
 
----
-
 ## 3-2. Memory 조회 함수
 
 Agent 호출 **전에** 고객의 이전 맥락을 가져옵니다:
@@ -111,12 +108,11 @@ def fetch_customer_context(actor_id: str, query: str) -> str:
     return "신규 고객 (이전 맥락 없음)"
 ```
 
-!!! tip "retrieve_memory_records의 동작"
-    `searchQuery`로 **의미 기반 검색**을 합니다.
-    
-    "반품하고 싶어요"라고 물으면, 이전 대화에서 반품 관련 내용을 우선 검색합니다.
+::: tip retrieve_memory_records의 동작
+`searchQuery`로 **의미 기반 검색**을 합니다.
 
----
+"반품하고 싶어요"라고 물으면, 이전 대화에서 반품 관련 내용을 우선 검색합니다.
+:::
 
 ## 3-3. 대화 기록 저장 함수
 
@@ -142,13 +138,12 @@ def save_turn(actor_id: str, session_id: str, user_msg: str, agent_response: str
         print(f"[Memory Save Error] {e}")
 ```
 
-!!! info "Event vs Record"
-    - **Event**: 원본 대화 (user/assistant 메시지 쌍)
-    - **Record**: Strategy가 Event에서 자동 추출한 결과 (선호, 요약, 사실)
-    
-    Event를 저장하면, Strategy가 백그라운드에서 Record를 자동 생성합니다.
+::: info Event vs Record
+- **Event**: 원본 대화 (user/assistant 메시지 쌍)
+- **Record**: Strategy가 Event에서 자동 추출한 결과 (선호, 요약, 사실)
 
----
+Event를 저장하면, Strategy가 백그라운드에서 Record를 자동 생성합니다.
+:::
 
 ## 3-4. Agent Entrypoint (전체 흐름)
 
@@ -209,10 +204,9 @@ if __name__ == "__main__":
     app.run()
 ```
 
-!!! info "왜 async generator + 백그라운드 스레드인가"
-    Phase 1과 마찬가지로 `yield`를 쓰면 토큰이 생성되는 즉시 스트리밍됩니다. 여기에 더해 CS Agent는 응답 후 Memory 저장(`save_turn`)이라는 추가 네트워크 호출이 있는데, 이걸 응답을 다 보여준 뒤 백그라운드 스레드에서 처리하도록 분리했습니다 — 참가자가 Memory 쓰기 완료까지 기다릴 필요가 없어집니다.
-
----
+::: info 왜 async generator + 백그라운드 스레드인가
+Phase 1과 마찬가지로 `yield`를 쓰면 토큰이 생성되는 즉시 스트리밍됩니다. 여기에 더해 CS Agent는 응답 후 Memory 저장(`save_turn`)이라는 추가 네트워크 호출이 있는데, 이걸 응답을 다 보여준 뒤 백그라운드 스레드에서 처리하도록 분리했습니다 — 참가자가 Memory 쓰기 완료까지 기다릴 필요가 없어집니다.
+:::
 
 ## 3-5. 배포
 
@@ -222,21 +216,24 @@ chmod +x scripts/*.sh
 ./scripts/deploy-agent.sh agents/phase2a_cs.py rcg_cs_agent
 ```
 
-!!! note "Memory ID 전달"
-    `deploy-agent.sh`가 `AGENTCORE_GATEWAY_URL`, `AGENTCORE_MEMORY_ID`, `AWS_REGION`을 모두 자동으로 Runtime 환경변수에 전달합니다.
-    실행 전에 `echo $AGENTCORE_MEMORY_ID`로 값이 비어있지 않은지 먼저 확인하세요.
+::: info Memory ID 전달
+`deploy-agent.sh`가 `AGENTCORE_GATEWAY_URL`, `AGENTCORE_MEMORY_ID`, `AWS_REGION`을 모두 자동으로 Runtime 환경변수에 전달합니다.
+실행 전에 `echo $AGENTCORE_MEMORY_ID`로 값이 비어있지 않은지 먼저 확인하세요.
+:::
 
-!!! warning "RUNTIME_ROLE_ARN 확인 필수"
-    `RUNTIME_ROLE_ARN`은 `./infra/onestop.sh`가 CloudShell에서 생성한 값으로, `.env.w001`에 저장되어 있습니다.
-    Code Editor 터미널을 새로 열었다면 반드시 `source ~/workshop/.env.w001` 후 `echo $RUNTIME_ROLE_ARN`으로 값이 채워졌는지 확인하세요.
-    이 값이 비어있으면 Memory 접근 권한이 없는 Role로 잘못 배포될 수 있어, `deploy-agent.sh`가 값이 없을 경우 즉시 에러로 중단하도록 되어 있습니다.
 
----
+::: warning RUNTIME_ROLE_ARN 확인 필수
+`RUNTIME_ROLE_ARN`은 `./infra/onestop.sh`가 CloudShell에서 생성한 값으로, `.env.w001`에 저장되어 있습니다.
+Code Editor 터미널을 새로 열었다면 반드시 `source ~/workshop/.env.w001` 후 `echo $RUNTIME_ROLE_ARN`으로 값이 채워졌는지 확인하세요.
+이 값이 비어있으면 Memory 접근 권한이 없는 Role로 잘못 배포될 수 있어, `deploy-agent.sh`가 값이 없을 경우 즉시 에러로 중단하도록 되어 있습니다.
+:::
 
 ## 3-6. 테스트 (Memory 동작 확인)
 
-!!! tip "테스트 방법"
-    같은 터미널에서 순서대로 실행합니다. `session_id`만 다르게 — 실제 고객이 채팅창을 닫고 다시 열었을 때를 시뮬레이션합니다.
+::: tip 테스트 방법
+같은 터미널에서 순서대로 실행합니다. `session_id`만 다르게 — 실제 고객이 채팅창을 닫고 다시 열었을 때를 시뮬레이션합니다.
+:::
+
 
 **첫 번째 대화:**
 
@@ -252,37 +249,41 @@ agentcore invoke --agent rcg_cs_agent \
   '{"message": "아까 그 주문 반품하고 싶어요", "actor_id": "C001", "session_id": "cs-test-002"}'
 ```
 
-??? success "Memory 연동 확인 포인트"
-    두 번째 대화에서 Agent가:
-    
-    - "아까 그 주문" = ORD-20260620-001을 **기억**하고 있음
-    - 주문번호를 다시 물어보지 않음 (첫 번째 대화에서 조회했던 주문·상품·배송 정보를 그대로 활용)
-    - `return_policy` Tool까지 스스로 연계 호출하여 반품 가능 여부·기한·환불 조건을 함께 안내
-    - Memory에서 이전 세션의 맥락을 가져왔기 때문
-    
-    ```
-    🤖 Agent: 주문 내역과 반품 정책을 확인했습니다. 아래 내용을 안내드립니다.
+::: details ✅ Memory 연동 확인 포인트
+두 번째 대화에서 Agent가:
 
-    ## 📦 주문 확인
-    | 항목 | 내용 |
-    |------|------|
-    | 주문번호 | ORD-20260620-001 |
-    | 상품 | 유기농 프로틴바 (12개입) |
-    | 결제금액 | 32,000원 |
-    | 배송완료일 | 2026년 6월 22일 |
+- "아까 그 주문" = ORD-20260620-001을 **기억**하고 있음
+- 주문번호를 다시 물어보지 않음 (첫 번째 대화에서 조회했던 주문·상품·배송 정보를 그대로 활용)
+- `return_policy` Tool까지 스스로 연계 호출하여 반품 가능 여부·기한·환불 조건을 함께 안내
+- Memory에서 이전 세션의 맥락을 가져왔기 때문
 
-    ## 📋 건강식품 반품 정책
-    - 반품 가능 기간: 배송 완료 후 7일 이내 (~ 6월 29일까지)
-    - 환불 조건: 미개봉 시 전액 환불 / 개봉 후 환불 불가(식품위생법) / 유통기한 임박 시 교환만 가능
-    - 환불 방법: 신용카드로 3~5영업일 내 환불
+```
+🤖 Agent: 주문 내역과 반품 정책을 확인했습니다. 아래 내용을 안내드립니다.
 
-    반품 사유와 개봉 여부를 여쭤보고, 상황에 맞는 처리 방법을 안내드리겠습니다.
-    ```
+## 📦 주문 확인
+| 항목 | 내용 |
+|------|------|
+| 주문번호 | ORD-20260620-001 |
+| 상품 | 유기농 프로틴바 (12개입) |
+| 결제금액 | 32,000원 |
+| 배송완료일 | 2026년 6월 22일 |
 
-    주문번호를 다시 묻지 않고 "그 주문"만으로 바로 상세 정보를 이어서 안내하는 것이 Memory가 정상 동작하고 있다는 핵심 증거입니다. 이후 반품 사유·개봉 여부에 따라 `process_return` Tool을 호출해 실제 환불/에스컬레이션 여부가 결정됩니다 (Step 4에서 다룹니다).
+## 📋 건강식품 반품 정책
+- 반품 가능 기간: 배송 완료 후 7일 이내 (~ 6월 29일까지)
+- 환불 조건: 미개봉 시 전액 환불 / 개봉 후 환불 불가(식품위생법) / 유통기한 임박 시 교환만 가능
+- 환불 방법: 신용카드로 3~5영업일 내 환불
 
-!!! info "출력이 여러 줄의 JSON으로 나옵니다"
-    entrypoint가 async generator라서 `{"type": "chunk", ...}` 이벤트가 여러 번 나오다가 마지막 `{"type": "done", ...}`에 전체 텍스트가 담깁니다 (Phase 1 Step 3-3 참고). 위 예시는 최종 텍스트만 정리한 것입니다.
+반품 사유와 개봉 여부를 여쭤보고, 상황에 맞는 처리 방법을 안내드리겠습니다.
+```
+
+주문번호를 다시 묻지 않고 "그 주문"만으로 바로 상세 정보를 이어서 안내하는 것이 Memory가 정상 동작하고 있다는 핵심 증거입니다. 이후 반품 사유·개봉 여부에 따라 `process_return` Tool을 호출해 실제 환불/에스컬레이션 여부가 결정됩니다 (Step 4에서 다룹니다).
+:::
+
+
+::: info 출력이 여러 줄의 JSON으로 나옵니다
+entrypoint가 async generator라서 `{"type": "chunk", ...}` 이벤트가 여러 번 나오다가 마지막 `{"type": "done", ...}`에 전체 텍스트가 담깁니다 (Phase 1 Step 3-3 참고). 위 예시는 최종 텍스트만 정리한 것입니다.
+:::
+
 
 **세 번째 대화 (존재하지 않는 주문번호 — 환각 방지 확인):**
 
@@ -291,16 +292,15 @@ agentcore invoke --agent rcg_cs_agent \
   '{"message": "주문 ORD-9999-999 배송 상태 알려주세요", "actor_id": "C001", "session_id": "cs-test-003"}'
 ```
 
-??? success "환각 방지 확인 포인트"
-    존재하지 않는 주문번호를 물어봤을 때, Agent가:
+::: details ✅ 환각 방지 확인 포인트
+존재하지 않는 주문번호를 물어봤을 때, Agent가:
 
-    - `lookup_order` Tool 호출 결과가 404(실패)임을 확인하고
-    - 배송 상태를 그럴듯하게 지어내지 않고 **"해당 주문을 찾을 수 없습니다"**라고 정직하게 답함
-    - 참고로 고객이 실제로 가진 다른 주문번호를 안내에 덧붙일 수 있음 (Memory에 남은 맥락 활용)
+- `lookup_order` Tool 호출 결과가 404(실패)임을 확인하고
+- 배송 상태를 그럴듯하게 지어내지 않고 **"해당 주문을 찾을 수 없습니다"**라고 정직하게 답함
+- 참고로 고객이 실제로 가진 다른 주문번호를 안내에 덧붙일 수 있음 (Memory에 남은 맥락 활용)
 
-    Tool 응답에 없는 정보는 절대 지어내지 않는다는 System Prompt 규칙이 이 시나리오를 위한 것입니다. 만약 Agent가 존재하지 않는 주문에 대해 배송 상태를 답한다면 환각이 발생한 것이므로, `phase2a_cs.py`의 System Prompt에 있는 "절대 규칙 — Tool 결과만 사용" 섹션을 확인하세요.
-
----
+Tool 응답에 없는 정보는 절대 지어내지 않는다는 System Prompt 규칙이 이 시나리오를 위한 것입니다. 만약 Agent가 존재하지 않는 주문에 대해 배송 상태를 답한다면 환각이 발생한 것이므로, `phase2a_cs.py`의 System Prompt에 있는 "절대 규칙 — Tool 결과만 사용" 섹션을 확인하세요.
+:::
 
 ## 3-6b. Agent Playground에 연결
 
@@ -313,8 +313,6 @@ CLI로 Memory 동작까지 확인했다면, 이제 웹 화면에서 대화형으
 2. 좌측 **CS 자동화 Agent** 카드가 `ACTIVE`로 바뀌면 채팅창에서 바로 질문 가능
 
 ![Agent Playground 화면](../assets/images/playground/playground-overview.png)
-
----
 
 ## 3-7. Trace 비교 (Observability)
 
@@ -330,13 +328,12 @@ Phase 2A Trace:
   새로 추가된 Memory 스팬
 ```
 
-!!! info "Memory 스팬이 보임"
-    Observability에서 `MEMORY_RETRIEVE`와 `MEMORY_SAVE` 스팬을 확인할 수 있습니다.
-    
-    - `MEMORY_RETRIEVE`: 몇 개의 record를 가져왔는지, 검색 시간
-    - `MEMORY_SAVE`: Event 저장 성공 여부
+::: info Memory 스팬이 보임
+Observability에서 `MEMORY_RETRIEVE`와 `MEMORY_SAVE` 스팬을 확인할 수 있습니다.
 
----
+- `MEMORY_RETRIEVE`: 몇 개의 record를 가져왔는지, 검색 시간
+- `MEMORY_SAVE`: Event 저장 성공 여부
+:::
 
 ## 이해 체크
 
@@ -347,5 +344,7 @@ Phase 2A Trace:
 
 ---
 
-!!! success "다음"
-    Memory 연동 완료! → [Step 4: Policy (에스컬레이션)](step4-policy.md)
+::: tip ✅ 다음
+Memory 연동 완료! → [Step 4: Policy (에스컬레이션)](step4-policy.md)
+:::
+
