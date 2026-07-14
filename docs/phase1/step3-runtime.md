@@ -102,7 +102,7 @@ agentcore invoke --prompt "고객 C001에게 상품 3개 추천해주세요"
 배포된 Agent를 **AWS Console에서 직접 테스트**할 수 있습니다:
 
 1. Console → **Amazon Bedrock** → **AgentCore** → 좌측 **Runtime**
-2. `rcg_recommend_agent` 클릭 → 우측 상단 **Test** 버튼 클릭
+2. `phase1_phase1` 클릭 → 우측 상단 **Test** 버튼 클릭
 
 ![Runtime 상세 페이지](../assets/images/phase1/runtime-test-page.png)
 
