@@ -92,11 +92,28 @@ for target in CS_TARGETS:
 
 경쟁사 가격 비교 등 외부 웹 데이터가 필요할 때 **Browser Tool**을 사용합니다. Gateway Target이 아니라 **Agent 코드에서 직접 추가**합니다.
 
-Console에서 **Built-in tools → Browser** 에서 확인할 수 있습니다:
+### Browser Tool은 어떻게 동작하나
+
+![AgentCore Browser 동작 원리](../assets/images/phase2a/agentcore-browser-concept.png)
+
+AgentCore Browser는 AWS가 관리하는 **클라우드 헤드리스 브라우저**입니다. Agent가 웹에서 정보를 가져와야 한다고 판단하면 다음 흐름이 돕니다:
+
+1. **질의** — 사용자가 "다른 곳이 더 싸다"처럼 외부 정보가 필요한 요청을 함
+2. **LLM 호출** — Agent가 LLM에 판단을 요청
+3. **툴 사용** — LLM이 `browser` 툴을 `{type: "click", x, y}` 같은 구조화된 액션으로 호출
+4. **명령어 변환** — 지시문이 브라우저 자동화 명령(Browser_use, Playwright 등)으로 변환
+5. **명령 실행** — 클라우드의 헤드리스 브라우저가 실제 페이지를 열고 조작
+6. **스크린샷/결과** — 페이지에서 읽은 내용이 Agent로 돌아와 응답에 반영
+
+::: tip 로컬 브라우저가 아닙니다
+브라우저는 **여러분의 PC나 Runtime 컨테이너가 아니라 AgentCore가 관리하는 격리된 클라우드 환경**에서 실행됩니다. 그래서 Runtime 코드는 브라우저를 설치할 필요 없이, `AgentCoreBrowser`로 세션만 열어 CDP(Chrome DevTools Protocol)로 연결합니다.
+:::
+
+Console에서 **Built-in tools → Browser** 에서도 확인할 수 있습니다:
 
 ![AgentCore Browser Tool](../assets/images/phase2a/browser-tool-detail.png)
 
-AWS가 관리하는 클라우드 브라우저 서비스이며, Agent 코드에서 import만 하면 사용 가능합니다:
+Agent 코드에서는 import만 하면 사용 가능합니다:
 
 ```python title="app/phase2a/main.py에서 Browser Tool 사용 (이미 포함됨)"
 # 지연 생성 + 싱글톤 캐싱 — import 시점에 즉시 만들면 Playwright 초기화가
@@ -116,13 +133,25 @@ agent = Agent(
 )
 ```
 
-::: info Mock 경쟁사 사이트
-워크샵에서는 Mock 사이트를 제공합니다:
+### Mock 경쟁사 사이트 — PriceHunter
 
-- 경쟁사 가격 비교: `${MOCK_SITE_URL}/competitor-prices.html`
+실제 경쟁사 사이트를 크롤링할 수는 없으므로, 워크샵은 **PriceHunter**라는 Mock 최저가 비교 사이트를 미리 배포해 제공합니다. Agent가 Browser Tool로 이 페이지를 방문해 실제 가격을 읽어옵니다:
 
-Agent가 Browser Tool로 이 사이트를 방문하여 가격 정보를 가져옵니다.
-별도 설정 불필요 — `app/phase2a/main.py`에 이미 포함되어 있고, `MOCK_SITE_URL`은 배포 시 자동 주입됩니다.
+![Mock 경쟁사 사이트 — PriceHunter](../assets/images/phase2a/mock-competitor-prices.png)
+
+- 경쟁사 가격 비교 페이지: `${MOCK_SITE_URL}/competitor-prices.html`
+- 전자기기·생활용품·식품별로 판매처(우리몰/쿠O/네O버 등)·가격·배송비·최저가 표시가 담긴 실제 HTML 페이지입니다.
+
+`MOCK_SITE_URL` 값은 **CloudFormation Outputs의 `MockSiteUrl`**에서 확인할 수 있습니다 (Workshop Studio Event Outputs 또는 스택 Outputs 탭):
+
+![CloudFormation MockSiteUrl](../assets/images/phase2a/cfn-mock-site-url.png)
+
+::: info 별도 설정 불필요
+`MOCK_SITE_URL`은 `deploy-agent.sh phase2a` 실행 시 Runtime 환경변수로 **자동 주입**되고, System Prompt에도 이 URL이 들어가 있어 Agent가 어디를 방문할지 압니다. Browser Tool 코드도 `app/phase2a/main.py`에 이미 포함되어 있습니다.
+:::
+
+::: tip 실제로 이렇게 동작합니다
+고객이 "보조배터리가 다른 곳에서 더 싸던데요?"라고 물으면 → Agent가 Browser로 PriceHunter를 방문 → "쿠O 59,900원이 최저가로, 우리몰(69,000원)보다 9,100원 저렴한 것이 사실"처럼 **실제 페이지에서 읽은 근거**로 응답합니다. (Step 3에서 배포 후 직접 테스트합니다.)
 :::
 
 ## 2-3. 등록된 Tool Schema 정리
