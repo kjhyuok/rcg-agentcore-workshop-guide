@@ -17,7 +17,7 @@ Agent에 **Memory를 연동**하여 고객 맥락을 기억하게 합니다.
 :::
 
 
-<div class="file-target">agents/phase2a/app/phase2a/main.py
+<div class="file-target">agents/phase2a/app/phase2a/main.py</div>
 
 ## 핵심 패턴
 

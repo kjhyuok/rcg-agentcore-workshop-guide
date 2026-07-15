@@ -18,7 +18,7 @@ Agent = Model + System Prompt + Gateway(Tools)
 :::
 
 
-<div class="file-target">agents/phase1/app/phase1/main.py
+<div class="file-target">agents/phase1/app/phase1/main.py</div>
 
 ## 핵심 패턴
 
