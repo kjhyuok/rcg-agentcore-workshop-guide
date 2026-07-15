@@ -106,7 +106,7 @@ def fetch_context(actor_id: str, query: str) -> str:
         print(f"[Memory Retrieve Error] {e}")
     return "이전 맥락 없음"
 
-# 3. 저장 — 응답 완료 후 백그라운드 스레드 (phase2a_cs.py의 save_turn 그대로)
+# 3. 저장 — 응답 완료 후 백그라운드 스레드 (app/phase2a/main.py의 save_turn 그대로)
 ```
 
 entrypoint에서는 `fetch_context()` 결과를 System Prompt에 주입하고,

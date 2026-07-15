@@ -18,7 +18,7 @@ Agent = Model + System Prompt + Gateway(Tools)
 :::
 
 
-<div class="file-target">agents/phase1_recommend.py</div>
+<div class="file-target">agents/phase1/app/phase1/main.py
 
 ## 핵심 패턴
 
@@ -51,10 +51,10 @@ Agent는 System Prompt의 지시에 따라 `customer_profile` → `purchase_hist
 
 ::: tip agent(prompt) vs agent.stream_async(prompt)
 `agent("질문")`은 Agent가 답을 전부 만든 뒤에야 결과를 반환합니다 — Tool 호출이 몇 번 도는 동안 아무 반응이 없어 느리게 느껴집니다.
-`agent.stream_async("질문")`은 토큰이 생성되는 즉시 하나씩 넘겨줍니다. `phase1_recommend.py`의 entrypoint는 이 방식을 씁니다(2-2 참고).
+`agent.stream_async("질문")`은 토큰이 생성되는 즉시 하나씩 넘겨줍니다. `app/phase1/main.py`의 entrypoint는 이 방식을 씁니다(2-2 참고).
 :::
 
-## 2-1. agents/phase1_recommend.py 열기
+## 2-1. agents/phase1/app/phase1/main.py 열기
 
 Step 1에서 쓰던 터미널을 그대로 이어서 사용하면 됩니다. venv 활성화는 필요 없습니다 — 워크샵 환경은 `python3.12`에 라이브러리가 직접 설치되어 있습니다.
 
@@ -65,23 +65,23 @@ cd ~/workshop/starter-code
 source ~/workshop/.env.w001
 ```
 
-Explorer에서 `starter-code/agents/phase1_recommend.py`를 클릭하여 코드를 확인하세요:
+Explorer에서 `starter-code/agents/phase1/app/phase1/main.py`를 클릭하여 코드를 확인하세요:
 
-```python title="agents/phase1_recommend.py — 핵심 부분"
+```python title="app/phase1/main.py — 핵심 부분"
 import os
-import uuid
 from strands import Agent
-from strands.models import BedrockModel
+from strands.models.bedrock import BedrockModel
 from strands.tools.mcp import MCPClient
 from mcp.client.streamable_http import streamablehttp_client
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
-# 환경변수 (agentcore deploy --env 로 주입)
+app = BedrockAgentCoreApp()
+
 GATEWAY_URL = os.environ.get("AGENTCORE_GATEWAY_URL", "")
 REGION = os.environ.get("AWS_REGION", "us-west-2")
 
 # MCPClient는 모듈 로드 시 1회만 생성 (요청마다 새로 만들면 매번 핸드셰이크 비용)
-mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
+mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL)) if GATEWAY_URL else None
 
 # 모델
 model = BedrockModel(
@@ -94,27 +94,19 @@ model = BedrockModel(
 
 Agent가 Gateway에서 Tool을 가져와 호출하는 핵심 코드:
 
-```python title="agents/phase1_recommend.py 내부"
+```python title="app/phase1/main.py 내부"
 @app.entrypoint
-async def recommend_agent(payload: dict):
-    user_message = payload.get("message", payload.get("prompt", ""))
-    session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
+async def invoke(payload, context):
+    prompt = payload.get("prompt", payload.get("message", ""))
 
-    agent = Agent(
-        model=model,
-        system_prompt=SYSTEM_PROMPT,
-        tools=[mcp_client],
-    )
+    tools = [mcp_client] if mcp_client else []
+    agent = Agent(model=model, system_prompt=SYSTEM_PROMPT, tools=tools)
 
-    # return 대신 yield — 토큰이 생성되는 즉시 흘려보냄 (SSE 스트리밍)
-    full_text = ""
-    async for event in agent.stream_async(user_message):
-        chunk = event.get("data")
-        if chunk:
-            full_text += chunk
-            yield {"type": "chunk", "response": chunk, "session_id": session_id}
-
-    yield {"type": "done", "response": full_text, "session_id": session_id}
+    # return 대신 yield — Strands 원시 이벤트를 그대로 흘려보냄 (SSE 스트리밍)
+    async for event in agent.stream_async(prompt):
+        if not isinstance(event, dict) or "event" not in event:
+            continue
+        yield event
 ```
 
 ::: info MCPClient가 하는 일
