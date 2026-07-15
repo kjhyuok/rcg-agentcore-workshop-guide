@@ -1,4 +1,4 @@
-# Step 4: Policy (에스컬레이션) <span class="badge-time">⏱️ 15분</span> <span class="badge-difficulty">★★☆</span>
+# Step 4: 에스컬레이션 (권한 경계 & Policy 개념) <span class="badge-time">⏱️ 15분</span> <span class="badge-difficulty">★★☆</span>
 
 <div class="step-progress">
   <span class="step done">✓ Step 1 Memory</span>
@@ -7,63 +7,54 @@
   <span class="step-connector done"></span>
   <span class="step done">✓ Step 3 Agent</span>
   <span class="step-connector done"></span>
-  <span class="step active">● Step 4 Policy</span>
+  <span class="step active">● Step 4 에스컬레이션</span>
 </div>
 
 ::: info 이 Step의 목표
-**AgentCore Policy**를 설정하여 Agent에 가드레일을 적용합니다.
+고객 응대에서 **에스컬레이션(escalation)** — AI가 자기 권한 밖의 결정을 임의로 처리하지 않고 사람(상급자)에게 넘기는 것 — 을 구현합니다.
 
-규칙: 환불 금액 > 50,000원이면 CS 팀 리더 승인 필요
+규칙: 환불 금액 > 50,000원이면 Agent가 직접 처리하지 않고 **CS 팀 리더 승인**으로 넘김
 :::
 
 
-<div class="file-target">scripts/setup-policy.py</div>
-
-## Policy란?
+## 에스컬레이션이란?
 
 ```
-Policy 없이:  Agent가 100만원 환불도 마음대로 처리
-Policy 있으면: "이 건은 제가 직접 처리할 수 없습니다. CS 팀 리더에게 전달합니다."
+가드레일 없이:  Agent가 100만원 환불도 마음대로 처리
+에스컬레이션:   "이 건은 제 권한 밖이라 직접 처리할 수 없습니다. CS 팀 리더에게 전달합니다."
 ```
 
-### AgentCore Policy는 어떻게 동작하나
+**에스컬레이션 = 자율 AI에 안전한 권한 경계를 두는 핵심 패턴**입니다. 콜센터 상담원이 "제 선에서 되는 건 처리하고, 큰 건은 팀장님께 넘기는" 것과 같습니다. AI Agent도 "여기까지가 내 권한, 그 이상은 사람에게"라는 경계를 가져야 합니다.
+
+### 가드레일을 구현하는 두 가지 방법
+
+AgentCore에서 이런 가드레일은 두 가지로 구현할 수 있습니다:
+
+| 방법 | 방식 | 특징 |
+|------|------|------|
+| **AgentCore Policy** | Gateway를 통한 Tool 호출을 **Cedar 정책으로 가로채 허용/거부** | 시스템 레벨 강제, 코드 무관, 감사 로그. **OAuth 인증 Gateway 필요** |
+| **Tool 비즈니스 로직** | Tool(Lambda)이 조건을 판정해 **결과에 플래그 반환** | 구현 단순, 인증 방식 무관 |
+
+::: warning 이 워크샵의 선택: Tool 비즈니스 로직 (Lambda)
+**AgentCore Policy(Cedar)는 OAuth 인증(authorizer) Gateway를 전제로 동작**합니다. Cedar 정책은 `principal`(인증된 사용자)을 기준으로 Tool 호출을 평가하기 때문입니다.
+
+이 워크샵의 Gateway는 실습 편의를 위해 **인증 없이(`authorizerType=NONE`)** 구성되어 있어, Cedar 정책이 `principal`을 인식하지 못해 ENFORCE 모드에서는 모든 Tool 호출이 차단됩니다. 따라서 이 워크샵에서는 **에스컬레이션을 `process_return` Lambda의 비즈니스 로직으로 구현**합니다 (금액 조건 → `needs_escalation` 플래그 반환 → Agent가 안내).
+
+> 💡 **실무 적용 시**: 프로덕션에서 Gateway를 OAuth(Cognito 등)로 구성하면, 이 5만원 규칙을 Cedar 정책으로 옮겨 **Agent 코드·Tool 수정 없이 시스템 레벨에서 강제**할 수 있습니다. 이 경우 위 다이어그램의 "동적 정책 평가"가 실제로 동작합니다.
+:::
+
+### 참고: AgentCore Policy는 어떻게 동작하나 (OAuth Gateway 기준)
 
 ![Policy in AgentCore 동작 원리](../assets/images/phase2a/agentcore-policy-concept.png)
 
-Policy는 **Gateway를 통한 Tool 호출을 가로채(intercept) 허용/거부를 판정하는 가드레일 계층**입니다. Agent가 아무리 자율적으로 판단해도, 조직이 정한 경계를 넘는 행동은 시스템이 차단합니다:
+AgentCore Policy를 쓰면(OAuth Gateway 전제), Gateway를 통한 Tool 호출을 Cedar 정책이 가로채 판정합니다:
 
-1. **요청된 Tool 호출** — Agent가 `process_return`(환불 처리) 같은 Tool을 호출하려 함
-2. **동적 정책 평가** — Policy Engine이 그 호출을 실시간으로 평가해 **허용/거부** 결정
-3. **허용된 Tool 호출만** 실제 보호된 리소스(툴·API·데이터)에 도달
-4. **Observability 기록** — 모든 ALLOW/DENY 결정이 Trace에 남아 감사 가능
+1. **요청된 Tool 호출** — Agent가 `process_return` 같은 Tool을 호출하려 함
+2. **동적 정책 평가** — Policy Engine이 `principal`·입력값을 실시간 평가해 **허용/거부** 결정
+3. **허용된 Tool 호출만** 실제 보호된 리소스에 도달
+4. **Observability 기록** — 모든 ALLOW/DENY 결정이 감사 로그에 남음
 
-정책 관리자는 규칙을 **자연어 또는 Cedar**(AWS의 검증 가능한 정책 언어)로 작성하고, Agent 코드와 무관하게 정책 라이프사이클을 관리합니다.
-
-**Policy가 특별한 세 가지 이유:**
-
-| 원칙 | 의미 |
-|------|------|
-| **경계 안에서 동작하는 에이전트** | Agent는 자율적으로 작동하되, 조직의 경계와 컴플라이언스 안에서만 |
-| **즉각적이고 일관된 평가** | 밀리초 단위로 정책 평가 — Agent 응답 속도 저하 없음 |
-| **검증 가능한 정확성** | Cedar 기반의 수년간 축적된 자동화 추론 위에 구축 |
-
-**이 Step에서 만드는 것:** "환불 금액 > 50,000원이면 CS 팀 리더 승인 필요"라는 규칙을 Policy로 강제하여, LLM이 System Prompt를 무시하고 고액 환불을 처리하려 해도 **시스템 레벨에서 에스컬레이션**되도록 합니다.
-
-::: tip System Prompt vs Policy
-| | System Prompt | Policy |
-|--|--|--|
-| 방식 | LLM에게 "하지 마" 요청 | 시스템이 **강제** 차단 |
-| 신뢰도 | LLM이 무시할 수 있음 | 100% 적용 보장 |
-| 변경 | Agent 재배포 필요 | 정책만 수정 |
-| 감사 | 로그 없음 | Trace에 기록 |
-:::
-
-**Policy의 가치 요약:**
-
-- Agent가 지켜야 할 **비즈니스 규칙**을 코드 외부에서 관리
-- Agent 코드 수정 없이 규칙 변경 가능
-- 감사 로그(Trace)에 ALLOW/DENY 결정이 기록됨
-- LLM이 규칙을 "까먹는" 것을 시스템 레벨에서 방지
+규칙은 **자연어 또는 Cedar**로 작성하고, Agent 코드와 무관하게 관리합니다. 밀리초 단위 평가로 응답 속도 저하가 없고, Cedar 기반의 검증 가능한 정확성을 제공합니다. (이 워크샵에선 위 환경 제약으로 개념만 소개합니다.)
 
 ## 4-1. 에스컬레이션 규칙 설계
 
@@ -96,45 +87,44 @@ def handler(event, context):
         }
 ```
 
-## 4-2. Policy 생성
+## 4-2. 에스컬레이션 로직은 이미 배포되어 있습니다
 
-```bash
-python3.12 scripts/setup-policy.py
-```
+이 워크샵의 에스컬레이션은 `process_return` Lambda(Step 2에서 Gateway에 등록한 Tool) 안에 이미 구현되어 있습니다. **별도 설정이 필요 없습니다** — 위 4-1 코드처럼 금액 조건으로 `needs_escalation` 플래그를 반환하고, Agent가 그 플래그를 보고 안내합니다.
 
-::: details 🧪 스크립트가 하는 일 (내부)
+::: details 🔧 (심화) AgentCore Policy로 구현한다면
+프로덕션에서 Gateway를 OAuth 인증으로 구성했다면, 같은 규칙을 Cedar 정책으로 옮겨 Tool 호출 자체를 시스템 레벨에서 차단할 수 있습니다. 개념 흐름:
+
 ```python
 import boto3
-
 client = boto3.client("bedrock-agentcore-control", region_name="us-west-2")
 
-# Policy Engine 생성
-engine = client.create_policy_engine(
-    name="rcg-cs-policy-engine",
-    description="CS Agent 에스컬레이션 정책",
-)
+# 1) Policy Engine 생성
+engine = client.create_policy_engine(name="cs-policy-engine")
 
-# Policy 규칙 등록
+# 2) Cedar 정책 — 5만원 초과 환불 Tool 호출을 차단(forbid)
 client.create_policy(
     policyEngineId=engine["policyEngineId"],
-    name="refund-escalation",
-    description="5만원 초과 환불은 CS 팀 리더 승인 필요",
-    policyType="TOOL_RESPONSE_GUARD",
-    rules=[
-        {
-            "toolName": "process_return",
-            "condition": "response.needs_escalation == true",
-            "action": "ESCALATE",
-            "message": "환불 금액이 기준(50,000원)을 초과합니다. CS 팀 리더에게 에스컬레이션합니다.",
-        }
-    ],
+    name="ForbidHighRefund",
+    definition={"cedar": {"statement": '''
+        forbid(
+          principal,
+          action == AgentCore::Action::"cs-process-return___cs_process_return",
+          resource == AgentCore::Gateway::"<GATEWAY_ARN>"
+        ) when { context.input.refund_amount > 50000 };
+    '''}},
 )
+
+# 3) Gateway에 Policy Engine 연결 (ENFORCE)
+client.update_gateway(gatewayIdentifier="<GW_ID>", ...,
+    policyEngineConfiguration={"arn": engine["policyEngineArn"], "mode": "ENFORCE"})
 ```
+
+⚠️ 단, Cedar 정책은 `principal`(인증된 사용자)을 기준으로 평가하므로 **OAuth authorizer Gateway에서만 동작**합니다. 이 워크샵의 `authorizerType=NONE` Gateway에서는 `principal`이 없어 모든 Tool이 차단되므로, 위 4-1의 Lambda 방식을 사용합니다.
 :::
 
-## 4-3. Agent에 Policy 적용
+## 4-3. Agent가 에스컬레이션 플래그를 처리하는 방법
 
-Agent의 System Prompt에도 규칙을 명시합니다 (이중 안전장치):
+Agent의 System Prompt에 규칙을 명시하여, `needs_escalation` 플래그에 따라 다르게 응대하도록 합니다:
 
 ```python title="System Prompt에 에스컬레이션 규칙 추가"
 SYSTEM_PROMPT = """당신은 리테일 CS 전문 상담사입니다.
@@ -153,10 +143,10 @@ SYSTEM_PROMPT = """당신은 리테일 CS 전문 상담사입니다.
 """
 ```
 
-::: warning System Prompt + Policy = 이중 안전장치
-System Prompt만으로는 LLM이 규칙을 무시할 수 있습니다.
+::: tip System Prompt + Tool 로직 = 이중 확인
+Tool(Lambda)이 금액 조건을 **결정론적으로 판정**(needs_escalation 플래그)하고, Agent는 그 플래그를 보고 응대합니다. 금액 판정을 LLM의 산수에 맡기지 않고 Tool이 확정하므로, "5만원 초과인데 LLM이 잘못 계산해 처리"하는 실수를 막습니다.
 
-Policy Engine이 **시스템 레벨에서** 강제하므로, LLM이 규칙을 어기는 것이 불가능합니다.
+> 프로덕션에서 더 강한 보장이 필요하면(LLM이 플래그 자체를 무시하는 것까지 차단), 4-2 심화의 AgentCore Policy로 Tool 호출을 시스템 레벨에서 막습니다.
 :::
 
 ## 4-4. 3가지 시나리오 테스트
@@ -249,9 +239,9 @@ CS 팀 리더에게 전달하겠습니다.
 실제로는 Agent가 에스컬레이션 처리 전에 "미개봉 상태인지" 먼저 확인하는 경우가 많습니다 — `process_return` Tool을 호출하려면 개봉 여부 등 추가 정보가 필요하기 때문입니다. 이 경우 한 번 더 답하면(예: "미개봉 상태예요") 위와 같은 에스컬레이션 결과로 이어집니다.
 :::
 
-## 4-5. Trace에서 Policy 확인
+## 4-5. Trace에서 에스컬레이션 확인
 
-Observability에서 테스트 3의 Trace를 확인합니다:
+Observability에서 테스트별 Trace를 비교합니다. 에스컬레이션 분기가 `process_return` Tool의 반환값(`needs_escalation`)에서 결정되는 것을 볼 수 있습니다:
 
 ```
 Trace (테스트 3 — 에스컬레이션):
@@ -259,9 +249,8 @@ Trace (테스트 3 — 에스컬레이션):
   AGENT_START
   TOOL_CALL(lookup_order) → 200 OK
   TOOL_CALL(return_policy) → 200 OK
-  TOOL_CALL(process_return) → needs_escalation: true
-  POLICY_CHECK → ESCALATE ⚠️   ← Policy가 개입한 지점
-  AGENT_END
+  TOOL_CALL(process_return) → needs_escalation: true ⚠️  ← 5만원 초과, 승인 필요
+  AGENT_END (CS 팀 리더 전달 안내)
   MEMORY_SAVE
 ```
 
@@ -270,16 +259,15 @@ Trace (테스트 1 — 정상 처리):
   MEMORY_RETRIEVE
   AGENT_START
   TOOL_CALL(lookup_order) → 200 OK
-  TOOL_CALL(process_return) → needs_escalation: false
-  POLICY_CHECK → ALLOW ✅      ← Policy 통과
-  AGENT_END
+  TOOL_CALL(process_return) → needs_escalation: false ✅  ← 5만원 이하, 자동 처리
+  AGENT_END (환불 완료 안내)
   MEMORY_SAVE
 ```
 
-::: info POLICY_CHECK 스팬
-- **ALLOW**: 정책 위반 없음, Agent가 정상 응답 가능
-- **ESCALATE**: 정책에 의해 에스컬레이션 트리거됨
-- Trace에 조건(`refund_amount > 50000`)과 결정(`ESCALATE`)이 기록됨
+::: info process_return Tool 스팬
+- **needs_escalation: false** → Agent가 환불 완료 안내
+- **needs_escalation: true** → Agent가 직접 처리하지 않고 CS 팀 리더 전달 안내
+- Tool 입출력(금액, 결정)이 Trace에 기록되어 **어떤 근거로 에스컬레이션됐는지 감사 가능**
 :::
 
 ## Phase 2A 완성!
@@ -290,7 +278,8 @@ Trace (테스트 1 — 정상 처리):
 |--------|------|------|
 | **Memory** | 고객 맥락 유지 | 같은 말 반복 안 해도 됨 |
 | **Gateway 확장** | CS Tool 4개 추가 | Agent 코드 수정 없이 확장 |
-| **Policy** | 에스컬레이션 규칙 | 금액 기준 자동 분기 + 감사 로그 |
+| **Browser** | 경쟁사 가격 실시간 조회 | 외부 웹 데이터 활용 |
+| **에스컬레이션** | 금액 기준 권한 경계 | 5만원 초과는 사람 승인으로 |
 
 ## Phase 1 → 2A 성장 비교
 
@@ -298,12 +287,12 @@ Trace (테스트 1 — 정상 처리):
 Phase 1:  Gateway → Agent → Observability
           (도구를 쓸 줄 아는 Agent)
 
-Phase 2A: Memory → Gateway → Agent → Policy → Observability
-          (기억하고, 규칙을 지키는 Agent)
+Phase 2A: Memory → Gateway → Agent → 에스컬레이션 → Observability
+          (기억하고, 권한 경계를 지키는 Agent)
 ```
 
 ::: tip ✅ Phase 2A 완료!
-Memory + Policy를 추가하여 **실제 CS 업무에 투입 가능한** Agent가 되었습니다.
+Memory + 에스컬레이션을 추가하여 **실제 CS 업무에 투입 가능한** Agent가 되었습니다.
 
 점심 후 [Phase 3: 바이브코딩으로 나만의 Agent 만들기](../phase3/index.md)에서
 오늘 배운 서비스들을 조합해 **여러분 회사의 문제를 푸는 Agent**를 직접 만듭니다.

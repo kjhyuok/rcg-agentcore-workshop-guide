@@ -7,7 +7,7 @@
   <span class="step-connector"></span>
   <span class="step">○ Step 3 Agent</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 4 Policy</span>
+  <span class="step">○ Step 4 에스컬레이션</span>
 </div>
 
 ::: info 이 Step의 목표

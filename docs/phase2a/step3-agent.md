@@ -7,7 +7,7 @@
   <span class="step-connector done"></span>
   <span class="step active">● Step 3 Agent</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 4 Policy</span>
+  <span class="step">○ Step 4 에스컬레이션</span>
 </div>
 
 ::: info 이 Step의 목표
@@ -362,6 +362,6 @@ Observability에서 `MEMORY_RETRIEVE`와 `MEMORY_SAVE` 스팬을 확인할 수 �
 ---
 
 ::: tip ✅ 다음
-Memory 연동 완료! → [Step 4: Policy (에스컬레이션)](step4-policy.md)
+Memory 연동 완료! → [Step 4: 에스컬레이션](step4-policy.md)
 :::
 

@@ -76,13 +76,13 @@ graph TB
 1. [Memory 생성 & Strategy](step1-memory.md) — 고객 맥락 저장 구조 설계
 2. [경쟁사 가격 조회 연결 (Gateway + Browser)](step2-gateway.md) — CS Tool 4개 + Browser로 Mock 사이트 가격 조회
 3. [Agent + Memory + Browser 연동](step3-agent.md) — 맥락 + 경쟁사 가격을 프롬프트에 주입
-4. [Policy (에스컬레이션)](step4-policy.md) — 금액 기반 자동 분기
+4. [에스컬레이션 (권한 경계)](step4-policy.md) — 금액 기반 자동 분기
 
 ---
 
 ::: tip 핵심 학습
 - Memory = "이 고객과 전에 무슨 대화를 했는지 기억"
-- Policy = "이 조건에서는 반드시 이렇게 행동해야 한다"
+- 에스컬레이션 = "내 권한 밖의 결정(고액 환불)은 사람에게 넘긴다"
 - Browser = "경쟁사 가격을 실시간으로 조회하여 고객에게 비교 정보 제공"
 :::
 
