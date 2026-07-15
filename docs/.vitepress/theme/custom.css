@@ -172,9 +172,9 @@
   line-height: 1.5;
 }
 
-/* 본문이 줄어든 aside 폭만큼 넓어지도록 */
+/* 본문이 줄어든 aside 폭만큼 넓어지도록 — 코드블록·표·스크린샷이 시원하게 */
 .VPDoc.has-aside .content-container {
-  max-width: 792px;
+  max-width: 900px;
 }
 
 /* --- Sidebar active item highlight --- */
