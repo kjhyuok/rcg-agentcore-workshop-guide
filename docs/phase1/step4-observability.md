@@ -31,7 +31,7 @@ Agent 내부에서 일어나는 모든 일을 **투명하게 추적**합니다:
 - LLM이 몇 토큰을 사용했는지
 - 에러가 어디서 발생했는지
 
-**AgentCore Runtime에 배포하면 자동으로 활성화됩니다.** (환경 세팅의 `onestop.sh`에서 Transaction Search를 사전 설정했습니다)
+**AgentCore Runtime에 배포하면 자동으로 활성화됩니다.** (사전 구성된 워크샵 환경에서 Transaction Search가 이미 활성화되어 있습니다)
 
 ### Tracing 상태 확인
 
@@ -42,7 +42,7 @@ Console → Bedrock → AgentCore → Runtime → `phase1_phase1` → 하단 **L
 ![Tracing Enabled](../assets/images/phase1/runtime-tracing-enabled.png)
 
 ::: tip ✅ Tracing: ✅ Enabled 확인
-`onestop.sh`에서 Transaction Search를 사전 설정했기 때문에, `deploy-agent.sh`로 배포하면 Tracing이 자동 활성화됩니다.
+사전 구성된 워크샵 환경에서 Transaction Search가 이미 활성화되어 있기 때문에, `deploy-agent.sh`로 배포하면 Tracing이 자동 활성화됩니다.
 
 - **Tracing** = Agent의 Tool 호출 순서, latency, 토큰 사용량 추적 (필수)
 - **Log delivery** = 별도 목적지로 로그 전송 (optional, 설정 불필요)
@@ -154,7 +154,7 @@ Trace ID를 클릭하면 **20개 Span의 시간축 분포**를 한눈에 볼 수
 
 ::: info 이 상세 Trace를 보려면
 `deploy-agent.sh`에서 `AGENT_OBSERVABILITY_ENABLED=true` 환경변수와 `aws-opentelemetry-distro` 패키지가 필요합니다.
-**환경 세팅의 `onestop.sh`와 `deploy-agent.sh`에서 이미 설정했으므로** 별도 작업 없이 확인 가능합니다.
+**사전 구성된 워크샵 환경과 `deploy-agent.sh`에서 이미 설정했으므로** 별도 작업 없이 확인 가능합니다.
 :::
 
 
