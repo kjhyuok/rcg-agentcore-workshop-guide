@@ -98,7 +98,7 @@ Console에서 **Built-in tools → Browser** 에서 확인할 수 있습니다:
 
 AWS가 관리하는 클라우드 브라우저 서비스이며, Agent 코드에서 import만 하면 사용 가능합니다:
 
-```python title="phase2a_cs.py에서 Browser Tool 사용 (이미 포함됨)"
+```python title="app/phase2a/main.py에서 Browser Tool 사용 (이미 포함됨)"
 # 지연 생성 + 싱글톤 캐싱 — import 시점에 즉시 만들면 Playwright 초기화가
 # Runtime의 30초 콜드스타트 타임아웃에 걸릴 수 있어, 첫 요청에서만 생성합니다
 def get_browser_tool():
@@ -122,7 +122,7 @@ agent = Agent(
 - 경쟁사 가격 비교: `${MOCK_SITE_URL}/competitor-prices.html`
 
 Agent가 Browser Tool로 이 사이트를 방문하여 가격 정보를 가져옵니다.
-별도 설정 불필요 — `phase2a_cs.py`에 이미 포함되어 있습니다.
+별도 설정 불필요 — `app/phase2a/main.py`에 이미 포함되어 있고, `MOCK_SITE_URL`은 배포 시 자동 주입됩니다.
 :::
 
 ## 2-3. 등록된 Tool Schema 정리

@@ -52,7 +52,7 @@ graph TB
         PL["환불 > 50,000원<br/>→ 에스컬레이션 필수"]
     end
 
-    AG -->|retrieve_memories| ME
+    AG -->|retrieve_memory_records| ME
     AG -->|MCP tool_use| GW
     AG -->|웹 탐색| BR
     AG -->|행동 체크| PO
