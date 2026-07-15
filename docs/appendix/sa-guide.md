@@ -29,16 +29,18 @@ rcg-agentcore-workshop/
 ├── README.md                    # 참가자용 Quick Start
 ├── .gitignore
 ├── starter-code/
-│   ├── agents/
-│   │   ├── phase1_recommend.py
-│   │   ├── phase2a_cs.py
-│   │   └── phase2b_collector.py
+│   ├── agents/                   # phase별 CDK 프로젝트 (app/<phase>/main.py가 배포 대상)
+│   │   ├── phase1/app/phase1/main.py
+│   │   ├── phase2a/app/phase2a/main.py   # Memory + Policy + Browser(경쟁사 가격비교)
+│   │   ├── phase2b/app/phase2b/main.py
+│   │   └── phase3/app/phase3/main.py
 │   ├── scripts/
 │   │   ├── setup-gateway.py
 │   │   ├── setup-memory.py
 │   │   ├── add-cs-targets.py
 │   │   ├── add-demand-targets.py
-│   │   └── deploy-agent.sh
+│   │   ├── deploy-agent.sh
+│   │   └── run-evaluation.py      # (예약) Phase 3 평가/Arena 채점용
 │   ├── lambdas/                 # SA가 사전 배포 (참가자 참고용)
 │   │   ├── customer_profile/
 │   │   ├── product_search/
@@ -66,13 +68,13 @@ rcg-agentcore-workshop/
     └── weather-forecast.html
 ```
 
-::: warning ⚠️ starter-code 저장소 필요 변경사항 (Phase 2B/3 재구성 반영)
-가이드 문서가 "나만의 Agent 만들기" 테마로 재구성되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
+::: info ✅ starter-code 저장소 정리 완료 (2026-07-15)
+CDK 마이그레이션으로 모든 Agent가 `agents/<phase>/app/<phase>/main.py` 신구조로 통일되었고, 아래 정리가 완료되었습니다:
 
-1. **`agents/phase2b_collector.py` 신규 작성** — 정보 수집 Agent 골격(System Prompt는 참가자가 채우는 빈칸 템플릿). **참조 구현이 이 가이드 저장소의 `agents/phase2b_collector.py`에 있습니다** — starter-code 저장소로 복사하면 됩니다. `phase2a_cs.py`와 동일 구조(모듈 레벨 MCPClient, 지연 생성 Browser, async generator 스트리밍)에서 Memory 코드를 빼고, System Prompt에 `MOCK_SITE_URL` 기반 정보원 안내를 넣은 형태입니다
-2. **`scripts/add-demand-targets.py` 작성/확인** — `add-cs-targets.py`를 복제해 `rcg-workshop-demand-*` Lambda 4개를 Gateway Target으로 등록
-3. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
-4. **`deploy-agent.sh`가 `MOCK_SITE_URL`도 Runtime 환경변수로 전달**하는지 확인 (phase2b_collector가 사용)
+1. ✅ **레거시 단일파일 Agent 제거** — `phase1_recommend.py`, `phase2a_cs.py`, `phase2b_demand.py`, `phase3_orchestrator.py`는 신구조로 완전 이관되어 삭제됨. 가이드 문서도 모두 신구조 경로로 전환.
+2. ✅ **Phase 2A Browser 이식** — `app/phase2a/main.py`에 경쟁사 가격비교(Browser Tool) 통합 완료. 배포 검증됨(Runtime 3.12 + playwright driver /tmp 복사 + Browser IAM 권한 CDK 반영).
+3. ✅ **`deploy-agent.sh`가 `MOCK_SITE_URL` 주입** — Browser가 Mock 경쟁사 사이트를 방문하는 데 사용.
+4. **`scripts/run-evaluation.py` 보존** — Phase 3 평가/Arena 채점용으로 남겨둠(향후 활용 예정).
 :::
 
 
