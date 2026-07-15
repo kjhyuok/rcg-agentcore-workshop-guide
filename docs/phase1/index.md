@@ -45,6 +45,12 @@ graph TB
     style OB fill:#f3e5f5,stroke:#6a1b9a
 ```
 
+<!-- AWS 아이콘 버전 (롤백 시 이 블록만 삭제) -->
+<figure>
+<img src="../assets/phase1_architecture.png" alt="Phase 1 Architecture" width="700">
+  <figcaption>AWS 서비스 아이콘 기반 아키텍처</figcaption>
+</figure>
+
 ## Steps
 
 1. [Gateway 생성 & Tool 등록](step1-gateway.md) — Lambda를 MCP Tool로 변환
