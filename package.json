@@ -1,0 +1,32 @@
+{
+  "name": "rcg-agentcore-workshop-guide",
+  "version": "1.0.0",
+  "description": "> **From PoC to Production**: Strands Agents + Amazon Bedrock AgentCore로 리테일 Agent를 처음부터 끝까지 직접 만들고 배포하는 핸즈온 워크샵 가이드입니다.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjhyuok/rcg-agentcore-workshop-guide.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kjhyuok/rcg-agentcore-workshop-guide/issues"
+  },
+  "homepage": "https://github.com/kjhyuok/rcg-agentcore-workshop-guide#readme",
+  "devDependencies": {
+    "mermaid": "^11.16.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17",
+    "vue": "^3.5.39"
+  }
+}

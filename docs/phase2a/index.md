@@ -2,17 +2,18 @@
 
 "보조배터리 충전이 안 됩니다. 환불 받고 싶어요." — 하루에 수백 건 들어오는 CS 문의. 이 Agent는 주문을 조회하고, 정책을 확인하고, 적절한 보상을 안내합니다. 다음에 이 고객이 다시 오면 지난 대화를 기억하고, 경쟁사 가격까지 조회해서 더 나은 안내를 합니다.
 
-!!! abstract "이 Phase에서 추가하는 것"
-    - **Memory** — 고객의 이전 대화 맥락과 선호를 기억
-    - **Policy** — 에스컬레이션 규칙 (5만원 초과 시 승인 필요)
-    - **Gateway 확장** — CS Tool 4개 추가 등록
-    - **Browser** — Mock 경쟁사 사이트에서 실시간 가격 조회 & 비교 안내
+::: info ℹ️ 이 Phase에서 추가하는 것
+- **Memory** — 고객의 이전 대화 맥락과 선호를 기억
+- **Policy** — 에스컬레이션 규칙 (5만원 초과 시 승인 필요)
+- **Gateway 확장** — CS Tool 4개 추가 등록
+- **Browser** — Mock 경쟁사 사이트에서 실시간 가격 조회 & 비교 안내
+:::
 
-!!! info "Browser는 사전 배포된 Mock 사이트를 조회합니다"
-    실제 경쟁사 사이트가 아닌, 운영진이 미리 배포한 Mock 가격 비교 사이트에 접속합니다.
-    Agent가 브라우저로 해당 사이트를 탐색하여 경쟁사 가격 정보를 수집하고, 고객에게 비교 안내합니다.
 
----
+::: info Browser는 사전 배포된 Mock 사이트를 조회합니다
+실제 경쟁사 사이트가 아닌, 운영진이 미리 배포한 Mock 가격 비교 사이트에 접속합니다.
+Agent가 브라우저로 해당 사이트를 탐색하여 경쟁사 가격 정보를 수집하고, 고객에게 비교 안내합니다.
+:::
 
 ## Phase 1과의 차이
 
@@ -23,8 +24,6 @@
 | 규칙 위반 없음 | **에스컬레이션 분기** |
 | Tool 3개 + Code Interpreter | Tool 4개 추가 + **Browser** (총 8개) |
 | 시각화 응답 | **경쟁사 가격 실시간 비교** |
-
----
 
 ## 아키텍처
 
@@ -67,12 +66,10 @@ graph TB
 ```
 
 <!-- AWS 아이콘 버전 (롤백 시 이 블록만 삭제) -->
-<figure markdown>
-  ![Phase 2A Architecture](../assets/phase2a_architecture.png){ width="700" }
+<figure>
+<img src="../assets/phase2a_architecture.png" alt="Phase 2A Architecture" width="700">
   <figcaption>AWS 서비스 아이콘 기반 아키텍처</figcaption>
 </figure>
-
----
 
 ## Steps
 
@@ -83,15 +80,19 @@ graph TB
 
 ---
 
-!!! tip "핵심 학습"
-    - Memory = "이 고객과 전에 무슨 대화를 했는지 기억"
-    - Policy = "이 조건에서는 반드시 이렇게 행동해야 한다"
-    - Browser = "경쟁사 가격을 실시간으로 조회하여 고객에게 비교 정보 제공"
+::: tip 핵심 학습
+- Memory = "이 고객과 전에 무슨 대화를 했는지 기억"
+- Policy = "이 조건에서는 반드시 이렇게 행동해야 한다"
+- Browser = "경쟁사 가격을 실시간으로 조회하여 고객에게 비교 정보 제공"
+:::
+
 
 ---
 
-!!! warning "시작 전 환경 확인"
-    터미널에서 아래 명령으로 환경을 복구하세요 (세션 끊겼을 때):
-    ```bash
-    cd ~/workshop/starter-code && source .venv/bin/activate && source ~/workshop/.env.w001
-    ```
+::: warning 시작 전 환경 확인
+터미널에서 아래 명령으로 환경을 복구하세요 (세션 끊겼을 때):
+```bash
+cd ~/workshop/starter-code && source .venv/bin/activate && source ~/workshop/.env.w001
+```
+:::
+

@@ -1,9 +1,8 @@
 # 환경 세팅
 
-!!! warning "시작 전 반드시 완료"
-    이 페이지의 모든 단계를 완료해야 Phase 1을 시작할 수 있습니다.
-
----
+::: warning 시작 전 반드시 완료
+이 페이지의 모든 단계를 완료해야 Phase 1을 시작할 수 있습니다.
+:::
 
 ## 워크샵 환경 개요
 
@@ -15,12 +14,11 @@
 - 워크샵 코드 (`~/workshop`)
 - Lambda 11개 + IAM Role + Mock 사이트 (모두 배포 완료)
 
-!!! danger "스크립트는 반드시 `python3.12`로 실행하세요"
-    터미널의 기본 `python3` 명령은 OS 기본 Python(3.9)을 가리키며 `boto3`가 설치되어 있지 않습니다.
-    워크샵용 라이브러리가 설치된 실행 파일은 `python3.12`이므로, 가이드의 모든 `python3 scripts/....py` 명령은
-    **`python3.12 scripts/....py`로 실행**해야 합니다. `python3`으로 실행하면 `ModuleNotFoundError: No module named 'boto3'`가 발생합니다.
-
----
+::: danger 스크립트는 반드시 `python3.12`로 실행하세요
+터미널의 기본 `python3` 명령은 OS 기본 Python(3.9)을 가리키며 `boto3`가 설치되어 있지 않습니다.
+워크샵용 라이브러리가 설치된 실행 파일은 `python3.12`이므로, 가이드의 모든 `python3 scripts/....py` 명령은
+**`python3.12 scripts/....py`로 실행**해야 합니다. `python3`으로 실행하면 `ModuleNotFoundError: No module named 'boto3'`가 발생합니다.
+:::
 
 ## Step 1. Event Outputs 확인
 
@@ -38,16 +36,12 @@ Workshop Studio 이벤트 페이지에서 **Event outputs**를 확인합니다:
 
 ![Event Outputs](assets/images/setup/event-output-example.png)
 
----
-
 ## Step 2. Code Server 접속
 
 **Event outputs**에서 **CodeServerUrl**을 클릭하여 VS Code Server에 접속합니다.
 
 - 비밀번호: **CodeServerPassword** 값 입력 (기본값: `workshop123!`)
 - 접속하면 `~/workshop` 폴더가 자동으로 열려 있습니다
-
----
 
 ## Step 3. 환경 확인
 
@@ -62,11 +56,13 @@ echo $AWS_REGION    # us-west-2
 echo $ACCOUNT_ID   # 계정 ID
 ```
 
-!!! tip "환경변수가 비어 있으면"
-    새 터미널을 열었거나 세션이 끊겼을 때:
-    ```bash
-    source ~/workshop/.env.w001
-    ```
+::: tip 환경변수가 비어 있으면
+새 터미널을 열었거나 세션이 끊겼을 때:
+```bash
+source ~/workshop/.env.w001
+```
+:::
+
 
 ### 3-2. AgentCore CLI 확인
 
@@ -95,29 +91,30 @@ aws lambda list-functions \
   --output table
 ```
 
-??? success "정상 출력 (11개 Lambda)"
-    ```
-    +---------------------------------------+
-    |  rcg-workshop-customer-profile        |
-    |  rcg-workshop-product-search          |
-    |  rcg-workshop-purchase-history        |
-    |  rcg-workshop-cs-lookup-order         |
-    |  rcg-workshop-cs-return-policy        |
-    |  rcg-workshop-cs-process-return       |
-    |  rcg-workshop-cs-delivery-status      |
-    |  rcg-workshop-demand-inventory        |
-    |  rcg-workshop-demand-sales-trend      |
-    |  rcg-workshop-demand-external-factors |
-    |  rcg-workshop-demand-purchase-order   |
-    +---------------------------------------+
-    ```
-
----
+::: details ✅ 정상 출력 (11개 Lambda)
+```
++---------------------------------------+
+|  rcg-workshop-customer-profile        |
+|  rcg-workshop-product-search          |
+|  rcg-workshop-purchase-history        |
+|  rcg-workshop-cs-lookup-order         |
+|  rcg-workshop-cs-return-policy        |
+|  rcg-workshop-cs-process-return       |
+|  rcg-workshop-cs-delivery-status      |
+|  rcg-workshop-demand-inventory        |
+|  rcg-workshop-demand-sales-trend      |
+|  rcg-workshop-demand-external-factors |
+|  rcg-workshop-demand-purchase-order   |
++---------------------------------------+
+```
+:::
 
 ## 📋 환경변수 한눈에 보기 (워크샵 전체)
 
-!!! tip "이 블록을 참고하세요"
-    아래 환경변수는 워크샵 진행하며 채워집니다. Phase 시작 전에 이 값들이 설정되어 있는지 확인하세요.
+::: tip 이 블록을 참고하세요
+아래 환경변수는 워크샵 진행하며 채워집니다. Phase 시작 전에 이 값들이 설정되어 있는지 확인하세요.
+:::
+
 
 <div class="env-block">
 <span class="env-label"># --- 사전 설정됨 (.env.w001 — 자동 로드) ---</span><br>
@@ -137,8 +134,6 @@ export AGENTCORE_MEMORY_ID=&lt;setup-memory.py 출력값&gt;<br>
 <span class="env-label"># --- Phase 3 (나만의 Agent 배포 후 채워짐) ---</span><br>
 export MY_AGENT_ARN=&lt;deploy-agent.sh 출력값&gt;<br>
 </div>
-
----
 
 ## 🔍 환경변수 체크 (Phase 시작 전 확인용)
 
@@ -160,11 +155,15 @@ echo "=== Phase 3 (나만의 Agent 배포 후) ==="
 echo "MY_AGENT_ARN: $MY_AGENT_ARN"
 ```
 
-!!! tip "값이 비어 있으면"
-    - 기본 설정이 비었으면: `source ~/workshop/.env.w001`
-    - Phase 1~3 값이 비었으면: 해당 Phase의 setup 스크립트를 아직 실행하지 않은 것 (정상)
+::: tip 값이 비어 있으면
+- 기본 설정이 비었으면: `source ~/workshop/.env.w001`
+- Phase 1~3 값이 비었으면: 해당 Phase의 setup 스크립트를 아직 실행하지 않은 것 (정상)
+:::
+
 
 ---
 
-!!! success "준비 완료!"
-    모든 체크가 통과했으면 [Phase 1: Gateway + Runtime + Observability](phase1/index.md)로 이동하세요.
+::: tip ✅ 준비 완료!
+모든 체크가 통과했으면 [Phase 1: Gateway + Runtime + Observability](phase1/index.md)로 이동하세요.
+:::
+

@@ -1,10 +1,9 @@
 # 부록: AgentCore 서비스 한눈에 보기
 
-!!! abstract "오늘 사용한 7개 서비스"
-    AgentCore는 Agent를 **만들고 → 배포하고 → 관찰하는** 풀스택 플랫폼입니다.
-    오늘 Workshop에서 7개 서비스를 직접 체험했습니다.
-
----
+::: info ℹ️ 오늘 사용한 7개 서비스
+AgentCore는 Agent를 **만들고 → 배포하고 → 관찰하는** 풀스택 플랫폼입니다.
+오늘 Workshop에서 7개 서비스를 직접 체험했습니다.
+:::
 
 ## 플랫폼 전체 구조
 
@@ -39,8 +38,6 @@ graph TB
     OB -.->|자동 수집| RT
 ```
 
----
-
 ## Phase별 서비스 도입 흐름
 
 ```mermaid
@@ -56,8 +53,6 @@ graph LR
     style P2 fill:#e3f2fd,stroke:#1565c0,color:#000
     style P3 fill:#f3e5f5,stroke:#6a1b9a,color:#000
 ```
-
----
 
 ## 서비스 요청 흐름 (단일 Agent 호출)
 
@@ -86,8 +81,6 @@ sequenceDiagram
     RT-->>OB: Trace 자동 기록
 ```
 
----
-
 ## 7개 서비스 상세
 
 ### 🟠 Phase 1 서비스
@@ -110,9 +103,11 @@ sequenceDiagram
 | **비유** | API Gateway가 HTTP를 라우팅하듯, Gateway는 **Tool을 라우팅** |
 | **사용 Phase** | Phase 1 (3개), Phase 2A (+4개), Phase 2B (+4개) |
 
-!!! tip "Gateway의 핵심 가치"
-    Agent 코드를 수정하지 않고 Gateway Target만 추가/변경하면 Agent 기능이 확장됩니다.
-    Mock Lambda → 실제 API 전환도 Agent 코드 변경 없이 가능합니다.
+::: tip Gateway의 핵심 가치
+Agent 코드를 수정하지 않고 Gateway Target만 추가/변경하면 Agent 기능이 확장됩니다.
+Mock Lambda → 실제 API 전환도 Agent 코드 변경 없이 가능합니다.
+:::
+
 
 #### Observability — Agent 행동을 투명하게
 
@@ -132,8 +127,6 @@ sequenceDiagram
 | **비유** | 계산기를 가진 Agent — 숫자를 "추측"이 아닌 "계산"으로 |
 | **사용 Phase** | Phase 3 (선택 — ROI/할인율 계산 등) |
 
----
-
 ### 🔵 Phase 2 서비스
 
 #### Memory — Agent에게 기억을 부여
@@ -145,9 +138,11 @@ sequenceDiagram
 | **비유** | CRM이 고객 정보를 기억하듯, Memory는 **Agent의 경험을 기억** |
 | **사용 Phase** | Phase 2A (대화 맥락), Phase 3 (나만의 Agent 고도화) |
 
-!!! info "단기 기억 vs 장기 기억"
-    - **단기 기억** (현재 대화): LLM Context Window가 담당
-    - **장기 기억** (이전 대화, 선호도): AgentCore Memory가 담당
+::: info 단기 기억 vs 장기 기억
+- **단기 기억** (현재 대화): LLM Context Window가 담당
+- **장기 기억** (이전 대화, 선호도): AgentCore Memory가 담당
+:::
+
 
 #### Policy — Agent에게 가드레일 설정
 
@@ -174,12 +169,11 @@ sequenceDiagram
 | **비유** | Agent에게 브라우저를 주면 — 경쟁사 가격, 뉴스, 날씨를 직접 확인 |
 | **사용 Phase** | Phase 2A (경쟁사 가격), Phase 2B (뉴스/날씨 수집) |
 
-!!! tip "Phase 3는 새 서비스가 아니라 '조합'입니다"
-    Phase 3에서는 새로운 서비스를 배우는 대신, 위 서비스들(Runtime + Gateway + Memory)을
-    **바이브코딩으로 조합**하여 나만의 Agent를 만들었습니다.
-    이것이 AgentCore의 핵심 — 서비스는 재료이고, Agent는 조합입니다.
-
----
+::: tip Phase 3는 새 서비스가 아니라 '조합'입니다
+Phase 3에서는 새로운 서비스를 배우는 대신, 위 서비스들(Runtime + Gateway + Memory)을
+**바이브코딩으로 조합**하여 나만의 Agent를 만들었습니다.
+이것이 AgentCore의 핵심 — 서비스는 재료이고, Agent는 조합입니다.
+:::
 
 ## 서비스 선택 의사결정 가이드
 
@@ -203,8 +197,6 @@ graph TD
     style CI2 fill:#f3e5f5,stroke:#6a1b9a
 ```
 
----
-
 ## 오늘 배운 핵심 패턴
 
 | 패턴 | 설명 | 코드 한 줄 |
@@ -218,12 +210,14 @@ graph TD
 | **실시간 = Browser** | 웹사이트 방문 & 추출 | `tools=[browser.browser]` |
 | **조합 = 바이브코딩** | 설계서 + 참고 코드 → 나만의 Agent | "이 설계서대로 만들어줘" |
 
-!!! success "핵심 메시지"
-    Agent 개발은 **"코드를 짜는 것"**이 아니라 **"서비스를 조합하는 것"**입니다.
-    
-    - Gateway Target만 바꾸면 → Tool이 바뀜
-    - System Prompt만 바꾸면 → 역할이 바뀜
-    - Memory Strategy만 바꾸면 → 지능이 바뀜
-    - Policy Rule만 바꾸면 → 행동 범위가 바뀜
-    
-    **여러분은 이미 프로덕션 Agent 개발자입니다.** 🎉
+::: tip ✅ 핵심 메시지
+Agent 개발은 **"코드를 짜는 것"**이 아니라 **"서비스를 조합하는 것"**입니다.
+
+- Gateway Target만 바꾸면 → Tool이 바뀜
+- System Prompt만 바꾸면 → 역할이 바뀜
+- Memory Strategy만 바꾸면 → 지능이 바뀜
+- Policy Rule만 바꾸면 → 행동 범위가 바뀜
+
+**여러분은 이미 프로덕션 Agent 개발자입니다.** 🎉
+:::
+

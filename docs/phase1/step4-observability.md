@@ -10,12 +10,11 @@
   <span class="step active">● Step 4 Observability</span>
 </div>
 
-!!! info "이 Step의 목표"
-    배포된 Agent의 동작을 **GenAI Observability Dashboard**에서 실시간 관찰합니다.
-    
-    Agent가 어떤 Tool을 어떤 순서로 호출했는지, 각 단계의 소요 시간을 확인합니다.
+::: info 이 Step의 목표
+배포된 Agent의 동작을 **GenAI Observability Dashboard**에서 실시간 관찰합니다.
 
----
+Agent가 어떤 Tool을 어떤 순서로 호출했는지, 각 단계의 소요 시간을 확인합니다.
+:::
 
 ## Observability란?
 
@@ -42,13 +41,12 @@ Console → Bedrock → AgentCore → Runtime → `phase1_phase1` → 하단 **L
 
 ![Tracing Enabled](../assets/images/phase1/runtime-tracing-enabled.png)
 
-!!! success "Tracing: ✅ Enabled 확인"
-    `onestop.sh`에서 Transaction Search를 사전 설정했기 때문에, `deploy-agent.sh`로 배포하면 Tracing이 자동 활성화됩니다.
-    
-    - **Tracing** = Agent의 Tool 호출 순서, latency, 토큰 사용량 추적 (필수)
-    - **Log delivery** = 별도 목적지로 로그 전송 (optional, 설정 불필요)
+::: tip ✅ Tracing: ✅ Enabled 확인
+`onestop.sh`에서 Transaction Search를 사전 설정했기 때문에, `deploy-agent.sh`로 배포하면 Tracing이 자동 활성화됩니다.
 
----
+- **Tracing** = Agent의 Tool 호출 순서, latency, 토큰 사용량 추적 (필수)
+- **Log delivery** = 별도 목적지로 로그 전송 (optional, 설정 불필요)
+:::
 
 ## 4-1. CLI로 Trace 확인
 
@@ -77,14 +75,31 @@ agentcore traces get <traceId>
 
 이 예시는 `execute_event_loop_cycle`이 2번 반복되며 `customer_profile` → `purchase_history` → `product_search` 순서로 3개 Tool을 호출한 뒤, 두 번의 `chat`(LLM 호출)으로 응답을 완성한 과정을 보여줍니다 — 전체 21개 Span, 18.7초, 7,275 토큰.
 
-!!! note "Trace 데이터 지연"
-    첫 invoke 후 Trace가 나타나기까지 **최대 10분**이 걸릴 수 있습니다.
-    목록이 비어 있으면 잠시 대기 후 재시도하세요.
+::: info Trace 데이터 지연
+첫 invoke 후 Trace가 나타나기까지 **최대 10분**이 걸릴 수 있습니다.
+"No spans found"가 나오면 잠시 대기 후 재시도하세요.
+:::
 
-!!! info "CLI 버전에 따라 명령어가 다릅니다"
-    이 워크샵은 최신 CDK 기반 CLI(`@aws/agentcore`)를 사용하며, Trace 조회는 `agentcore obs list/show`가 아니라 **`agentcore traces list`/`agentcore traces get`**입니다.
 
----
+::: details ✅ Trace 출력 예시
+```
+Trace: ac-tr-67aa52c5
+Duration: 3,439ms
+Status: SUCCESS
+
+Spans:
+├─ [RUNTIME] Invoke received (2ms)
+├─ [MODEL] Claude Sonnet 4.6 — in:1,200 out:89 — tool_use (2.1s)
+├─ [GATEWAY] customer_profile — PERMIT (184ms)
+├─ [MODEL] Claude Sonnet 4.6 — in:1,450 out:67 — tool_use (1.8s)
+├─ [GATEWAY] purchase_history — PERMIT (92ms)
+├─ [MODEL] Claude Sonnet 4.6 — in:1,680 out:112 — tool_use (2.0s)
+├─ [GATEWAY] product_search — PERMIT (156ms)
+├─ [GATEWAY] product_search — PERMIT (148ms)
+├─ [MODEL] Claude Sonnet 4.6 — in:2,100 out:423 — end_turn (2.8s)
+└─ [RUNTIME] Complete — SUCCESS (3,439ms)
+```
+:::
 
 ## 4-2. GenAI Observability Dashboard
 
@@ -133,9 +148,11 @@ Trace ID를 클릭하면 **20개 Span의 시간축 분포**를 한눈에 볼 수
 - **mcp tools/list, mcp.session** → Gateway 연결 + Tool 목록 조회
 - 우측 패널: 모델명, latency, 토큰 수, System Prompt 내용까지 확인 가능
 
-!!! info "이 상세 Trace를 보려면"
-    `deploy-agent.sh`에서 `AGENT_OBSERVABILITY_ENABLED=true` 환경변수와 `aws-opentelemetry-distro` 패키지가 필요합니다.
-    **환경 세팅의 `onestop.sh`와 `deploy-agent.sh`에서 이미 설정했으므로** 별도 작업 없이 확인 가능합니다.
+::: info 이 상세 Trace를 보려면
+`deploy-agent.sh`에서 `AGENT_OBSERVABILITY_ENABLED=true` 환경변수와 `aws-opentelemetry-distro` 패키지가 필요합니다.
+**환경 세팅의 `onestop.sh`와 `deploy-agent.sh`에서 이미 설정했으므로** 별도 작업 없이 확인 가능합니다.
+:::
+
 
 ### Dashboard에서 볼 수 있는 것
 
@@ -146,8 +163,6 @@ Trace ID를 클릭하면 **20개 Span의 시간축 분포**를 한눈에 볼 수
 | **Token Usage** | 입력/출력 토큰 사용량 |
 | **Tool Calls** | Tool별 호출 횟수 |
 | **Error Rate** | 에러 비율 |
-
----
 
 ## 4-3. 직접 호출하고 Trace 확인하기
 
@@ -166,8 +181,6 @@ agentcore invoke --runtime phase1 --session-id "obs-test-002-$(uuidgen)" "고객
 - [ ] **LLM 호출** — `chat us.anthropic.claude-sonnet-4-6` span이 몇 개인가?
 - [ ] **전체 소요시간** — Timeline에서 병목 구간이 어디인가?
 - [ ] **토큰 사용량** — 우측 패널에서 Input tokens / Output tokens 확인
-
----
 
 ## 4-4. 에러 시나리오 디버깅
 
@@ -198,14 +211,13 @@ Dashboard에서 관찰:
 - Agent가 `customer_profile` Tool로부터 에러 응답을 받았을 때 **어떻게 대처하는지** 확인
 - 에러에도 불구하고 사용자에게 적절한 안내를 하는가?
 
-!!! tip "Observability의 진짜 가치"
-    문제가 생겼을 때 **어디서 실패했는지** 즉시 파악할 수 있습니다.
-    
-    - Tool이 에러를 반환했나? → Spans 탭에서 해당 Tool span 확인
-    - LLM이 잘못 판단했나? → `chat` span 클릭 → Input/Output 메시지 확인
-    - 느린 응답? → Timeline에서 가장 긴 Span이 병목
+::: tip Observability의 진짜 가치
+문제가 생겼을 때 **어디서 실패했는지** 즉시 파악할 수 있습니다.
 
----
+- Tool이 에러를 반환했나? → Spans 탭에서 해당 Tool span 확인
+- LLM이 잘못 판단했나? → `chat` span 클릭 → Input/Output 메시지 확인
+- 느린 응답? → Timeline에서 가장 긴 Span이 병목
+:::
 
 ## Phase 1 완료!
 

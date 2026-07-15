@@ -1,12 +1,13 @@
 # SA 운영 가이드: 환경 구축 & 배포
 
-!!! abstract "이 페이지는 SA(운영진) 전용입니다"
-    참가자에게는 공개하지 않습니다. 워크샵 인프라 준비, Git Repo 세팅, SageMaker Code Editor 환경 구성을 다룹니다.
+::: info ℹ️ 이 페이지는 SA(운영진) 전용입니다
+참가자에게는 공개하지 않습니다. 워크샵 인프라 준비, Git Repo 세팅, SageMaker Code Editor 환경 구성을 다룹니다.
+:::
 
-!!! danger "mkdocs.yml nav에서 제외되어 있지만 URL 직접 접근은 막히지 않습니다"
-    이 파일은 참가자용 CloudFront 배포본에는 **포함시키지 마세요**. `mkdocs build` 시 `docs/appendix/sa-guide.md`를 site 빌드 대상에서 제외(별도 브랜치/별도 빌드 또는 `exclude` 플러그인 사용)하거나, 참가자 공개용 배포 직전에 이 파일을 리포지토리에서 빼고 빌드하세요.
 
----
+::: danger mkdocs.yml nav에서 제외되어 있지만 URL 직접 접근은 막히지 않습니다
+이 파일은 참가자용 CloudFront 배포본에는 **포함시키지 마세요**. `mkdocs build` 시 `docs/appendix/sa-guide.md`를 site 빌드 대상에서 제외(별도 브랜치/별도 빌드 또는 `exclude` 플러그인 사용)하거나, 참가자 공개용 배포 직전에 이 파일을 리포지토리에서 빼고 빌드하세요.
+:::
 
 ## 전체 아키텍처 (운영 관점)
 
@@ -18,8 +19,6 @@ graph LR
     E[S3: MkDocs Guide] --> F[CloudFront<br/>가이드 URL]
     G[Workshop Studio<br/>100 Accounts] --> B
 ```
-
----
 
 ## 1. Git Repository 세팅
 
@@ -67,13 +66,15 @@ rcg-agentcore-workshop/
     └── weather-forecast.html
 ```
 
-!!! warning "⚠️ starter-code 저장소 필요 변경사항 (Phase 2B/3 재구성 반영)"
-    가이드 문서가 "나만의 Agent 만들기" 테마로 재구성되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
+::: warning ⚠️ starter-code 저장소 필요 변경사항 (Phase 2B/3 재구성 반영)
+가이드 문서가 "나만의 Agent 만들기" 테마로 재구성되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
 
-    1. **`agents/phase2b_collector.py` 신규 작성** — 정보 수집 Agent 골격(System Prompt는 참가자가 채우는 빈칸 템플릿). **참조 구현이 이 가이드 저장소의 `agents/phase2b_collector.py`에 있습니다** — starter-code 저장소로 복사하면 됩니다. `phase2a_cs.py`와 동일 구조(모듈 레벨 MCPClient, 지연 생성 Browser, async generator 스트리밍)에서 Memory 코드를 빼고, System Prompt에 `MOCK_SITE_URL` 기반 정보원 안내를 넣은 형태입니다
-    2. **`scripts/add-demand-targets.py` 작성/확인** — `add-cs-targets.py`를 복제해 `rcg-workshop-demand-*` Lambda 4개를 Gateway Target으로 등록
-    3. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
-    4. **`deploy-agent.sh`가 `MOCK_SITE_URL`도 Runtime 환경변수로 전달**하는지 확인 (phase2b_collector가 사용)
+1. **`agents/phase2b_collector.py` 신규 작성** — 정보 수집 Agent 골격(System Prompt는 참가자가 채우는 빈칸 템플릿). **참조 구현이 이 가이드 저장소의 `agents/phase2b_collector.py`에 있습니다** — starter-code 저장소로 복사하면 됩니다. `phase2a_cs.py`와 동일 구조(모듈 레벨 MCPClient, 지연 생성 Browser, async generator 스트리밍)에서 Memory 코드를 빼고, System Prompt에 `MOCK_SITE_URL` 기반 정보원 안내를 넣은 형태입니다
+2. **`scripts/add-demand-targets.py` 작성/확인** — `add-cs-targets.py`를 복제해 `rcg-workshop-demand-*` Lambda 4개를 Gateway Target으로 등록
+3. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
+4. **`deploy-agent.sh`가 `MOCK_SITE_URL`도 Runtime 환경변수로 전달**하는지 확인 (phase2b_collector가 사용)
+:::
+
 
 ### 1-2. GitHub Repo 생성
 
@@ -125,8 +126,6 @@ source ./infra/bootstrap.sh
 cd starter-code
 python3 scripts/setup-gateway.py
 ```
-
----
 
 ## 2. SageMaker Code Editor 환경 구성
 
@@ -267,8 +266,6 @@ echo "=========================================="
 }
 ```
 
----
-
 ## 3. Lambda 사전 배포
 
 ### 3-1. 일괄 배포 스크립트 (`infra/deploy-lambdas.sh`)
@@ -356,8 +353,6 @@ WorkshopLambdaRole:
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 ```
 
----
-
 ## 4. Mock 사이트 배포
 
 ### 4-1. S3 + CloudFront 배포
@@ -393,8 +388,6 @@ echo ""
 echo "   이 URL을 bootstrap.sh의 MOCK_SITE_URL에 설정하세요."
 ```
 
----
-
 ## 5. MkDocs 가이드 배포
 
 ```bash
@@ -408,8 +401,6 @@ aws s3 sync site/ s3://rcg-workshop-guide-${ACCOUNT_ID}/ \
 # CloudFront 무효화 (있는 경우)
 # aws cloudfront create-invalidation --distribution-id EXXXXX --paths "/*"
 ```
-
----
 
 ## 6. D-Day 체크리스트
 
@@ -451,8 +442,6 @@ aws s3 sync site/ s3://rcg-workshop-guide-${ACCOUNT_ID}/ \
 - [ ] 10:20 — 참가자 `source bootstrap.sh` 일제히 실행
 - [ ] 각 Phase 시작 시 SA 실시간 모니터링 (CloudWatch)
 
----
-
 ## 7. 트러블슈팅
 
 ### 흔한 이슈 & 해결
@@ -482,8 +471,6 @@ cat /tmp/out.json
 # 전체 리소스 정리 (워크샵 종료 후)
 ./infra/cleanup.sh
 ```
-
----
 
 ## 8. 리소스 정리 (`infra/cleanup.sh`)
 

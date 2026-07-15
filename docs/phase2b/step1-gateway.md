@@ -6,11 +6,10 @@
   <span class="step">○ Step 2 Agent</span>
 </div>
 
-!!! info "이 Step의 목표"
-    Phase 1에서 만든 Gateway에 **`external-factors` Tool**을 추가 등록합니다.
-    이 Tool은 날씨 예보/지역 이벤트/공휴일 데이터를 Agent에게 제공합니다.
-
----
+::: info 이 Step의 목표
+Phase 1에서 만든 Gateway에 **`external-factors` Tool**을 추가 등록합니다.
+이 Tool은 날씨 예보/지역 이벤트/공휴일 데이터를 Agent에게 제공합니다.
+:::
 
 ## 현재 Gateway 상태 확인
 
@@ -23,11 +22,10 @@ Phase 1에서 이미 Gateway를 생성하고 3개 Target을 등록했습니다:
 Gateway 합계: 4개 Target = Agent가 사용할 수 있는 Tool
 ```
 
-!!! tip "Gateway의 핵심 가치"
-    Agent 코드를 수정하지 않고 Gateway Target만 추가하면 Agent 기능이 확장됩니다.
-    이것이 Gateway의 관심사 분리 — Tool 확장과 Agent 코드가 분리되어 있습니다.
-
----
+::: tip Gateway의 핵심 가치
+Agent 코드를 수정하지 않고 Gateway Target만 추가하면 Agent 기능이 확장됩니다.
+이것이 Gateway의 관심사 분리 — Tool 확장과 Agent 코드가 분리되어 있습니다.
+:::
 
 ## 1-1. `external-factors` Target 등록
 
@@ -65,11 +63,10 @@ Bedrock AgentCore Gateway 콘솔에서 추가 버튼을 누릅니다.
 }
 ```
 
-!!! tip "스키마의 description이 Tool 선택을 좌우합니다"
-    Agent는 이 description을 읽고 "날씨 관련 질문에 이 Tool을 쓸지" 판단합니다.
-    Phase 3에서 나만의 Tool을 조합할 때도 이 원리를 활용하게 됩니다.
-
----
+::: tip 스키마의 description이 Tool 선택을 좌우합니다
+Agent는 이 description을 읽고 "날씨 관련 질문에 이 Tool을 쓸지" 판단합니다.
+Phase 3에서 나만의 Tool을 조합할 때도 이 원리를 활용하게 됩니다.
+:::
 
 ## 1-2. 결과 확인
 
@@ -81,22 +78,23 @@ aws bedrock-agentcore-control list-gateway-targets \
   --query 'items[].name' --output table
 ```
 
-??? success "정상 출력 (4개 Target)"
-    ```
-    ----------------------
-    | ListGatewayTargets |
-    +--------------------+
-    |  customer-profile  |
-    |  product-search    |
-    |  purchase-history  |
-    |  external-factors  |
-    +--------------------+
-    ```
+::: details ✅ 정상 출력 (4개 Target)
+```
+----------------------
+| ListGatewayTargets |
++--------------------+
+|  customer-profile  |
+|  product-search    |
+|  purchase-history  |
+|  external-factors  |
++--------------------+
+```
+:::
 
-!!! info "4개 모두 확인되면 성공"
-    Status가 `CREATING`이면 30초 정도 기다린 후 다시 확인하세요.
 
----
+::: info 4개 모두 확인되면 성공
+Status가 `CREATING`이면 30초 정도 기다린 후 다시 확인하세요.
+:::
 
 ## 이해 체크
 
@@ -106,5 +104,7 @@ aws bedrock-agentcore-control list-gateway-targets \
 
 ---
 
-!!! success "다음"
-    데이터 재료 준비 완료! → [Step 2: 나만의 수집 Agent 만들어 배포하기](step2-agent.md)
+::: tip ✅ 다음
+데이터 재료 준비 완료! → [Step 2: 나만의 수집 Agent 만들어 배포하기](step2-agent.md)
+:::
+
