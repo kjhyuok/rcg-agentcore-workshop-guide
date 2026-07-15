@@ -21,33 +21,33 @@
 
 ## 4-1. Memory 준비 (트랙별로 다릅니다)
 
-=== "Phase 2A를 진행했다면"
+#### Phase 2A를 진행했다면
 
-    이미 Memory가 있습니다. 환경변수만 확인하세요:
+이미 Memory가 있습니다. 환경변수만 확인하세요:
 
-    ```bash
-    echo $AGENTCORE_MEMORY_ID
-    ```
+```bash
+echo $AGENTCORE_MEMORY_ID
+```
 
-    비어 있다면 `source ~/workshop/.env.w001`로 복구합니다.
+비어 있다면 `source ~/workshop/.env.w001`로 복구합니다.
 
-=== "Phase 2B를 진행했다면"
+#### Phase 2B를 진행했다면
 
-    Memory를 새로 생성합니다 (2A 트랙이 Phase 2A Step 1에서 했던 것과 동일):
+Memory를 새로 생성합니다 (2A 트랙이 Phase 2A Step 1에서 했던 것과 동일):
 
-    ```bash
-    cd ~/workshop/starter-code
-    python3.12 scripts/setup-memory.py
-    ```
+```bash
+cd ~/workshop/starter-code
+python3.12 scripts/setup-memory.py
+```
 
-    스크립트가 `bedrock-agentcore-control` API로 Memory와 3개 Strategy(CustomerFacts, SessionSummaries, CustomerPreferences)를 생성합니다.
+스크립트가 `bedrock-agentcore-control` API로 Memory와 3개 Strategy(CustomerFacts, SessionSummaries, CustomerPreferences)를 생성합니다.
 
-    ::: danger 반드시 실행: 출력된 export 명령어를 복사 → 붙여넣기
-    ```bash
-    export AGENTCORE_MEMORY_ID=<출력에 나온 실제 Memory ID>
-    ```
-    이 값이 없으면 Agent가 Memory에 접근하지 못합니다.
-    :::
+::: danger 반드시 실행: 출력된 export 명령어를 복사 → 붙여넣기
+```bash
+export AGENTCORE_MEMORY_ID=<출력에 나온 실제 Memory ID>
+```
+이 값이 없으면 Agent가 Memory에 접근하지 못합니다.
+:::
 
 ## 4-2. 바이브코딩으로 Memory 연동
 
