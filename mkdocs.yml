@@ -73,7 +73,7 @@ nav:
   - "Phase 1: 첫 Agent, 세상에 내보내기":
     - 개요: phase1/index.md
     - "Agent에게 도구를 쥐어주자": phase1/step1-gateway.md
-    - "똑똑한 두뇌를 달아주자": phase1/step2-agent.md
+    - "Agent를 조립하고 행동을 살펴보자": phase1/step2-agent.md
     - "세상에 공개하기": phase1/step3-runtime.md
     - "Agent의 생각을 들여다보기": phase1/step4-observability.md
   - "Phase 2A: 어제 온 고객을 기억하는 CS Agent":
