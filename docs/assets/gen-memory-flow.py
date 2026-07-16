@@ -27,7 +27,11 @@ digraph MemoryFlow {
   edge [fontname="Helvetica", fontsize=11, color="#64748b", penwidth=1.4];
 
   // AgentCore Memory 저장소 (읽기/쓰기 양쪽 연결)
-  memory [label="🧠 AgentCore Memory\n\n고객 선호·이력\n대화 요약\n(actor_id로 격리)", fillcolor="#ede9fe", color="#7c3aed", fontcolor="#4c1d95", fontsize=13, width=2.0];
+  memory [label="🧠 AgentCore Memory\n\nusers/{actor_id}/facts\n고객 선호·이력·대화 요약\n(actor_id 단위로 격리)", fillcolor="#ede9fe", color="#7c3aed", fontcolor="#4c1d95", fontsize=13, width=2.2];
+
+  // 세션 경계를 넘는 핵심을 하단에 명시
+  note [shape=note, fillcolor="#fef9c3", color="#ca8a04", fontcolor="#713f12", fontsize=12,
+        label="💡 조회는 actor의 모든 세션 facts / 저장은 이번 session\n→ 어제 다른 세션의 대화를 오늘 기억한다"];
 
   // 4단계 파이프라인
   subgraph cluster_flow {
@@ -50,9 +54,13 @@ digraph MemoryFlow {
   step2 -> step3 [color="#334155"];
   step3 -> step4 [color="#334155"];
 
-  // Memory ↔ 조회/저장 연결
-  memory -> step1 [label="read", color="#0e7490", fontcolor="#0e7490"];
-  step4 -> memory [label="write", color="#ea580c", fontcolor="#ea580c"];
+  // Memory ↔ 조회/저장 연결 (범위 비대칭이 핵심)
+  memory -> step1 [label="read\n(actor 전체 세션)", color="#0e7490", fontcolor="#0e7490"];
+  step4 -> memory [label="write\n(이번 session)", color="#ea580c", fontcolor="#ea580c"];
+
+  // 핵심 노트를 Memory 아래에 배치
+  memory -> note [style=invis];
+  { rank=same; memory; note; }
 }
 """
 
