@@ -105,7 +105,7 @@ graph TD
 
 - [ ] **환경 세팅** — Workshop Studio **Event Outputs**의 `CodeServerUrl`로 VS Code Server 접속 (`~/workshop` 자동 오픈, 사전 구성 완료)
 - [ ] **Phase 1** — Gateway 생성, Agent 작성, Runtime 배포, Trace 확인
-- [ ] **Phase 2 (택1)** — 2A: Memory + Policy + Browser / 2B: Browser + Gateway 확장
+- [ ] **Phase 2** — CS Agent: Memory + Policy + Browser
 - [ ] **Phase 3** — 설계서 작성, 바이브코딩, 배포, Memory 연동
 
 ## 시작하기
