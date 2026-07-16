@@ -21,6 +21,11 @@ Agent에 **Memory를 연동**하여 고객 맥락을 기억하게 합니다.
 
 ## 핵심 패턴
 
+<figure style="text-align:center; margin:1.5rem 0;">
+  <img src="../assets/memory-flow.png" alt="Memory 연동 흐름 개념도" width="840">
+  <figcaption>매 요청마다 <b>조회 → 주입 → 실행 → 저장</b> — AgentCore Memory가 <b>read</b>(맥락 조회)와 <b>write</b>(대화 저장) 양쪽에 연결됩니다</figcaption>
+</figure>
+
 ```python
 # Phase 1: 상태 없는 Agent
 agent("주문 조회해주세요")  # 매번 새로운 대화
