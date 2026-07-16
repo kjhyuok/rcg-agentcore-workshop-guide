@@ -13,7 +13,7 @@ import os
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 with Diagram(
-    "Phase 1: 추천 Agent + 시각화",
+    "Phase 1: 추천 Agent",
     filename=os.path.join(OUTPUT_DIR, "phase1_architecture"),
     show=False,
     direction="TB",
@@ -37,13 +37,9 @@ with Diagram(
             t2 = Lambda("product\n_search")
             t3 = Lambda("purchase\n_history")
 
-        with Cluster("Code Interpreter", graph_attr={"bgcolor": "#e8f5e9"}):
-            ci = Bedrock("Python Sandbox\nmatplotlib/pandas\n차트 생성")
-
         obs = Cloudwatch("Observability\nGenAI Dashboard\n+ X-Ray Trace")
 
     agent >> Edge(label="MCP tool_use", color="#1565c0") >> t1
     agent >> Edge(color="#1565c0") >> t2
     agent >> Edge(color="#1565c0") >> t3
-    agent >> Edge(label="코드 실행", color="#2e7d32") >> ci
     agent >> Edge(label="자동 Trace", style="dashed", color="#6a1b9a") >> obs
