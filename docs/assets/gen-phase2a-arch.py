@@ -5,7 +5,6 @@ from diagrams import Diagram, Cluster, Edge
 from diagrams.aws.ml import Bedrock
 from diagrams.aws.compute import Lambda
 from diagrams.aws.management import Cloudwatch
-from diagrams.aws.database import Dynamodb as DynamoDB
 from diagrams.aws.security import WAF as Shield
 import os
 
@@ -32,7 +31,7 @@ with Diagram(
             agent = Bedrock("CS Agent\n(Strands SDK)\nClaude Sonnet 4.6")
 
         with Cluster("Memory", graph_attr={"bgcolor": "#e8eaf6"}):
-            memory = DynamoDB("고객 선호/이력\n대화 요약\nNamespace 분리")
+            memory = Bedrock("AgentCore Memory\n고객 선호/이력·대화 요약\nNamespace 분리")
 
         with Cluster("Gateway (CS Tools)", graph_attr={"bgcolor": "#e3f2fd"}):
             t1 = Lambda("lookup\n_order")

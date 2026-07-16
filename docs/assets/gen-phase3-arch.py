@@ -8,7 +8,6 @@ PNG 재생성 필요 시: pip install diagrams && python3 gen-phase3-arch.py
 from diagrams import Diagram, Cluster, Edge
 from diagrams.aws.ml import Bedrock
 from diagrams.aws.compute import Lambda
-from diagrams.aws.database import Dynamodb as DynamoDB
 from diagrams.aws.management import Cloudwatch
 import os
 
@@ -43,7 +42,7 @@ with Diagram(
             browser = Bedrock("Browser\n뉴스/날씨/가격")
 
         with Cluster("Memory (Step 4 연동)", graph_attr={"bgcolor": "#e8eaf6"}):
-            memory = DynamoDB("기억의 주체 = actor_id\n(고객 ID / 매장 ID)")
+            memory = Bedrock("AgentCore Memory\n기억의 주체 = actor_id\n(고객 ID / 매장 ID)")
 
         obs = Cloudwatch("Observability")
 
