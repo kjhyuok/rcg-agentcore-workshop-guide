@@ -124,7 +124,8 @@ agents/phase3/app/phase3/main.py를 실행하니 아래 에러가 나. 원인을
 AI 도구를 쓸 수 없거나, 생성된 코드가 미덥지 않다면 이 템플릿에서 시작하세요.
 **같은 Tool이라도 System Prompt와 Tool 조합이 다르면 완전히 다른 Agent**가 됩니다.
 
-```python title="agents/phase3/app/phase3/main.py"
+```python
+# agents/phase3/app/phase3/main.py
 import os
 import uuid
 import threading
@@ -149,88 +150,88 @@ mcp_client = MCPClient(lambda: streamablehttp_client(GATEWAY_URL))
 # Browser Tool은 지연 생성 + 싱글톤 캐싱 (콜드스타트 타임아웃 예방)
 _browser_tool = None
 _browser_tool_lock = threading.Lock()
+
+
+def get_browser_tool():
+    global _browser_tool
+    if _browser_tool is None:
+        with _browser_tool_lock:
+            if _browser_tool is None:
+                from strands_tools.browser import AgentCoreBrowser
+                _browser_tool = AgentCoreBrowser(region=REGION)
+    return _browser_tool
+
+# ╔══════════════════════════════════════════════╗
+# ║  수정 포인트 1: System Prompt (설계서 반영)   ║
+# ╚══════════════════════════════════════════════╝
+SYSTEM_PROMPT = """당신은 [설계서의 한 줄 설명]입니다.
+
+## 역할
+- [구체적인 역할 설명]
+
+## 사용 가능한 도구
+- [Tool 1]: [언제 사용하는지]
+- [Tool 2]: [언제 사용하는지]
+
+## 응답 규칙
+- [설계서의 응답 규칙 1]
+- [설계서의 응답 규칙 2]
+- Tool 결과에 없는 정보는 절대 지어내지 않습니다
+"""
+
+# ╔══════════════════════════════════════════════╗
+# ║  수정 포인트 2: 사용할 추가 Tool 선택         ║
+# ╚══════════════════════════════════════════════╝
+def build_tools():
+    tools = [mcp_client]                       # Gateway Tools (항상 포함)
+    # tools.append(get_browser_tool().browser)  # Browser가 필요하면 주석 해제
+    return tools
+
+# ╔══════════════════════════════════════════════╗
+# ║  수정 포인트 3: Memory의 기억 주체            ║
+# ║  (Step 4에서 사용 — 지금은 주석만 남겨두세요) ║
+# ╚══════════════════════════════════════════════╝
+# Memory 연동은 Step 4에서 추가합니다.
+# actor_id로 무엇을 쓸지(고객 ID? 매장 ID?)만 설계서에서 정해두세요.
+
+
+# --- Runtime Entrypoint ---
+app = BedrockAgentCoreApp()
+
+
+@app.entrypoint
+async def my_agent(payload: dict):
+    user_message = payload.get("message", "")
+    session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
+
+    agent = Agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=build_tools(),
+    )
+
+    # return 대신 yield — 토큰이 생성되는 즉시 스트리밍
+    full_text = ""
+    async for event in agent.stream_async(user_message):
+        chunk = event.get("data")
+        if chunk:
+            full_text += chunk
+            yield {"type": "chunk", "response": chunk, "session_id": session_id}
+
+    yield {"type": "done", "response": full_text, "session_id": session_id}
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+수정하는 것은 딱 3곳입니다:
+
+1. **System Prompt** — 설계서의 역할/응답 규칙 반영
+2. **build_tools()** — Browser/Code Interpreter 필요 시 추가
+3. **Memory 주석** — 기억의 주체(actor_id)만 정해두기 (연동은 Step 4에서)
+
 :::
-
-
-
-    def get_browser_tool():
-        global _browser_tool
-        if _browser_tool is None:
-            with _browser_tool_lock:
-                if _browser_tool is None:
-                    from strands_tools.browser import AgentCoreBrowser
-                    _browser_tool = AgentCoreBrowser(region=REGION)
-        return _browser_tool
-
-    # ╔══════════════════════════════════════════════╗
-    # ║  수정 포인트 1: System Prompt (설계서 반영)   ║
-    # ╚══════════════════════════════════════════════╝
-    SYSTEM_PROMPT = """당신은 [설계서의 한 줄 설명]입니다.
-
-    ## 역할
-    - [구체적인 역할 설명]
-
-    ## 사용 가능한 도구
-    - [Tool 1]: [언제 사용하는지]
-    - [Tool 2]: [언제 사용하는지]
-
-    ## 응답 규칙
-    - [설계서의 응답 규칙 1]
-    - [설계서의 응답 규칙 2]
-    - Tool 결과에 없는 정보는 절대 지어내지 않습니다
-    """
-
-    # ╔══════════════════════════════════════════════╗
-    # ║  수정 포인트 2: 사용할 추가 Tool 선택         ║
-    # ╚══════════════════════════════════════════════╝
-    def build_tools():
-        tools = [mcp_client]                       # Gateway Tools (항상 포함)
-        # tools.append(get_browser_tool().browser)  # Browser가 필요하면 주석 해제
-        return tools
-
-    # ╔══════════════════════════════════════════════╗
-    # ║  수정 포인트 3: Memory의 기억 주체            ║
-    # ║  (Step 4에서 사용 — 지금은 주석만 남겨두세요) ║
-    # ╚══════════════════════════════════════════════╝
-    # Memory 연동은 Step 4에서 추가합니다.
-    # actor_id로 무엇을 쓸지(고객 ID? 매장 ID?)만 설계서에서 정해두세요.
-
-
-    # --- Runtime Entrypoint ---
-    app = BedrockAgentCoreApp()
-
-
-    @app.entrypoint
-    async def my_agent(payload: dict):
-        user_message = payload.get("message", "")
-        session_id = payload.get("session_id", f"sess-{uuid.uuid4()}")
-
-        agent = Agent(
-            model=model,
-            system_prompt=SYSTEM_PROMPT,
-            tools=build_tools(),
-        )
-
-        # return 대신 yield — 토큰이 생성되는 즉시 스트리밍
-        full_text = ""
-        async for event in agent.stream_async(user_message):
-            chunk = event.get("data")
-            if chunk:
-                full_text += chunk
-                yield {"type": "chunk", "response": chunk, "session_id": session_id}
-
-        yield {"type": "done", "response": full_text, "session_id": session_id}
-
-
-    if __name__ == "__main__":
-        app.run()
-    ```
-
-    수정하는 것은 딱 3곳입니다:
-
-    1. **System Prompt** — 설계서의 역할/응답 규칙 반영
-    2. **build_tools()** — Browser/Code Interpreter 필요 시 추가
-    3. **Memory 주석** — 기억의 주체(actor_id)만 정해두기 (연동은 Step 4에서)
 
 ## 2-5. 완성 체크리스트
 
