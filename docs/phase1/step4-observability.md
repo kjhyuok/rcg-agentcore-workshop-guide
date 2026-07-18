@@ -81,30 +81,6 @@ agentcore traces get <traceId>
 목록이 비어 있으면 잠시 대기 후 재시도하세요.
 :::
 
-::: info CLI 버전에 따라 명령어가 다릅니다
-이 워크샵은 최신 CDK 기반 CLI(`@aws/agentcore`)를 사용하며, Trace 조회는 `agentcore obs list/show`가 아니라 **`agentcore traces list`/`agentcore traces get`**입니다.
-:::
-
-::: details ✅ Trace 출력 예시
-```
-Trace: ac-tr-67aa52c5
-Duration: 3,439ms
-Status: SUCCESS
-
-Spans:
-├─ [RUNTIME] Invoke received (2ms)
-├─ [MODEL] Claude Sonnet 4.6 — in:1,200 out:89 — tool_use (2.1s)
-├─ [GATEWAY] customer_profile — PERMIT (184ms)
-├─ [MODEL] Claude Sonnet 4.6 — in:1,450 out:67 — tool_use (1.8s)
-├─ [GATEWAY] purchase_history — PERMIT (92ms)
-├─ [MODEL] Claude Sonnet 4.6 — in:1,680 out:112 — tool_use (2.0s)
-├─ [GATEWAY] product_search — PERMIT (156ms)
-├─ [GATEWAY] product_search — PERMIT (148ms)
-├─ [MODEL] Claude Sonnet 4.6 — in:2,100 out:423 — end_turn (2.8s)
-└─ [RUNTIME] Complete — SUCCESS (3,439ms)
-```
-:::
-
 ## 4-2. GenAI Observability Dashboard
 
 Dashboard를 보기 전에 용어를 먼저 정리합니다. Session 안에 여러 Trace가 있고, Trace 안에 여러 Span이 있고, Span 안에 다시 Sub-span이 있는 **계층 구조**입니다:
