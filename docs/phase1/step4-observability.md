@@ -153,7 +153,7 @@ agentcore invoke --runtime phase1 --session-id "obs-test-002-$(uuidgen)" "고객
 ```
 
 ::: warning session-id는 33자 이상이어야 합니다
-`--session-id`에 짧은 문자열(`obs-test-002`)만 넣으면 `Value at 'runtimeSessionId' failed to satisfy constraint: Member must have length greater than or equal to 33` 에러가 납니다. `$(uuidgen)`으로 뒤에 UUID를 붙여 33자를 넉넉히 채우세요. `--session-id`를 생략하면 CLI가 자동으로 유효한 세션 ID를 생성합니다.
+`--session-id`에 짧은 문자열(`obs-test-002`)만 넣으면 `Value at 'runtimeSessionId' failed to satisfy constraint: Member must have length greater than or equal to 33` 에러가 납니다. `$(uuidgen)`으로 뒤에 UUID를 붙여 33자를 넉넉히 채우세요. `--session-id`를 생략하면 CLI가 세션 ID를 자동 생성하지만, Trace를 구분해 찾으려면 위처럼 알아보기 쉬운 라벨을 붙이는 편이 편합니다.
 :::
 
 1~2분 후 GenAI Dashboard → **Spans** 탭에서 확인:
