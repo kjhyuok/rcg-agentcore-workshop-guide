@@ -154,6 +154,14 @@ agent = Agent(
 고객이 "보조배터리가 다른 곳에서 더 싸던데요?"라고 물으면 → Agent가 Browser로 PriceHunter를 방문 → "쿠O 59,900원이 최저가로, 우리몰(69,000원)보다 9,100원 저렴한 것이 사실"처럼 **실제 페이지에서 읽은 근거**로 응답합니다. (Step 3에서 배포 후 직접 테스트합니다.)
 :::
 
+::: warning Browser Tool은 PriceHunter를 "모릅니다" — 방문할 곳은 프롬프트가 지시합니다
+`AgentCoreBrowser`는 **아무 웹페이지나 열 수 있는 범용 도구**일 뿐, 어느 사이트로 가야 하는지는 알지 못합니다. 방문 대상은 **System Prompt에 주입된 지시문**으로 정해집니다 — 그래서 URL 전달이 다음 경로로 이어집니다:
+
+`CloudFormation MockSiteUrl` → 환경변수 `MOCK_SITE_URL` → `deploy-agent.sh`가 Runtime에 주입 → **System Prompt에 `{MOCK_SITE_URL}/competitor-prices.html`로 치환**
+
+그리고 프롬프트에는 가드레일도 함께 걸려 있습니다: **Browser는 오직 "경쟁사 가격 비교"에만** 쓰고, 주문·배송·환불 조회는 반드시 전용 Gateway Tool(`cs_lookup_order` 등)을 쓰도록 명시되어 있어 Browser가 엉뚱한 곳에 쓰이지 않습니다.
+:::
+
 ## 2-3. 등록된 Tool Schema 정리
 
 | Tool 이름 | 설명 (Agent가 읽는 것) | 파라미터 |
