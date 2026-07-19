@@ -138,14 +138,6 @@ strategies:
 ```
 :::
 
-## 1-4. 환경변수 설정
-
-::: warning 환경변수 설정 필수
-```bash
-export AGENTCORE_MEMORY_ID=<위에서 출력된 Memory ID>
-```
-이 값은 Step 3에서 Agent가 Memory에 접근할 때 사용됩니다.
-:::
 
 ## 이해 체크
 

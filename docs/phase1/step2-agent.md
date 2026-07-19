@@ -149,28 +149,29 @@ agentcore dev --no-browser
 
 같은 Agent에게 아래 4가지 시나리오를 순서대로 입력해보고, **매번 Tool을 어떤 순서·횟수로 호출하는지** 비교하세요.
 
-!!! tip "미리보기: 시나리오마다 호출 패턴이 다릅니다"
-    4가지 시나리오는 겉보기엔 비슷한 질문이지만, System Prompt의 규칙이 서로 다른 조건에서 충돌하도록 설계되어 있습니다. 아래는 **시나리오 1**의 예상 호출 순서입니다 — 실제로 실행해서 이 순서와 일치하는지 확인하세요.
+::: tip 미리보기: 시나리오마다 호출 패턴이 다릅니다
+4가지 시나리오는 겉보기엔 비슷한 질문이지만, System Prompt의 규칙이 서로 다른 조건에서 충돌하도록 설계되어 있습니다. 아래는 **시나리오 1**의 예상 호출 순서입니다 — 실제로 실행해서 이 순서와 일치하는지 확인하세요.
 
-    ```mermaid
-    sequenceDiagram
-        participant U as 사용자
-        participant A as Agent
-        participant CP as customer_profile
-        participant PH as purchase_history
-        participant PS as product_search
+```mermaid
+sequenceDiagram
+    participant U as 사용자
+    participant A as Agent
+    participant CP as customer_profile
+    participant PH as purchase_history
+    participant PS as product_search
 
-        U->>A: 고객 C001에게 상품 3개 추천 (알러지 고려)
-        A->>CP: customer_id=C001
-        CP-->>A: 알러지: 견과류, 등급: VIP
-        A->>PH: customer_id=C001
-        PH-->>A: 기구매 상품 목록
-        A->>PS: category, tags 조건
-        PS-->>A: 재고 상품 목록
-        A->>U: 알러지·기구매 제외 후 최대 3개 추천
-    ```
+    U->>A: 고객 C001에게 상품 3개 추천 (알러지 고려)
+    A->>CP: customer_id=C001
+    CP-->>A: 알러지: 견과류, 등급: VIP
+    A->>PH: customer_id=C001
+    PH-->>A: 기구매 상품 목록
+    A->>PS: category, tags 조건
+    PS-->>A: 재고 상품 목록
+    A->>U: 알러지·기구매 제외 후 최대 3개 추천
+```
 
-    나머지 3개 시나리오는 이 순서에서 **호출이 빠지거나(시나리오 4), 결과가 비거나(시나리오 2), 규칙이 충돌(시나리오 3)** 하는 경우입니다. 직접 실행해서 Agent가 어떻게 다르게 반응하는지 비교해보세요.
+나머지 3개 시나리오는 이 순서에서 **호출이 빠지거나(시나리오 4), 결과가 비거나(시나리오 2), 규칙이 충돌(시나리오 3)** 하는 경우입니다. 직접 실행해서 Agent가 어떻게 다르게 반응하는지 비교해보세요.
+:::
 
 ### 시나리오 1 — 기본 추천 (알러지 고려)
 

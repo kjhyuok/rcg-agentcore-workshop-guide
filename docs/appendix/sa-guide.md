@@ -31,8 +31,7 @@ rcg-agentcore-workshop/
 ├── starter-code/
 │   ├── agents/
 │   │   ├── phase1_recommend.py
-│   │   ├── phase2a_cs.py
-│   │   └── phase2b_collector.py
+│   │   └── phase2a_cs.py
 │   ├── scripts/
 │   │   ├── setup-gateway.py
 │   │   ├── setup-memory.py
@@ -66,13 +65,13 @@ rcg-agentcore-workshop/
     └── weather-forecast.html
 ```
 
-::: warning ⚠️ starter-code 저장소 필요 변경사항 (Phase 2B/3 재구성 반영)
-가이드 문서가 "나만의 Agent 만들기" 테마로 재구성되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
+::: warning ⚠️ starter-code 저장소 필요 변경사항 (Phase 2B → Phase 3 통합 반영)
+Phase 2B가 Phase 3(나만의 Agent 만들기)로 통합되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
 
-1. **`agents/phase2b_collector.py` 신규 작성** — 정보 수집 Agent 골격(System Prompt는 참가자가 채우는 빈칸 템플릿). **참조 구현이 이 가이드 저장소의 `agents/phase2b_collector.py`에 있습니다** — starter-code 저장소로 복사하면 됩니다. `phase2a_cs.py`와 동일 구조(모듈 레벨 MCPClient, 지연 생성 Browser, async generator 스트리밍)에서 Memory 코드를 빼고, System Prompt에 `MOCK_SITE_URL` 기반 정보원 안내를 넣은 형태입니다
-2. **`scripts/add-demand-targets.py` 작성/확인** — `add-cs-targets.py`를 복제해 `rcg-workshop-demand-*` Lambda 4개를 Gateway Target으로 등록
-3. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
-4. **`deploy-agent.sh`가 `MOCK_SITE_URL`도 Runtime 환경변수로 전달**하는지 확인 (phase2b_collector가 사용)
+1. **`agents/phase2b_collector.py` 제거** — Phase 2B에서 만들던 수집 Agent가 사라지고, 참가자가 Phase 3에서 바이브코딩으로 직접 `agents/phase3/app/phase3/main.py`를 만듭니다 (참고 코드는 `phase2a`)
+2. **`external-factors` Lambda(`rcg-workshop-demand-external-factors`) 배포 유지** — Phase 3 Step 1에서 참가자가 콘솔로 직접 Gateway Target 등록
+3. **나머지 `rcg-workshop-demand-*` Lambda 3개(`inventory`/`sales-trend`/`purchase-order`)와 `rcg-workshop-weather-forecast`도 배포 유지** — Phase 3 설계 시 참가자가 선택적으로 Target 추가하는 재료
+4. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
 :::
 
 

@@ -1,18 +1,20 @@
-# Step 1: 나만의 Agent 설계하기 <span class="badge-time">⏱️ 10분</span> <span class="badge-difficulty">★☆☆</span>
+# Step 2: 나만의 Agent 설계하기 <span class="badge-time">⏱️ 10분</span> <span class="badge-difficulty">★☆☆</span>
 
 <div class="step-progress">
-  <span class="step active">● Step 1 설계</span>
+  <span class="step done">✓ Step 1 Gateway</span>
+  <span class="step-connector done"></span>
+  <span class="step active">● Step 2 설계</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 2 바이브코딩</span>
+  <span class="step">○ Step 3 바이브코딩</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 3 배포 & 테스트</span>
+  <span class="step">○ Step 4 배포 & 테스트</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 4 Memory 고도화</span>
+  <span class="step">○ Step 5 Memory</span>
 </div>
 
 ::: info 이 Step의 목표
 코드를 쓰기 전에 **무엇을 만들지** 먼저 정합니다.
-빈칸 채우기 설계서를 완성하면, 그게 그대로 Step 2의 **바이브코딩 프롬프트**가 됩니다.
+빈칸 채우기 설계서를 완성하면, 그게 그대로 Step 3의 **바이브코딩 프롬프트**가 됩니다.
 :::
 
 ## 시나리오 떠올리기
@@ -30,7 +32,7 @@
 떠오른 아이디어가 오늘의 Tool 팔레트로 표현이 안 될 수도 있습니다. 괜찮습니다 — 비슷한 성격의 Tool로 **축소판을 만든다**고 생각하세요. 예를 들어 "우리 회사의 물류 데이터"가 필요하면 오늘은 `inventory_status`로 대신하는 식입니다. 실무 적용 시 Gateway Target만 실제 API로 바꾸면 됩니다.
 
 ::: details 그래도 아이디어가 떠오르지 않는다면 (펼쳐보기)
-몇 가지 방향만 예로 들면 — 매장 실적과 경쟁사 가격을 비교해 프로모션 전략을 제안하는 Agent, 유통기한 임박 상품을 찾아 할인 전략을 세우는 Agent, 단골 고객의 구매 패턴에 맞춰 신상품을 추천하는 Agent, 반품 문의를 처리하며 이전 상담 이력을 기억하는 Agent 같은 것들이 가능합니다. 어디까지나 예시일 뿐입니다 — **여러분 회사에서 실제로 반복되는 업무**에서 출발하는 것이 가장 좋은 설계입니다.
+몇 가지 방향만 예로 들면 — 날씨와 이벤트를 보고 음료 발주를 제안하는 Agent, 매장 실적과 경쟁사 가격을 비교해 프로모션 전략을 제안하는 Agent, 유통기한 임박 상품을 찾아 할인 전략을 세우는 Agent, 단골 고객의 구매 패턴에 맞춰 신상품을 추천하는 Agent, 반품 문의를 처리하며 이전 상담 이력을 기억하는 Agent 같은 것들이 가능합니다. 어디까지나 예시일 뿐입니다 — **여러분 회사에서 실제로 반복되는 업무**에서 출발하는 것이 가장 좋은 설계입니다.
 :::
 
 ## 오늘 등록된 Tool 팔레트
@@ -44,13 +46,13 @@
 | `customer_profile` | `rcg-workshop-customer-profile` | 고객 프로필 조회 (등급, 선호도, 알러지) | Phase 1 |
 | `product_search` | `rcg-workshop-product-search` | 카테고리/태그로 상품 검색 | Phase 1 |
 | `purchase_history` | `rcg-workshop-purchase-history` | 고객 구매 이력 조회 | Phase 1 |
-| `cs_lookup_order` 외 3개 | `rcg-workshop-cs-*` | 주문 조회/반품 정책/반품 처리/배송 추적 | Phase 2A 트랙 |
-| `external_factors` | `rcg-workshop-demand-external-factors` | 날씨 예보/지역 이벤트/공휴일 | Phase 2B 트랙 |
+| `cs_lookup_order` 외 3개 | `rcg-workshop-cs-*` | 주문 조회/반품 정책/반품 처리/배송 추적 | Phase 2A |
+| `external_factors` | `rcg-workshop-demand-external-factors` | 날씨 예보/지역 이벤트/공휴일 | Phase 3 Step 1 |
 
 ### 더 필요하면 직접 등록할 수 있는 재료 (Lambda는 배포되어 있음)
 
 아래 Lambda들은 계정에 이미 배포되어 있지만 Gateway에는 아직 등록되지 않았습니다.
-설계에 필요하면 **Phase 2B Step 1에서 배운 콘솔 등록 방법** 그대로 Target을 추가하면 됩니다:
+설계에 필요하면 **Step 1에서 배운 콘솔 등록 방법** 그대로 Target을 추가하면 됩니다:
 
 | Lambda 함수 | 기능 |
 |------------|------|
@@ -58,13 +60,6 @@
 | `rcg-workshop-demand-sales-trend` | 판매 트렌드 분석 (7d/30d/90d) |
 | `rcg-workshop-demand-purchase-order` | 발주 실행 |
 | `rcg-workshop-weather-forecast` | 상세 날씨 예보 조회 |
-
-::: info 내 트랙에 따라 등록된 Tool이 다릅니다
-Phase 2A를 진행했다면 `cs_*` 4개, Phase 2B를 진행했다면 `external_factors`가
-내 Gateway에 등록되어 있습니다. Phase 1의 3개는 공통입니다.
-다른 트랙의 Tool이 필요하면 위 표의 Lambda를 콘솔에서 Target으로 등록하세요.
-:::
-
 
 ::: info 창의적 조합을 환영합니다
 예: `customer_profile` + `purchase_history` + `external_factors`
@@ -76,14 +71,14 @@ Phase 2A를 진행했다면 `cs_*` 4개, Phase 2B를 진행했다면 `external_f
 
 ## Fill-in-the-blank 설계서
 
-설계서를 **파일로 저장**하세요 — Step 2에서 AI 코딩 도구에게 이 파일을 읽게 하거나 내용을 붙여넣게 됩니다:
+설계서를 **파일로 저장**하세요 — Step 3에서 AI 코딩 도구에게 이 파일을 읽게 하거나 내용을 붙여넣게 됩니다:
 
 ```bash
 cd ~/workshop/starter-code
 touch my-agent-design.md
 ```
 
-VS Code에서 `my-agent-design.md`를 열고, 아래 템플릿을 복사한 뒤 빈칸을 채우세요 (5분):
+VS Code에서 `my-agent-design.md`를 열고, 아래 템플릿을 복사한 뒤 빈칸을 채우세요 (10분):
 
 ```markdown
 ## 나의 Agent 설계서
@@ -103,7 +98,7 @@ VS Code에서 `my-agent-design.md`를 열고, 아래 템플릿을 복사한 뒤 
 **추가 Tool**:
 - [ ] Code Interpreter (데이터 분석/계산)
 
-**Memory 전략** (Step 4에서 연동):
+**Memory 전략** (Step 5에서 연동):
 - 기억의 주체 (actor_id로 쓸 것): [ ] 고객 ID  [ ] 매장 ID  [ ] 기타: ________
 - 저장하는 것: _________________________
 - 활용 방식: _________________________
@@ -117,7 +112,7 @@ VS Code에서 `my-agent-design.md`를 열고, 아래 템플릿을 복사한 뒤 
 ```
 
 ::: tip 이 설계서가 곧 바이브코딩 프롬프트입니다
-Step 2에서 이 설계서를 AI 코딩 도구에 **그대로 붙여넣습니다**.
+Step 3에서 이 설계서를 AI 코딩 도구에 **그대로 붙여넣습니다**.
 빈칸이 구체적일수록 AI가 생성하는 코드가 정확해집니다.
 특히 **응답 규칙**과 **테스트 질문**을 명확히 쓰면 System Prompt 품질이 올라갑니다.
 :::
@@ -143,9 +138,8 @@ Step 2에서 이 설계서를 AI 코딩 도구에 **그대로 붙여넣습니다
 
 **추가 Tool**:
 - [ ] Code Interpreter (데이터 분석/계산)
-- [ ] Browser (외부 사이트 실시간 조회)
 
-**Memory 전략** (Step 4에서 연동):
+**Memory 전략** (Step 5에서 연동):
 - 기억의 주체 (actor_id로 쓸 것): [x] 고객 ID  [ ] 매장 ID  [ ] 기타: ________
 - 저장하는 것: 추천 결과와 고객 반응 (구매 여부)
 - 활용 방식: 다음 추천 시 이전에 추천했던 상품 제외 + 선호 반영
@@ -177,6 +171,5 @@ Step 2에서 이 설계서를 AI 코딩 도구에 **그대로 붙여넣습니다
 ---
 
 ::: tip ✅ 다음
-설계 완료! → [Step 2: 바이브코딩으로 구현하기](step2-vibecoding.md)
+설계 완료! → [Step 3: 바이브코딩으로 구현하기](step3-vibecoding.md)
 :::
-

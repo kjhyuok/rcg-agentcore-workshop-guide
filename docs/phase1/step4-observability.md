@@ -60,8 +60,9 @@ cd ~/workshop/starter-code/agents/phase1
 agentcore traces list --runtime phase1
 ```
 
-!!! warning "--runtime 값은 프로젝트 별칭입니다 (Runtime 리소스 이름과 다름!)"
-    `--runtime`에는 AgentCore Runtime 리소스 이름(`phase1_phase1-2jGPAQEdsM` 같은 실제 ARN에 들어가는 이름)이 아니라, **로컬 `agentcore.json`에 등록된 프로젝트 별칭**(이 워크샵에서는 `phase1`)을 넣습니다. `--runtime phase1_phase1`로 실행하면 `Runtime 'phase1_phase1' not found. Available: phase1`처럼 사용 가능한 별칭을 알려줍니다.
+::: warning --runtime 값은 프로젝트 별칭입니다 (Runtime 리소스 이름과 다름!)
+`--runtime`에는 AgentCore Runtime 리소스 이름(`phase1_phase1-2jGPAQEdsM` 같은 실제 ARN에 들어가는 이름)이 아니라, **로컬 `agentcore.json`에 등록된 프로젝트 별칭**(이 워크샵에서는 `phase1`)을 넣습니다. `--runtime phase1_phase1`로 실행하면 `Runtime 'phase1_phase1' not found. Available: phase1`처럼 사용 가능한 별칭을 알려줍니다.
+:::
 
 Trace ID, Timestamp, Session ID 목록과 CloudWatch Console 딥링크가 함께 출력됩니다. 기본적으로 최근 12시간, 최대 20개까지 표시됩니다 (`--since`, `--limit` 옵션으로 조정 가능). 특정 Trace의 상세 내용을 JSON 파일로 내려받으려면 위 목록에서 확인한 Trace ID를 넣어 실행하세요:
 
@@ -172,8 +173,9 @@ Trace ID를 클릭하면 **20개 Span의 시간축 분포**를 한눈에 볼 수
 agentcore invoke --runtime phase1 --session-id "obs-test-002-$(uuidgen)" "고객 C002에게 뷰티 상품 추천해주세요"
 ```
 
-!!! warning "session-id는 33자 이상이어야 합니다"
-    `--session-id`에 짧은 문자열(`obs-test-002`)만 넣으면 `Value at 'runtimeSessionId' failed to satisfy constraint: Member must have length greater than or equal to 33` 에러가 납니다. `$(uuidgen)`으로 뒤에 UUID를 붙여 33자를 넉넉히 채우세요. `--session-id`를 생략하면 CLI가 자동으로 유효한 세션 ID를 생성합니다.
+::: warning session-id는 33자 이상이어야 합니다
+`--session-id`에 짧은 문자열(`obs-test-002`)만 넣으면 `Value at 'runtimeSessionId' failed to satisfy constraint: Member must have length greater than or equal to 33` 에러가 납니다. `$(uuidgen)`으로 뒤에 UUID를 붙여 33자를 넉넉히 채우세요. `--session-id`를 생략하면 CLI가 자동으로 유효한 세션 ID를 생성합니다.
+:::
 
 1~2분 후 GenAI Dashboard → **Spans** 탭에서 확인:
 
@@ -190,21 +192,22 @@ agentcore invoke --runtime phase1 --session-id "obs-test-002-$(uuidgen)" "고객
 agentcore invoke --runtime phase1 --session-id "error-test-003-$(uuidgen)" "고객 C999에게 추천해주세요"
 ```
 
-??? success "정상 출력 예시"
-    ```
-    고객 프로필과 구매 이력을 동시에 조회하겠습니다!죄송합니다. 고객 C999에 대한 정보를 찾을 수 없습니다.
+::: details ✅ 정상 출력 예시
+```
+고객 프로필과 구매 이력을 동시에 조회하겠습니다!죄송합니다. 고객 C999에 대한 정보를 찾을 수 없습니다.
 
-    ❌ 추천 불가 사유
-    - 고객 프로필 조회 결과: 고객 C999를 찾을 수 없습니다 (404 오류)
-    - 고객의 선호도, 알러지 정보를 확인할 수 없어 안전한 개인화 추천이 불가능합니다.
+❌ 추천 불가 사유
+- 고객 프로필 조회 결과: 고객 C999를 찾을 수 없습니다 (404 오류)
+- 고객의 선호도, 알러지 정보를 확인할 수 없어 안전한 개인화 추천이 불가능합니다.
 
-    ⚠️ 알러지 정보 없이 상품을 추천할 경우, 고객에게 위험할 수 있어 추천을 진행하지 않습니다.
+⚠️ 알러지 정보 없이 상품을 추천할 경우, 고객에게 위험할 수 있어 추천을 진행하지 않습니다.
 
-    💡 해결 방법
-    1. 고객 ID 재확인 — 혹시 C999가 맞나요? 다른 ID(예: C001, C010 등)를 입력하신 건 아닌지 확인 부탁드립니다.
-    2. 고객 등록 여부 확인 — 해당 고객이 시스템에 등록되어 있는지 확인이 필요합니다.
-    ```
-    Agent가 `customer_profile` Tool의 404 에러를 그대로 삼키지 않고, 사용자에게 원인과 해결 방법까지 안내하며 **알러지 정보 없이는 추천을 진행하지 않는다는 안전 규칙**을 지킨 것을 확인할 수 있습니다.
+💡 해결 방법
+1. 고객 ID 재확인 — 혹시 C999가 맞나요? 다른 ID(예: C001, C010 등)를 입력하신 건 아닌지 확인 부탁드립니다.
+2. 고객 등록 여부 확인 — 해당 고객이 시스템에 등록되어 있는지 확인이 필요합니다.
+```
+Agent가 `customer_profile` Tool의 404 에러를 그대로 삼키지 않고, 사용자에게 원인과 해결 방법까지 안내하며 **알러지 정보 없이는 추천을 진행하지 않는다는 안전 규칙**을 지킨 것을 확인할 수 있습니다.
+:::
 
 Dashboard에서 관찰:
 
@@ -234,9 +237,8 @@ Dashboard에서 관찰:
 <div class="phase-complete">
 <h3>🎉 Phase 1 완료!</h3>
 <p>여러분의 Agent는 이미 <b>프로덕션 HTTPS 엔드포인트</b>로 동작하고 있습니다.</p>
-<p>이제 Agent에 새로운 능력을 추가합니다. 아래에서 택1 하세요:</p>
+<p>이제 Agent에 새로운 능력을 추가합니다:</p>
 <div class="next-options">
 <a href="../../phase2a/" class="option-2a">📞 Phase 2A: CS 자동화 Agent (★★★)</a>
-<a href="../../phase2b/" class="option-2b">📰 Phase 2B: 뉴스/날씨 수집 Agent (★★★)</a>
 </div>
 </div>
