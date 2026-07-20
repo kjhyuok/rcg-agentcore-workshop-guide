@@ -42,7 +42,7 @@ Step 2의 설계서를 AI 코딩 도구에 전달하여 `agents/phase3/app/phase
 
 ## 3-2. 참고 코드 구조 이해하기 (3분)
 
-바이브코딩 전에, AI에게 줄 **참고 코드의 뼈대**를 눈에 익혀두세요. Phase 2A에서 배포에 성공한 `agents/phase2a/app/phase2a/main.py`의 핵심 구조는 이렇습니다:
+바이브코딩 전에, AI에게 줄 **참고 코드의 뼈대**를 눈에 익혀두세요. Phase 2에서 배포에 성공한 `agents/phase2a/app/phase2a/main.py`의 핵심 구조는 이렇습니다:
 
 ```python
 import os
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 | # | 컨텍스트 | 어디서 가져오나 |
 |---|---------|---------------|
 | 1 | **설계서** | Step 2에서 작성한 `~/workshop/starter-code/my-agent-design.md` |
-| 2 | **참고 코드** | Phase 2A에서 배포에 성공한 `agents/phase2a/app/phase2a/main.py` |
+| 2 | **참고 코드** | Phase 2에서 배포에 성공한 `agents/phase2a/app/phase2a/main.py` |
 | 3 | **제약 조건** | 아래 3-4의 프롬프트에 포함된 4가지 제약 |
 
 ::: warning 참고 코드가 왜 필수인가요?

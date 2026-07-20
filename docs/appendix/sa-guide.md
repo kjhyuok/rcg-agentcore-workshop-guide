@@ -71,7 +71,7 @@ rcg-agentcore-workshop/
 CDK 마이그레이션으로 모든 Agent가 `agents/<phase>/app/<phase>/main.py` 신구조로 통일되었고, 아래 정리가 완료되었습니다:
 
 1. ✅ **레거시 단일파일 Agent 제거** — `phase1_recommend.py`, `phase2a_cs.py`, `phase2b_demand.py`, `phase3_orchestrator.py`는 신구조로 완전 이관되어 삭제됨. 가이드 문서도 모두 신구조 경로로 전환.
-2. ✅ **Phase 2A Browser 이식** — `app/phase2a/main.py`에 경쟁사 가격비교(Browser Tool) 통합 완료. 배포 검증됨(Runtime 3.12 + playwright driver /tmp 복사 + Browser IAM 권한 CDK 반영).
+2. ✅ **Phase 2 Browser 이식** — `app/phase2a/main.py`에 경쟁사 가격비교(Browser Tool) 통합 완료. 배포 검증됨(Runtime 3.12 + playwright driver /tmp 복사 + Browser IAM 권한 CDK 반영).
 3. ✅ **`deploy-agent.sh`가 `MOCK_SITE_URL` 주입** — Browser가 Mock 경쟁사 사이트를 방문하는 데 사용.
 4. **`scripts/run-evaluation.py` 보존** — Phase 3 평가/Arena 채점용으로 남겨둠(향후 활용 예정).
 :::

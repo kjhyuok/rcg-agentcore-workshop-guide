@@ -46,7 +46,7 @@
 | `customer_profile` | `rcg-workshop-customer-profile` | 고객 프로필 조회 (등급, 선호도, 알러지) | Phase 1 |
 | `product_search` | `rcg-workshop-product-search` | 카테고리/태그로 상품 검색 | Phase 1 |
 | `purchase_history` | `rcg-workshop-purchase-history` | 고객 구매 이력 조회 | Phase 1 |
-| `cs_lookup_order` 외 3개 | `rcg-workshop-cs-*` | 주문 조회/반품 정책/반품 처리/배송 추적 | Phase 2A |
+| `cs_lookup_order` 외 3개 | `rcg-workshop-cs-*` | 주문 조회/반품 정책/반품 처리/배송 추적 | Phase 2 |
 | `external_factors` | `rcg-workshop-demand-external-factors` | 날씨 예보/지역 이벤트/공휴일 | Phase 3 Step 1 |
 
 ### 더 필요하면 직접 등록할 수 있는 재료 (Lambda는 배포되어 있음)

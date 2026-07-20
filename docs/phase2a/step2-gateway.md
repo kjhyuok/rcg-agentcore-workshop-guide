@@ -26,7 +26,7 @@ Phase 1에서 이미 Gateway를 생성했습니다. 같은 Gateway에 Target을 
 
 ```
 Phase 1: customer-profile, product-search, purchase-history (Gateway 3개)
-Phase 2A: cs-lookup-order, cs-return-policy, cs-process-return, cs-delivery-status (Gateway 4개 추가)
+Phase 2: cs-lookup-order, cs-return-policy, cs-process-return, cs-delivery-status (Gateway 4개 추가)
 ───────────────────────────────────────────────────────────────
 Gateway 합계: 7개 Target
 

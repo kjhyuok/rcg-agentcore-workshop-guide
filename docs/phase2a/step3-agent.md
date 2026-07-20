@@ -30,7 +30,7 @@ Agent에 **Memory를 연동**하여 고객 맥락을 기억하게 합니다.
 # Phase 1: 상태 없는 Agent
 agent("주문 조회해주세요")  # 매번 새로운 대화
 
-# Phase 2A: Memory 연동 Agent
+# Phase 2: Memory 연동 Agent
 context = fetch_customer_context(actor_id, message)   # 이전 맥락 가져오기 (retrieve_memory_records)
 agent(message, context=context)                        # 맥락과 함께 실행
 save_turn(actor_id, session_id, message, response)     # 이번 대화 저장 (create_event)
@@ -344,7 +344,7 @@ Phase 1 Trace와 비교해봅니다:
 Phase 1 Trace:
   AGENT_START → TOOL_CALL(product_search) → TOOL_CALL(...) → AGENT_END
 
-Phase 2A Trace:
+Phase 2 Trace:
   MEMORY_RETRIEVE → AGENT_START → TOOL_CALL(lookup_order) → AGENT_END → MEMORY_SAVE
   ^^^^^^^^^^^^^^^^^^                                                      ^^^^^^^^^^^^
   새로 추가된 Memory 스팬

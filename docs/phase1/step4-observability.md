@@ -218,7 +218,7 @@ Dashboard에서 관찰:
 <p>여러분의 Agent는 이미 <b>프로덕션 HTTPS 엔드포인트</b>로 동작하고 있습니다.</p>
 <p>이제 Agent에 새로운 능력을 추가합니다. 아래에서 택1 하세요:</p>
 <div class="next-options">
-<a href="../../phase2a/" class="option-2a">📞 Phase 2A: CS 자동화 Agent (★★★)</a>
+<a href="../../phase2a/" class="option-2a">📞 Phase 2: CS 자동화 Agent (★★★)</a>
 <a href="../../phase2b/" class="option-2b">📰 Phase 2B: 뉴스/날씨 수집 Agent (★★★)</a>
 </div>
 </div>

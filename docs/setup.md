@@ -128,7 +128,7 @@ export RUNTIME_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/rcg-workshop-runtime-rol
 export AGENTCORE_GATEWAY_URL=&lt;setup-gateway.py 출력값&gt;<br>
 export GATEWAY_ID=&lt;Gateway ID&gt;<br>
 <br>
-<span class="env-label"># --- Phase 2A 또는 Phase 3 (Memory 생성 후 채워짐) ---</span><br>
+<span class="env-label"># --- Phase 2 또는 Phase 3 (Memory 생성 후 채워짐) ---</span><br>
 export AGENTCORE_MEMORY_ID=&lt;setup-memory.py 출력값&gt;<br>
 <br>
 <span class="env-label"># --- Phase 3 (나만의 Agent 배포 후 채워짐) ---</span><br>
@@ -148,7 +148,7 @@ echo "=== Phase 1 (Gateway 생성 후) ==="
 echo "AGENTCORE_GATEWAY_URL: $AGENTCORE_GATEWAY_URL"
 echo "GATEWAY_ID: $GATEWAY_ID"
 echo ""
-echo "=== Phase 2A / Phase 3 (Memory 생성 후) ==="
+echo "=== Phase 2 / Phase 3 (Memory 생성 후) ==="
 echo "AGENTCORE_MEMORY_ID: $AGENTCORE_MEMORY_ID"
 echo ""
 echo "=== Phase 3 (나만의 Agent 배포 후) ==="

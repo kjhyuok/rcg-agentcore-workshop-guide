@@ -151,7 +151,7 @@ Tool(Lambda)이 금액 조건을 **결정론적으로 판정**(needs_escalation 
 
 ## 4-4. 2가지 시나리오 테스트
 
-Phase 2A Step 3에서 썼던 `agentcore invoke` CLI 패턴을 그대로 사용합니다. 5만원 경계를 기준으로 **자동 처리 vs 에스컬레이션**이 갈리는 것을 비교합니다.
+Phase 2 Step 3에서 썼던 `agentcore invoke` CLI 패턴을 그대로 사용합니다. 5만원 경계를 기준으로 **자동 처리 vs 에스컬레이션**이 갈리는 것을 비교합니다.
 
 ::: tip 시나리오 선택 팁 — 반품이 확실히 '처리'되는 주문을 쓰세요
 에스컬레이션을 보려면 Agent가 `process_return` Tool을 **실제로 호출**해야 합니다. 그런데 주문이 **배송 중(IN_TRANSIT)**이거나 **화장품(개봉 여부 확인 필요)**이면, Agent가 "수령 후에" 또는 "개봉 여부 확인 후"라며 처리를 미뤄 에스컬레이션까지 도달하지 않습니다.
@@ -248,9 +248,9 @@ Trace (테스트 1 — 정상 처리, ORD-2024-101 / 35,000원):
 - Tool 입출력(금액, 결정)이 Trace에 기록되어 **어떤 근거로 에스컬레이션됐는지 감사 가능**
 :::
 
-## Phase 2A 완성!
+## Phase 2 완성!
 
-축하합니다! Phase 2A에서 추가한 것들:
+축하합니다! Phase 2에서 추가한 것들:
 
 | 서비스 | 역할 | 효과 |
 |--------|------|------|
@@ -265,11 +265,11 @@ Trace (테스트 1 — 정상 처리, ORD-2024-101 / 35,000원):
 Phase 1:  Gateway → Agent → Observability
           (도구를 쓸 줄 아는 Agent)
 
-Phase 2A: Memory → Gateway → Agent → 에스컬레이션 → Observability
+Phase 2: Memory → Gateway → Agent → 에스컬레이션 → Observability
           (기억하고, 권한 경계를 지키는 Agent)
 ```
 
-::: tip ✅ Phase 2A 완료!
+::: tip ✅ Phase 2 완료!
 Memory + 에스컬레이션을 추가하여 **실제 CS 업무에 투입 가능한** Agent가 되었습니다.
 
 점심 후 [Phase 3: 바이브코딩으로 나만의 Agent 만들기](../phase3/index.md)에서

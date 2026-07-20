@@ -101,7 +101,7 @@ sequenceDiagram
 | **한 줄 요약** | Lambda/API를 MCP Tool로 변환하여 Agent가 호출 가능하게 |
 | **핵심 명령** | `create_gateway`, `create_gateway_target` |
 | **비유** | API Gateway가 HTTP를 라우팅하듯, Gateway는 **Tool을 라우팅** |
-| **사용 Phase** | Phase 1 (3개), Phase 2A (+4개), Phase 3 (+1개~) |
+| **사용 Phase** | Phase 1 (3개), Phase 2 (+4개), Phase 3 (+1개~) |
 
 ::: tip Gateway의 핵심 가치
 Agent 코드를 수정하지 않고 Gateway Target만 추가/변경하면 Agent 기능이 확장됩니다.
@@ -136,7 +136,7 @@ Mock Lambda → 실제 API 전환도 Agent 코드 변경 없이 가능합니다.
 | **한 줄 요약** | 대화 이력, 사용자 선호, 과거 결과를 저장/검색 |
 | **핵심 코드** | `memory_client.retrieve_memories()`, `create_event()` |
 | **비유** | CRM이 고객 정보를 기억하듯, Memory는 **Agent의 경험을 기억** |
-| **사용 Phase** | Phase 2A (대화 맥락), Phase 3 (나만의 Agent 고도화) |
+| **사용 Phase** | Phase 2 (대화 맥락), Phase 3 (나만의 Agent 고도화) |
 
 ::: info 단기 기억 vs 장기 기억
 - **단기 기억** (현재 대화): LLM Context Window가 담당
@@ -151,7 +151,7 @@ Mock Lambda → 실제 API 전환도 Agent 코드 변경 없이 가능합니다.
 | **한 줄 요약** | 특정 조건에서 Agent 행동을 제한/승인 요구 |
 | **핵심 코드** | `agentcore policy create --rules [...]` |
 | **비유** | 결재 시스템이 금액별 승인을 요구하듯, Policy는 **Agent 행동을 통제** |
-| **사용 Phase** | Phase 2A (5만원 환불 에스컬레이션) |
+| **사용 Phase** | Phase 2 (5만원 환불 에스컬레이션) |
 
 | | System Prompt | Policy |
 |--|--|--|
@@ -167,7 +167,7 @@ Mock Lambda → 실제 API 전환도 Agent 코드 변경 없이 가능합니다.
 | **한 줄 요약** | Agent가 웹사이트를 방문하여 정보를 추출 |
 | **핵심 코드** | `AgentCoreBrowser(region="us-east-1")` |
 | **비유** | Agent에게 브라우저를 주면 — 경쟁사 가격, 뉴스, 날씨를 직접 확인 |
-| **사용 Phase** | Phase 2A (경쟁사 가격), Phase 3 (선택 — 뉴스/날씨 수집) |
+| **사용 Phase** | Phase 2 (경쟁사 가격), Phase 3 (선택 — 뉴스/날씨 수집) |
 
 ::: tip Phase 3는 새 서비스가 아니라 '조합'입니다
 Phase 3에서는 새로운 서비스를 배우는 대신, 위 서비스들(Runtime + Gateway + Memory)을

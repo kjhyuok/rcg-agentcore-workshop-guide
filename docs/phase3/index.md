@@ -39,7 +39,7 @@ graph TB
 
     subgraph GW["🔗 Gateway (오늘 등록한 Tool 팔레트)"]
         T1["Phase 1: customer_profile /<br/>product_search / purchase_history"]
-        T2["Phase 2A: cs_* Tool 4개"]
+        T2["Phase 2: cs_* Tool 4개"]
         T3["Step 1에서 등록: external_factors<br/>(날씨/이벤트/공휴일)"]
     end
 

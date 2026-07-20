@@ -23,7 +23,7 @@
 
 ## 5-1. Memory 준비
 
-Phase 2A에서 이미 Memory를 만들었습니다. 환경변수만 확인하세요:
+Phase 2에서 이미 Memory를 만들었습니다. 환경변수만 확인하세요:
 
 ```bash
 echo $AGENTCORE_MEMORY_ID
@@ -31,7 +31,7 @@ echo $AGENTCORE_MEMORY_ID
 
 비어 있다면 `source ~/workshop/.env.w001`로 복구합니다.
 
-::: details Memory가 아직 없다면 (Phase 2A를 건너뛴 경우)
+::: details Memory가 아직 없다면 (Phase 2를 건너뛴 경우)
 Memory를 새로 생성합니다:
 
 ```bash
@@ -112,7 +112,7 @@ def fetch_context(actor_id: str, query: str) -> str:
 
 entrypoint에서는 `fetch_context()` 결과를 System Prompt에 주입하고,
 스트리밍 완료 후 `threading.Thread(target=save_turn, ...).start()`를 호출합니다.
-전체 흐름은 [Phase 2A Step 3](../phase2a/step3-agent.md)을 참고하세요.
+전체 흐름은 [Phase 2 Step 3](../phase2a/step3-agent.md)을 참고하세요.
 :::
 
 ## 5-3. 재배포 & 두 번째 호출 효과 확인
@@ -173,7 +173,7 @@ Step 5 (Memory 연동 후):
 | Phase | 구축물 | AgentCore 서비스 |
 |-------|--------|-----------------|
 | Phase 1 | 추천 Agent | Runtime + Gateway + Observability + Code Interpreter |
-| Phase 2A | CS Agent | + Memory + Policy + Browser |
+| Phase 2 | CS Agent | + Memory + Policy + Browser |
 | Phase 3 | **나만의 Agent (바이브코딩)** | Gateway 확장 + Runtime + Memory 조합 |
 
 **핵심 메시지:**
