@@ -9,7 +9,7 @@
   <span class="step-connector"></span>
   <span class="step">○ Step 4 배포 & 테스트</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 5 Memory</span>
+  <span class="step">○ Step 5 제출</span>
 </div>
 
 ::: info 이 Step의 목표
@@ -98,7 +98,7 @@ VS Code에서 `my-agent-design.md`를 열고, 아래 템플릿을 복사한 뒤 
 **추가 Tool**:
 - [ ] Code Interpreter (데이터 분석/계산)
 
-**Memory 전략** (Step 5에서 연동):
+**Memory 전략** (선택사항):
 - 기억의 주체 (actor_id로 쓸 것): [ ] 고객 ID  [ ] 매장 ID  [ ] 기타: ________
 - 저장하는 것: _________________________
 - 활용 방식: _________________________
@@ -139,7 +139,7 @@ Step 3에서 이 설계서를 AI 코딩 도구에 **그대로 붙여넣습니다
 **추가 Tool**:
 - [ ] Code Interpreter (데이터 분석/계산)
 
-**Memory 전략** (Step 5에서 연동):
+**Memory 전략** (선택사항):
 - 기억의 주체 (actor_id로 쓸 것): [x] 고객 ID  [ ] 매장 ID  [ ] 기타: ________
 - 저장하는 것: 추천 결과와 고객 반응 (구매 여부)
 - 활용 방식: 다음 추천 시 이전에 추천했던 상품 제외 + 선호 반영

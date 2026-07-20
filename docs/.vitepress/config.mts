@@ -67,7 +67,7 @@ export default withMermaid(defineConfig({
           { text: '나만의 Agent 설계하기', link: '/phase3/step2-design' },
           { text: '바이브코딩으로 구현하기', link: '/phase3/step3-vibecoding' },
           { text: 'Runtime 배포 & Playground 테스트', link: '/phase3/step4-deploy' },
-          { text: 'Memory로 고도화하기', link: '/phase3/step5-memory' },
+          { text: '🏟️ 아레나 제출하기', link: '/phase3/step5-submit' },
         ],
       },
       {

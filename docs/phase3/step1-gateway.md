@@ -9,7 +9,7 @@
   <span class="step-connector"></span>
   <span class="step">○ Step 4 배포 & 테스트</span>
   <span class="step-connector"></span>
-  <span class="step">○ Step 5 Memory</span>
+  <span class="step">○ Step 5 제출</span>
 </div>
 
 ::: info 이 Step의 목표

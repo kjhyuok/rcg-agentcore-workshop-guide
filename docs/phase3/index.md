@@ -7,7 +7,7 @@
 - **설계** — 나만의 Agent 설계서 작성 (빈칸 채우기 템플릿)
 - **바이브코딩** — AI 코딩 도구에게 설계서 + 참고 코드를 주고 Agent 구현
 - **배포** — AgentCore Runtime에 배포하고 Playground에서 테스트
-- **고도화** — Memory를 연동해 기억하는 Agent로 업그레이드
+- **제출** — 아레나에 결과물 제출
 :::
 
 
@@ -17,6 +17,45 @@ Claude Code, Amazon Q Developer, Kiro 등 **어떤 AI 코딩 도구든 좋습니
 도구가 없어도 괜찮습니다 — 제공되는 템플릿을 직접 수정하는 방법도 안내합니다.
 :::
 
+## 두 가지 경로
+
+Phase 3는 경험과 시간에 따라 **두 갈래** 중 하나를 선택할 수 있습니다:
+
+::: details 🅰️ 가이드형 — Step 1~5를 순서대로 따라가기 (권장)
+**이런 분에게 적합합니다:**
+- Agent를 처음 만들어보는 분
+- 시간이 40분 이내인 분
+- 확실히 동작하는 결과물을 원하는 분
+
+**흐름:**
+1. Gateway에 `external-factors` Tool 추가 (Step 1)
+2. 기존 Tool 팔레트(8개) 안에서 시나리오를 떠올려 설계서 작성 (Step 2)
+3. 바이브코딩으로 `main.py` 생성 (Step 3)
+4. 배포 & 테스트 (Step 4)
+5. 아레나 제출 (Step 5)
+:::
+
+::: details 🅱️ 자유형 — 커스텀 Tool부터 직접 만들기 (도전)
+**이런 분에게 적합합니다:**
+- Agent 개발 경험이 있거나 Kiro/Claude Code에 익숙한 분
+- 독창적인 시나리오를 처음부터 설계하고 싶은 분
+- 직접 만든 Lambda Tool을 아레나에 함께 제출하고 싶은 분
+
+**흐름:**
+1. Kiro(또는 선호하는 AI 코딩 도구)로 Lambda Tool을 직접 구현
+2. Gateway에 커스텀 Tool을 Target으로 등록
+3. 설계서(`my-agent-design.md`) 작성 — 직접 만든 Tool 포함
+4. `main.py` 구현 (기존 참고 코드 구조는 유지)
+5. 배포 & 테스트
+6. 아레나 제출 — Lambda 코드도 함께 zip에 포함
+
+::: warning 자유형 제약
+`main.py`의 뼈대(`BedrockAgentCoreApp` + `@app.entrypoint` + async yield)는 반드시 유지해야 합니다.
+이 구조가 없으면 AgentCore Runtime 배포가 불가능합니다.
+:::
+
+두 경로 모두 **최종 제출물은 동일**합니다 → [Step 5: 아레나 제출하기](step5-submit.md)
+
 ## 타임라인
 
 | 시간 | 활동 | 산출물 |
@@ -25,7 +64,7 @@ Claude Code, Amazon Q Developer, Kiro 등 **어떤 AI 코딩 도구든 좋습니
 | 10분 | Agent 설계서 작성 | 나만의 Agent 설계서 |
 | 20분 | 바이브코딩으로 구현 | `agents/phase3/app/phase3/main.py` |
 | 10분 | Runtime 배포 + Playground 테스트 | 프로덕션 HTTPS 엔드포인트 |
-| 10분 | Memory 연동 고도화 | 기억하는 Agent |
+| 5분 | 아레나 제출 | zip → Google Drive 업로드 |
 
 ## 아키텍처
 
@@ -47,19 +86,13 @@ graph TB
         CI["Code Interpreter<br/>계산/시각화"]
     end
 
-    subgraph ME["🧠 Memory (Step 5에서 연동)"]
-        MR["기억의 주체 = actor_id<br/>(고객 ID / 매장 ID 등)"]
-    end
-
     U --> RT
     AG -->|MCP tool_use| GW
     AG -.->|선택적 사용| BI
-    AG -->|retrieve / save| ME
 
     style RT fill:#fff3e0,stroke:#e65100
     style GW fill:#e3f2fd,stroke:#1565c0
     style BI fill:#e0f2f1,stroke:#00695c
-    style ME fill:#e8eaf6,stroke:#3f51b5
 ```
 
 ## Steps
@@ -68,7 +101,7 @@ graph TB
 2. [나만의 Agent 설계하기](step2-design.md) — 빈칸 채우기 설계서로 Use Case 정의
 3. [바이브코딩으로 구현하기](step3-vibecoding.md) — AI 도구에게 설계서를 주고 코드 생성
 4. [Runtime 배포 & Playground 테스트](step4-deploy.md) — 내 Agent를 세상에 공개
-5. [Memory로 고도화하기](step5-memory.md) — 기억하는 Agent로 업그레이드
+5. [아레나 제출하기](step5-submit.md) — zip 압축 후 Google Drive 업로드
 
 ---
 
@@ -76,8 +109,7 @@ graph TB
 Agent 개발은 "코드를 짜는 것"이 아니라 "서비스를 조합하는 것"입니다.
 
 - Gateway Tool 조합을 바꾸면 **능력**이 바뀌고
-- System Prompt를 바꾸면 **역할**이 바뀌고
-- Memory 전략을 바꾸면 **지능**이 바뀝니다
+- System Prompt를 바꾸면 **역할**이 바뀝니다
 
 바이브코딩은 이 조합을 **말로 지시하는 것**입니다. 좋은 설계서가 곧 좋은 프롬프트입니다.
 :::
