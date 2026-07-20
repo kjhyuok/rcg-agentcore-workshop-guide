@@ -22,7 +22,7 @@ export default withMermaid(defineConfig({
         text: 'Phases',
         items: [
           { text: 'Phase 1: 첫 Agent', link: '/phase1/' },
-          { text: 'Phase 2A: CS Agent', link: '/phase2a/' },
+          { text: 'Phase 2: CS Agent', link: '/phase2a/' },
           { text: 'Phase 3: 나만의 Agent', link: '/phase3/' },
         ],
       },
@@ -48,7 +48,7 @@ export default withMermaid(defineConfig({
         ],
       },
       {
-        text: 'Phase 2A: CS Agent',
+        text: 'Phase 2: CS Agent',
         collapsed: true,
         items: [
           { text: '개요', link: '/phase2a/' },
