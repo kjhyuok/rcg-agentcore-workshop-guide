@@ -92,7 +92,7 @@ sequenceDiagram
 | **한 줄 요약** | Python Agent 코드를 HTTPS 엔드포인트로 변환 |
 | **핵심 명령** | `agentcore deploy`, `agentcore invoke` |
 | **비유** | Lambda가 함수를 서비스하듯, Runtime은 **Agent를 서비스** |
-| **사용 Phase** | 전 Phase (1, 2A, 2B, 3) |
+| **사용 Phase** | 전 Phase (1, 2A, 3) |
 
 #### Gateway — 외부 Tool을 Agent에 연결
 
@@ -101,7 +101,7 @@ sequenceDiagram
 | **한 줄 요약** | Lambda/API를 MCP Tool로 변환하여 Agent가 호출 가능하게 |
 | **핵심 명령** | `create_gateway`, `create_gateway_target` |
 | **비유** | API Gateway가 HTTP를 라우팅하듯, Gateway는 **Tool을 라우팅** |
-| **사용 Phase** | Phase 1 (3개), Phase 2A (+4개), Phase 2B (+4개) |
+| **사용 Phase** | Phase 1 (3개), Phase 2A (+4개), Phase 3 (+1개~) |
 
 ::: tip Gateway의 핵심 가치
 Agent 코드를 수정하지 않고 Gateway Target만 추가/변경하면 Agent 기능이 확장됩니다.
@@ -167,7 +167,7 @@ Mock Lambda → 실제 API 전환도 Agent 코드 변경 없이 가능합니다.
 | **한 줄 요약** | Agent가 웹사이트를 방문하여 정보를 추출 |
 | **핵심 코드** | `AgentCoreBrowser(region="us-east-1")` |
 | **비유** | Agent에게 브라우저를 주면 — 경쟁사 가격, 뉴스, 날씨를 직접 확인 |
-| **사용 Phase** | Phase 2A (경쟁사 가격), Phase 2B (뉴스/날씨 수집) |
+| **사용 Phase** | Phase 2A (경쟁사 가격), Phase 3 (선택 — 뉴스/날씨 수집) |
 
 ::: tip Phase 3는 새 서비스가 아니라 '조합'입니다
 Phase 3에서는 새로운 서비스를 배우는 대신, 위 서비스들(Runtime + Gateway + Memory)을

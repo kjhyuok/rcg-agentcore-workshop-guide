@@ -23,7 +23,6 @@ export default withMermaid(defineConfig({
         items: [
           { text: 'Phase 1: 첫 Agent', link: '/phase1/' },
           { text: 'Phase 2A: CS Agent', link: '/phase2a/' },
-          { text: 'Phase 2B: 수집 Agent', link: '/phase2b/' },
           { text: 'Phase 3: 나만의 Agent', link: '/phase3/' },
         ],
       },
@@ -60,23 +59,15 @@ export default withMermaid(defineConfig({
         ],
       },
       {
-        text: 'Phase 2B: 뉴스/날씨 수집 Agent',
-        collapsed: true,
-        items: [
-          { text: '개요', link: '/phase2b/' },
-          { text: '데이터 재료 준비하기', link: '/phase2b/step1-gateway' },
-          { text: '나만의 수집 Agent 만들어 배포하기', link: '/phase2b/step2-agent' },
-        ],
-      },
-      {
         text: 'Phase 3: 나만의 Agent 만들기',
         collapsed: true,
         items: [
           { text: '개요', link: '/phase3/' },
-          { text: '나만의 Agent 설계하기', link: '/phase3/step1-design' },
-          { text: '바이브코딩으로 구현하기', link: '/phase3/step2-vibecoding' },
-          { text: 'Runtime 배포 & Playground 테스트', link: '/phase3/step3-deploy' },
-          { text: 'Memory로 고도화하기', link: '/phase3/step4-memory' },
+          { text: '데이터 재료 준비하기', link: '/phase3/step1-gateway' },
+          { text: '나만의 Agent 설계하기', link: '/phase3/step2-design' },
+          { text: '바이브코딩으로 구현하기', link: '/phase3/step3-vibecoding' },
+          { text: 'Runtime 배포 & Playground 테스트', link: '/phase3/step4-deploy' },
+          { text: 'Memory로 고도화하기', link: '/phase3/step5-memory' },
         ],
       },
       {

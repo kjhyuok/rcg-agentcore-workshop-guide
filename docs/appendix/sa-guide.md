@@ -32,8 +32,7 @@ rcg-agentcore-workshop/
 │   ├── agents/                   # phase별 CDK 프로젝트 (app/<phase>/main.py가 배포 대상)
 │   │   ├── phase1/app/phase1/main.py
 │   │   ├── phase2a/app/phase2a/main.py   # Memory + Policy + Browser(경쟁사 가격비교)
-│   │   ├── phase2b/app/phase2b/main.py
-│   │   └── phase3/app/phase3/main.py
+│   │   └── phase3/app/phase3/main.py     # Phase 2B 통합 — 참가자가 바이브코딩으로 직접 작성
 │   ├── scripts/
 │   │   ├── setup-gateway.py
 │   │   ├── setup-memory.py
@@ -75,6 +74,15 @@ CDK 마이그레이션으로 모든 Agent가 `agents/<phase>/app/<phase>/main.py
 2. ✅ **Phase 2A Browser 이식** — `app/phase2a/main.py`에 경쟁사 가격비교(Browser Tool) 통합 완료. 배포 검증됨(Runtime 3.12 + playwright driver /tmp 복사 + Browser IAM 권한 CDK 반영).
 3. ✅ **`deploy-agent.sh`가 `MOCK_SITE_URL` 주입** — Browser가 Mock 경쟁사 사이트를 방문하는 데 사용.
 4. **`scripts/run-evaluation.py` 보존** — Phase 3 평가/Arena 채점용으로 남겨둠(향후 활용 예정).
+:::
+
+::: warning ⚠️ starter-code 저장소 필요 변경사항 (Phase 2B → Phase 3 통합 반영)
+Phase 2B가 Phase 3(나만의 Agent 만들기)로 통합되면서, 별도 코드 저장소에 아래 변경이 필요합니다:
+
+1. **`agents/phase2b_collector.py` 제거** — Phase 2B에서 만들던 수집 Agent가 사라지고, 참가자가 Phase 3에서 바이브코딩으로 직접 `agents/phase3/app/phase3/main.py`를 만듭니다 (참고 코드는 `phase2a`)
+2. **`external-factors` Lambda(`rcg-workshop-demand-external-factors`) 배포 유지** — Phase 3 Step 1에서 참가자가 콘솔로 직접 Gateway Target 등록
+3. **나머지 `rcg-workshop-demand-*` Lambda 3개(`inventory`/`sales-trend`/`purchase-order`)와 `rcg-workshop-weather-forecast`도 배포 유지** — Phase 3 설계 시 참가자가 선택적으로 Target 추가하는 재료
+4. **기존 `agents/phase2b_demand.py`, `agents/phase3_orchestrator.py`, `scripts/run-evaluation.py`, Orchestrator 관련 스크립트 제거** — 더 이상 가이드에서 참조하지 않음
 :::
 
 
