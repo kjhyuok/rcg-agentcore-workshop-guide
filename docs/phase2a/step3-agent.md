@@ -215,7 +215,7 @@ if __name__ == "__main__":
 ```
 
 ::: info 왜 async generator + 백그라운드 스레드인가
-`yield`로 Strands 원시 이벤트를 흘려보내면 토큰이 생성되는 즉시 스트리밍됩니다. 여기에 더해 CS Agent는 응답 후 Memory 저장(`save_turn`)이라는 추가 네트워크 호출이 있는데, 응답을 다 보여준 뒤 백그라운드 스레드에서 처리하도록 분리했습니다 — 참가자가 Memory 쓰기 완료까지 기다릴 필요가 없어집니다. (`session_id`가 있을 때만 저장 — CLI `--prompt`처럼 세션이 없으면 저장을 건너뜁니다.)
+`yield`로 Strands 원시 이벤트를 흘려보내면 Runtime이 이를 SSE 스트리밍 응답으로 내보냅니다(스트리밍 효과는 Playground에서 확인). 여기에 더해 CS Agent는 응답 후 Memory 저장(`save_turn`)이라는 추가 네트워크 호출이 있는데, 응답을 다 보여준 뒤 백그라운드 스레드에서 처리하도록 분리했습니다 — 참가자가 Memory 쓰기 완료까지 기다릴 필요가 없어집니다. (`session_id`가 있을 때만 저장 — CLI `--prompt`처럼 세션이 없으면 저장을 건너뜁니다.)
 :::
 
 ## 3-5. 배포
@@ -300,8 +300,8 @@ agentcore invoke --prompt-file /tmp/cs-2.json
 :::
 
 
-::: info 출력이 스트리밍으로 나옵니다
-entrypoint가 async generator라서 토큰이 생성되는 즉시 이벤트가 흘러나옵니다. 위 예시는 최종 텍스트만 정리한 것입니다.
+::: info 출력이 여러 이벤트로 나뉘어 나옵니다
+entrypoint가 async generator(`yield`)라서 응답이 **여러 이벤트 조각으로 나뉘어** 출력됩니다. 위 예시는 최종 텍스트만 정리한 것입니다. (실시간 토큰 **스트리밍 효과는 Agent Playground**에서 확인할 수 있습니다.)
 :::
 
 

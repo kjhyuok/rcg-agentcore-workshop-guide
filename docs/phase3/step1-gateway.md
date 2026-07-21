@@ -78,6 +78,8 @@ Bedrock AgentCore Gateway 콘솔에서 등록된 Gateway를 클릭합니다.
 - **대상 유형**: Lambda ARN
 - **Lambda ARN**: 배포되어 있는 `rcg-workshop-demand-external-factors` 함수의 ARN을 붙여넣습니다(Lambda 콘솔에서 해당 ARN을 찾습니다)
 
+![Lambda 콘솔에서 Function ARN 확인 (Copy ARN 버튼)](lambda-arn.png)
+
 **인라인 스키마**에 아래 JSON을 넣습니다:
 
 ```json

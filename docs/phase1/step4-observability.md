@@ -35,18 +35,9 @@ Agent 내부에서 일어나는 모든 일을 **투명하게 추적**합니다:
 
 ### Tracing 상태 확인
 
-Console → Bedrock → AgentCore → Runtime → `phase1_phase1` → 하단 **Log deliveries and tracing** 섹션에서 확인:
+Console → Bedrock → AgentCore → Runtime → `phase1_phase1` → 하단 **Observability** 섹션에서 확인:
 
 ![Runtime Observability 메트릭](../assets/images/phase1/runtime-observability-metrics.png)
-
-![Tracing Enabled](../assets/images/phase1/runtime-tracing-enabled.png)
-
-::: tip ✅ Tracing: ✅ Enabled 확인
-사전 구성된 워크샵 환경에서 Transaction Search가 이미 활성화되어 있기 때문에, `deploy-agent.sh`로 배포하면 Tracing이 자동 활성화됩니다.
-
-- **Tracing** = Agent의 Tool 호출 순서, latency, 토큰 사용량 추적 (필수)
-- **Log delivery** = 별도 목적지로 로그 전송 (optional, 설정 불필요)
-:::
 
 ## 4-1. CLI로 Trace 확인
 

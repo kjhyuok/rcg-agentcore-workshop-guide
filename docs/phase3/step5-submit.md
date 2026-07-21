@@ -50,16 +50,25 @@ cd submission
 zip ../팀명_submission.zip *
 ```
 
+압축한 zip 파일을 내 PC로 내려받습니다. VS Code Explorer에서 생성된 zip 파일(`팀명_submission.zip`)을 **우클릭 → Download...** 하면 로컬로 다운로드됩니다:
+
+![VS Code에서 zip 파일 Download](submit-download.png)
+
 ### 2. Google Drive에 업로드
 
 아래 Google Drive 공유 폴더에 zip 파일을 업로드합니다:
 
 링크: https://drive.google.com/drive/folders/1wtw2J4DtajH01Av0672wZGHXn4x7eICI?usp=sharing
 
+공유 폴더에 접속한 뒤, 내려받은 zip 파일을 화면에 **드래그 앤 드롭**하거나 우측 상단 **'신규'** 버튼으로 업로드합니다:
+
+![Google Drive 공유 폴더에 드래그 앤 드롭](submit-drive-upload.png)
+
 ::: warning 📁 제출 링크
 **Google Drive 링크: [링크](https://drive.google.com/drive/folders/1wtw2J4DtajH01Av0672wZGHXn4x7eICI?usp=sharing)**
 
 - 파일명 형식: `팀명.zip`
+- ⚠️ **`팀명` 부분을 실제 팀 이름으로 바꿔서** 제출하세요 (예: `A조.zip`, `retail-team.zip`). `팀명.zip` 그대로 올리지 마세요.
 :::
 
 ### 3. 제출 확인
