@@ -228,7 +228,7 @@ chmod +x scripts/*.sh
 
 ::: info 환경변수 자동 전달
 `deploy-agent.sh phase2a`가 `AGENTCORE_GATEWAY_URL`, `AGENTCORE_MEMORY_ID`, `MOCK_SITE_URL`, `AWS_REGION`을 모두 자동으로 Runtime 환경변수(`agentcore.json`)에 주입합니다.
-실행 전에 `echo $AGENTCORE_MEMORY_ID`로 값이 비어있지 않은지 먼저 확인하세요.
+실행 전에 `echo $AGENTCORE_MEMORY_ID $MOCK_SITE_URL`로 두 값이 비어있지 않은지 확인하세요. 비어있으면 `source ~/workshop/.env.w001` 후 다시 확인하세요. (`MOCK_SITE_URL`이 비면 Browser가 경쟁사 가격 페이지에 접속하지 못합니다.)
 :::
 
 
