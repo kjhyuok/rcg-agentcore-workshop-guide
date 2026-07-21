@@ -68,7 +68,7 @@ features:
 
 ```mermaid
 graph TD
-    A["Phase 1: 추천 Agent<br/>Gateway + Runtime + Observability<br/><b>60분</b>"] --> C["Phase 2: CS Agent<br/>+ Memory + Policy + Browser<br/>★★★ 60분"]
+    A["Phase 1: 추천 Agent<br/>Gateway + Runtime + Observability<br/><b>60분</b>"] --> C["Phase 2: CS Agent<br/>+ Memory + Policy + Browser<br/>60분"]
     C --> E["Phase 3: 바이브코딩으로 나만의 Agent<br/>Gateway 확장 + 설계 + 구현 + 배포 + Memory<br/><b>60분</b>"]
 ```
 
@@ -84,7 +84,7 @@ graph TD
 
 체크하며 따라가세요:
 
-- [ ] **환경 세팅** — `./infra/onestop.sh w001` (CloudShell) + `./infra/setup-python.sh` (Code Editor) 실행 완료
+- [ ] **환경 세팅** — Event Outputs 확인 → Code Server 접속 → 환경 확인 (사전 구성된 EC2, 모두 배포 완료)
 - [ ] **Phase 1** — Gateway 생성, Agent 작성, Runtime 배포, Trace 확인
 - [ ] **Phase 2** — Memory + Policy + Browser
 - [ ] **Phase 3** — Tool 등록(Gateway 확장), 설계서 작성, 바이브코딩, 배포, Memory 연동

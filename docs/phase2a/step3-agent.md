@@ -336,26 +336,11 @@ CLI로 Memory 동작까지 확인했다면, 이제 웹 화면에서 대화형으
 
 ![Agent Playground 화면](../assets/images/playground/playground-overview.png)
 
-## 3-7. Trace 비교 (Observability)
+## 3-7. 호출된 서비스 확인 (Observability)
 
-Phase 1 Trace와 비교해봅니다:
+Playground 우측 **AGENTCORE SERVICES** 패널에서, 방금 호출에서 이 Agent가 **실제로 사용한 서비스와 tool**을 확인할 수 있습니다. Gateway·Bedrock LLM·Memory·Policy·Browser 등 각 서비스가 `감지됨`으로 표시되고, 호출된 tool(`cs_lookup_order`, `cs_process_return` 등)까지 함께 볼 수 있습니다.
 
-```
-Phase 1 Trace:
-  AGENT_START → TOOL_CALL(product_search) → TOOL_CALL(...) → AGENT_END
-
-Phase 2 Trace:
-  MEMORY_RETRIEVE → AGENT_START → TOOL_CALL(lookup_order) → AGENT_END → MEMORY_SAVE
-  ^^^^^^^^^^^^^^^^^^                                                      ^^^^^^^^^^^^
-  새로 추가된 Memory 스팬
-```
-
-::: info Memory 스팬이 보임
-Observability에서 `MEMORY_RETRIEVE`와 `MEMORY_SAVE` 스팬을 확인할 수 있습니다.
-
-- `MEMORY_RETRIEVE`: 몇 개의 record를 가져왔는지, 검색 시간
-- `MEMORY_SAVE`: Event 저장 성공 여부
-:::
+![Playground AGENTCORE SERVICES 패널](../assets/images/playground/playground-services-panel.png)
 
 ## 이해 체크
 

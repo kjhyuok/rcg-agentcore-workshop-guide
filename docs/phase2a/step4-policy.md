@@ -217,35 +217,15 @@ CS 팀 리더에게 전달하겠습니다.
 만약 Agent가 "수령 후에" 또는 "개봉 여부를 알려달라"며 되물으면, `process_return`을 아직 호출하지 않은 것입니다. "네, 개봉했지만 불량이라 지금 환불해주세요"처럼 한 번 더 확정해 주면 Tool을 호출하고 위 에스컬레이션 결과로 이어집니다.
 :::
 
-## 4-5. Trace에서 에스컬레이션 확인
+## 4-5. 에스컬레이션 분기 확인 (Observability)
 
-Observability에서 테스트별 Trace를 비교합니다. 에스컬레이션 분기가 `process_return` Tool의 반환값(`needs_escalation`)에서 결정되는 것을 볼 수 있습니다:
+Playground 우측 **AGENTCORE SERVICES** 패널에서, 방금 두 테스트가 각각 어떤 Tool을 호출했고 `process_return`이 어떤 결정을 내렸는지 확인할 수 있습니다. 에스컬레이션 분기는 `process_return` Tool의 반환값(`needs_escalation`)에서 결정됩니다:
 
-```
-Trace (테스트 2 — 에스컬레이션, ORD-2024-999 / 69,000원):
-  MEMORY_RETRIEVE
-  AGENT_START
-  TOOL_CALL(lookup_order) → 200 OK
-  TOOL_CALL(return_policy) → 200 OK
-  TOOL_CALL(process_return) → needs_escalation: true ⚠️  ← 5만원 초과, 승인 필요
-  AGENT_END (CS 팀 리더 전달 안내)
-  MEMORY_SAVE
-```
+- **needs_escalation: false** (5만원 이하) → Agent가 환불 완료 안내
+- **needs_escalation: true** (5만원 초과) → Agent가 직접 처리하지 않고 CS 팀 리더 전달 안내
 
-```
-Trace (테스트 1 — 정상 처리, ORD-2024-101 / 35,000원):
-  MEMORY_RETRIEVE
-  AGENT_START
-  TOOL_CALL(lookup_order) → 200 OK
-  TOOL_CALL(process_return) → needs_escalation: false ✅  ← 5만원 이하, 자동 처리
-  AGENT_END (환불 완료 안내)
-  MEMORY_SAVE
-```
-
-::: info process_return Tool 스팬
-- **needs_escalation: false** → Agent가 환불 완료 안내
-- **needs_escalation: true** → Agent가 직접 처리하지 않고 CS 팀 리더 전달 안내
-- Tool 입출력(금액, 결정)이 Trace에 기록되어 **어떤 근거로 에스컬레이션됐는지 감사 가능**
+::: info 왜 Tool이 판정하나
+금액 판정을 LLM의 산수에 맡기지 않고 `process_return` Tool(Lambda)이 결정론적으로 확정합니다. Tool 입출력(금액, 결정)이 Trace에 기록되므로 **어떤 근거로 에스컬레이션됐는지 감사(audit)가 가능**합니다.
 :::
 
 ## Phase 2 완성!
