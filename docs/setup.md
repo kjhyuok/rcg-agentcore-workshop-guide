@@ -4,6 +4,41 @@
 이 페이지의 모든 단계를 완료해야 Phase 1을 시작할 수 있습니다.
 :::
 
+## AWS 이벤트 참여 (Workshop Studio 접속)
+
+이 워크샵은 **Workshop Studio**를 통해 AWS 계정을 제공받아 진행합니다. 이 계정에는 워크샵에 필요한 인프라와 IAM 정책이 사전에 구성되어 있습니다. 아래 순서로 할당된 AWS 계정에 접속하세요.
+
+::: tip 준비물
+- **Chrome 또는 Firefox** 브라우저
+- 이벤트 호스트가 제공한 **Workshop Studio 링크**와 **이벤트 액세스 코드**
+:::
+
+**1. Workshop Studio 링크 접속 → 로그인 방법 선택**
+
+이벤트 호스트가 제공한 Workshop Studio 링크로 이동한 뒤, **Email one-time password (OTP)** 를 선택합니다.
+
+![Workshop Studio 로그인 방법 선택](assets/images/setup/ws-signin-otp.png)
+
+**2. 이메일 입력 → 코드 요청**
+
+본인 이메일 주소를 입력하고 **Send passcode** 를 클릭합니다.
+
+![이메일 입력](assets/images/setup/ws-email-input.png)
+
+**3. 9자리 코드 입력 → 로그인**
+
+이메일로 받은 **9자리 passcode**를 입력하고 **Sign in** 을 클릭합니다. (메일은 5분 이내 도착)
+
+![Passcode 입력](assets/images/setup/ws-passcode.png)
+
+**4. 이용 약관 동의 → 이벤트 참여**
+
+이용 약관을 검토하고 **I agree with the Terms and Conditions** 를 체크한 뒤 **Join event** 를 클릭합니다.
+
+![이용 약관 동의 및 Join event](assets/images/setup/ws-join-event.png)
+
+로그인에 성공하면 이벤트 대시보드로 이동합니다. 이제 아래 단계로 워크샵 환경을 확인하세요.
+
 ## 워크샵 환경 개요
 
 이 워크샵은 **사전 구성된 EC2 인스턴스**에서 진행됩니다. CloudFormation으로 배포된 환경에 다음이 이미 준비되어 있습니다:
