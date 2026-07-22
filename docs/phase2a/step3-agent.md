@@ -255,19 +255,37 @@ cd ~/workshop/starter-code/agents/phase2a
 
 ```bash
 cat > /tmp/cs-1.json <<'JSON'
-{"prompt": "주문 ORD-20260620-001 배송 상태 확인해주세요", "actor_id": "C001", "session_id": "cs-test-001-aaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+{"prompt": "주문 ORD-20260620-001 배송 상태 확인해주세요", "actor_id": "C001", "session_id": "cs-test-003-aaaaaaaaaaaaaaaaaaaaaaaaaaa"}
 JSON
-agentcore invoke --prompt-file /tmp/cs-1.json
+aws bedrock-agentcore invoke-agent-runtime \
+  --agent-runtime-arn "<여러분의 Runtime ARN>" \
+  --payload fileb:///tmp/cs-1.json \
+  --runtime-session-id "cs-test-012-aaaaaaaaaaaaaaaaaaaaaaaaaaa" \
+  --region us-west-2 \
+  /dev/stdout 2>/dev/null | sed 's/^data: //' | jq -rj 'select(.event.contentBlockDelta) | .event.contentBlockDelta.delta.text // empty'; echo
 ```
+
+::: warning `<여러분의 Runtime ARN>`을 직접 교체하세요
+`--agent-runtime-arn "<여러분의 Runtime ARN>"` 부분을 본인의 실제 Runtime ARN으로 바꿔야 합니다. ARN은 `agentcore status`로 확인할 수 있습니다.
+:::
 
 **두 번째 대화 (같은 고객, 새 세션):**
 
 ```bash
 cat > /tmp/cs-2.json <<'JSON'
-{"prompt": "아까 그 주문 반품하고 싶어요", "actor_id": "C001", "session_id": "cs-test-002-bbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+{"prompt": "아까 그 주문 반품하고 싶어요", "actor_id": "C001", "session_id": "cs-test-005-cccccccccccccccccccccccccccc"}
 JSON
-agentcore invoke --prompt-file /tmp/cs-2.json
+aws bedrock-agentcore invoke-agent-runtime \
+  --agent-runtime-arn "<여러분의 Runtime ARN>" \
+  --payload fileb:///tmp/cs-2.json \
+  --runtime-session-id "cs-test-015-cccccccccccccccccccccccccccc" \
+  --region us-west-2 \
+  /dev/stdout 2>/dev/null | sed 's/^data: //' | jq -rj 'select(.event.contentBlockDelta) | .event.contentBlockDelta.delta.text // empty'; echo
 ```
+
+::: warning `<여러분의 Runtime ARN>`을 직접 교체하세요
+위와 동일하게 `--agent-runtime-arn "<여러분의 Runtime ARN>"`을 본인의 실제 Runtime ARN으로 바꿔주세요. (`agentcore status`로 확인)
+:::
 
 ::: details ✅ Memory 연동 확인 포인트
 두 번째 대화에서 Agent가:
